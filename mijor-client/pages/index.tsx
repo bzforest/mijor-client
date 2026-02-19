@@ -7,7 +7,6 @@ import { useState } from "react";
 import Alert from "@/components/ui/Alert";
 import Step from "@/components/ui/Step";
 
-
 const baseColors = [
   { name: "Gray 0", hex: "#070C1B", className: "bg-brand-gray-0" },
   { name: "Gray 100", hex: "#21263F", className: "bg-brand-gray-100" },
@@ -219,7 +218,6 @@ export default function Home() {
           />
 
         </section>
-
         <section className="lg:col-span-6" />
       </div>
 
