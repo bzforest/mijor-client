@@ -4,7 +4,8 @@ import TextArea from "@/components/ui/TextArea";
 import Button from "@/components/ui/Button";
 import Modal from "@/components/ui/Modal";
 import { useState } from "react";
-
+import Pagination from "@/components/ui/pagination";
+import Tabs from "@/components/ui/Tab";
 import Alert from "@/components/ui/Alert";
 import Step from "@/components/ui/Step";
 import Checkbox from "@/components/ui/Checkbox";
@@ -38,6 +39,20 @@ export default function Home() {
   });
   const [selected, setSelected] = useState("1");
 
+  // ตัวอย่าง pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  function handlePageChange(newPage: number): void {
+    console.log("Current page:", newPage);
+    setCurrentPage(newPage);
+  }
+  // ตัวอย่าง tabs
+  const [currentTab, setCurrentTab] = useState("tab1");
+
+  const tabItems = [
+    { id: "tab1", label: "General Info" },
+    { id: "tab2", label: "System Settings" },
+    { id: "tab3", label: "Usage History" },
+  ];
 
   return (
     <div className="flex flex-col items-center min-h-screen bg-brand-gray-0 px-6 py-8 text-white">
@@ -337,6 +352,33 @@ export default function Home() {
       <Button variant="primary" onClick={() => setIsModalOpen(true)}>
         Open Modal
       </Button>
+
+      {/* pagination */}
+      <Pagination
+        currentPage={currentPage}
+        totalPages={10}
+        onPageChange={handlePageChange}
+      />
+
+      {/* tabs */}
+      <div className="p-10 bg-brand-gray-0 min-h-screen">
+        {/* 2. ส่ง State และฟังก์ชัน Set State เข้าไปใน Tabs */}
+        <Tabs
+          tabs={tabItems}
+          activeTab={currentTab}
+          onChange={(id) => setCurrentTab(id)}
+        />
+
+        {/* แสดงเนื้อหาตาม Tab ที่เลือก */}
+        <div className="mt-8 text-white p-6 bg-brand-gray-100/10 rounded-lg">
+          {currentTab === "tab1" && <div>นี่คือเนื้อหาของ ข้อมูลทั่วไป</div>}
+          {currentTab === "tab2" && <div>หน้านี้ไว้สำหรับ ตั้งค่าระบบ</div>}
+          {currentTab === "tab3" && (
+            <div>แสดงรายการ ประวัติการใช้งาน ทั้งหมด</div>
+          )}
+        </div>
+      </div>
+
       <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
