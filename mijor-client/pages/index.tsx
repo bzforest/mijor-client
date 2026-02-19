@@ -1,3 +1,7 @@
+import Alert from "@/components/ui/Alert";
+import Step from "@/components/ui/Step";
+
+
 const baseColors = [
   { name: "Gray 0", hex: "#070C1B", className: "bg-brand-gray-0" },
   { name: "Gray 100", hex: "#21263F", className: "bg-brand-gray-100" },
@@ -70,6 +74,52 @@ export default function Home() {
             </div>
           </div>
         </section>
+        
+        <section className="mt-16 space-y-10 rounded-lg border border-brand-gray-100 p-6">
+          
+          <div>
+            <p className="text-body-2 text-brand-gray-300">Alert</p>
+            <h1 className="mt-1 text-headline-2">Alert </h1>
+          </div>
+
+          {/* 🔥 NEW: Alert Test */}
+          <div className="space-y-4">
+            <Alert
+              type="error"
+              title="Attention needed"
+              message="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum id ante vitae eros suscipit pulvinar. "
+              onClose={() => {
+                console.log("Alert closed!");
+              }}
+            />
+
+            <Alert
+              type="success"
+              title="Attention needed"
+              message="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum id ante vitae eros suscipit pulvinar. "
+              onClose={() => {
+                console.log("Alert closed!");
+              }}
+            />
+          </div>
+
+          <div>
+            <p className="text-body-2 text-brand-gray-300">Step</p>
+            <h1 className="mt-1 text-headline-2">Step</h1>
+          </div>
+
+          {/* 🔥 NEW: Step Test */}
+          <Step
+            steps={[
+              { label: "Account" }, 
+              { label: "Profile" },
+              { label: "Confirm" },
+            ]}
+            currentStep={2}
+          />
+
+        </section>
+
         <section className="lg:col-span-6" />
       </div>
     </div>
