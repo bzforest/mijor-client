@@ -1,3 +1,7 @@
+import Button from "@/components/ui/Button";
+import Modal from "@/components/ui/Modal";
+import { useState } from "react";
+
 const baseColors = [
   { name: "Gray 0", hex: "#070C1B", className: "bg-brand-gray-0" },
   { name: "Gray 100", hex: "#21263F", className: "bg-brand-gray-100" },
@@ -16,6 +20,7 @@ const brandColors = [
 ];
 
 export default function Home() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
     <div className="flex flex-col items-center min-h-screen bg-brand-gray-0 px-6 py-8 text-white">
@@ -72,6 +77,43 @@ export default function Home() {
         </section>
         <section className="lg:col-span-6" />
       </div>
+
+      {/* button */}
+      <div className="flex">
+        <div>
+          <Button variant="primary">Button</Button>
+          <Button variant="secondary">Button</Button>
+          <Button variant="text">Button</Button>
+        </div>
+        <div>
+          <Button variant="primary" disabled={true}>
+            Button
+          </Button>
+          <Button variant="secondary" disabled={true}>
+            Button
+          </Button>
+          <Button variant="text" disabled={true}>
+            Button
+          </Button>
+        </div>
+      </div>
+
+      {/* modal */}
+      <Button variant="primary" onClick={() => setIsModalOpen(true)}>
+        Open Modal
+      </Button>
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title="Modal Title"
+        primaryActionButton="primary" // มี หรือ ไม่มี ก็ได้
+        secondaryActionButton="secondary" // มี หรือ ไม่มี ก็ได้
+        onPrimaryAction={() => console.log("Primary Click")} // ตรงนี้ เพิ่มฟังชั่นเข้าไปได้ว่า onclick จะทำอะไรต่อ
+        onSecondaryAction={() => setIsModalOpen(false)}
+      >
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum id
+        ante vitae eros suscipit pulvinar.
+      </Modal>
     </div>
   );
 }
