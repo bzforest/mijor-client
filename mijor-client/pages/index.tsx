@@ -22,10 +22,10 @@ const brandColors = [
 ];
 
 export default function Home() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [textArea, setTextArea] = useState("");
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
     <div className="flex flex-col items-center min-h-screen bg-brand-gray-0 px-6 py-8 text-white">
