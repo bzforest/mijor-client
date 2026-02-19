@@ -1,3 +1,7 @@
+import InputField from "@/components/ui/InputField";
+import { useState } from "react";
+import TextArea from "@/components/ui/TextArea";
+
 const baseColors = [
   { name: "Gray 0", hex: "#070C1B", className: "bg-brand-gray-0" },
   { name: "Gray 100", hex: "#21263F", className: "bg-brand-gray-100" },
@@ -16,6 +20,9 @@ const brandColors = [
 ];
 
 export default function Home() {
+  const [search, setSearch] = useState("");
+  const [textArea, setTextArea] = useState("");
+
 
   return (
     <div className="flex flex-col items-center min-h-screen bg-brand-gray-0 px-6 py-8 text-white">
@@ -68,6 +75,96 @@ export default function Home() {
               <p className="text-body-2">Body 2 - Regular</p>
               <p className="text-body-3">Body 3</p>
             </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-10">
+            <InputField
+              label="Label"
+              placeholder="Placeholder"
+              text={search}
+              textTrue="Correct text"
+              textFalse="Incorrect text"
+              onChange={setSearch}
+              correct={true}
+              onClear={() => {
+                setSearch("");
+              }}
+            />
+
+            <InputField
+              label="Label"
+              placeholder="Placeholder"
+              text={search}
+              textTrue="Correct text"
+              textFalse="Incorrect text"
+              onChange={setSearch}
+              correct={false}
+              onClear={() => {
+                setSearch("");
+              }}
+            />
+
+            <InputField
+              label="Label"
+              placeholder="Placeholder"
+              text={search}
+              textTrue="Correct text"
+              textFalse="Incorrect text"
+              onChange={setSearch}
+              correct={true}
+              search={true}
+              onSearch={() => {
+                console.log("Search");
+              }}
+              onClear={() => {
+                setSearch("");
+              }}
+            />
+
+            <InputField
+              label="Label"
+              placeholder="Placeholder"
+              text={search}
+              textTrue="Correct text"
+              textFalse="Incorrect text"
+              onChange={setSearch}
+              correct={false}
+              search={true}
+              onSearch={() => {
+                console.log("Search");
+              }}
+              onClear={() => {
+                setSearch("");
+              }}
+            />
+
+            <InputField
+              label="Label"
+              placeholder="Placeholder"
+              text={search}
+              textTrue="Correct text"
+              textFalse="Incorrect text"
+              onChange={setSearch}
+              correct={true}
+              search={true}
+              onSearch={() => {
+                console.log("Search");
+              }}
+              onClear={() => {
+                setSearch("");
+              }}
+              disabled={true}
+            />
+
+          </div>
+
+          <div>
+            <TextArea
+              label="Label"
+              placeholder="Placeholder"
+              value={textArea}
+              onChange={setTextArea}
+            />
           </div>
         </section>
         <section className="lg:col-span-6" />
