@@ -1,78 +1,77 @@
-import Image from "next/image";
-import { Geist, Geist_Mono } from "next/font/google";
+const baseColors = [
+  { name: "Gray 0", hex: "#070C1B", className: "bg-brand-gray-0" },
+  { name: "Gray 100", hex: "#21263F", className: "bg-brand-gray-100" },
+  { name: "Gray 200", hex: "#565F7E", className: "bg-brand-gray-200" },
+  { name: "Gray 300", hex: "#8B93B0", className: "bg-brand-gray-300" },
+  { name: "Gray 400", hex: "#C8CEDD", className: "bg-brand-gray-400" },
+  { name: "White", hex: "#FFFFFF", className: "bg-white" },
+];
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+const brandColors = [
+  { name: "Blue 100", hex: "#4E7BEE", className: "bg-brand-blue-100" },
+  { name: "Blue 200", hex: "#1E29A8", className: "bg-brand-blue-200" },
+  { name: "Blue 300", hex: "#0C1580", className: "bg-brand-blue-300" },
+  { name: "Green", hex: "#00A372", className: "bg-brand-green" },
+  { name: "Red", hex: "#E5364B", className: "bg-brand-red" },
+];
 
 export default function Home() {
+
   return (
-    <div
-      className={`${geistSans.className} ${geistMono.className} flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black`}
-    >
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the index.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs/pages/getting-started?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+    <div className="flex flex-col items-center min-h-screen bg-brand-gray-0 px-6 py-8 text-white">
+      <div className="w-fit">
+        <section className="mb-10 grid gap-40 rounded-lg border border-brand-gray-100 p-6 lg:grid-cols-2">
+          <div>
+            <p className="text-body-2 text-brand-gray-300">Color</p>
+            <h1 className="mt-1 text-headline-2">Colors</h1>
+
+            <h2 className="mt-6 text-headline-4 text-white">Base</h2>
+            <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
+              {baseColors.map((color) => (
+                <div key={color.name}>
+                  <div className={`h-14 w-full ${color.className}`} />
+                  <p className="mt-2 text-body-2 text-white">{color.name}</p>
+                  <p className="text-body-3 text-brand-gray-300">{color.hex}</p>
+                </div>
+              ))}
+            </div>
+
+            <h2 className="mt-6 text-headline-4 text-white">Brand</h2>
+            <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5">
+              {brandColors.map((color) => (
+                <div key={color.name}>
+                  <div className={`h-14 w-full ${color.className}`} />
+                  <p className="mt-2 text-body-2 text-white">{color.name}</p>
+                  <p className="text-body-3 text-brand-gray-300">{color.hex}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <p className="text-body-2 text-brand-gray-300">Font</p>
+            <h1 className="mt-1 text-headline-2">Fonts</h1>
+
+            <h2 className="mt-6 text-headline-4 text-white">Headline</h2>
+            <div className="mt-3 space-y-2 text-brand-gray-300">
+              <p className="text-headline-1">Headline1</p>
+              <p className="text-headline-2">Headline 2</p>
+              <p className="text-headline-3">Headline 3</p>
+              <p className="text-headline-4">Headline 4</p>
+            </div>
+
+            <h2 className="mt-6 text-headline-4 text-white">Body</h2>
+            <div className="mt-3 space-y-2 text-brand-gray-300">
+              <p className="text-body-1-bold">Body 1 - Medium</p>
+              <p className="text-body-1">Body 1 - Regular</p>
+              <p className="text-body-2-bold">Body 2 - Medium</p>
+              <p className="text-body-2">Body 2 - Regular</p>
+              <p className="text-body-3">Body 3</p>
+            </div>
+          </div>
+        </section>
+        <section className="lg:col-span-6" />
+      </div>
     </div>
   );
 }
