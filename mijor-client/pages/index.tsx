@@ -8,6 +8,9 @@ import Pagination from "@/components/ui/pagination";
 import Tabs from "@/components/ui/Tab";
 import Alert from "@/components/ui/Alert";
 import Step from "@/components/ui/Step";
+import MenuLink from "@/components/ui/MenuLink";
+import { UserRound } from 'lucide-react';
+import Tag from "@/components/ui/Tag";
 import Checkbox from "@/components/ui/Checkbox";
 import Radio from "@/components/ui/Radio";
 
@@ -197,9 +200,9 @@ export default function Home() {
             />
           </div>
         </section>
-        
-    <section className="mt-16 space-y-10 rounded-lg border border-brand-gray-100 p-6">
-      
+
+        <section className="mt-16 space-y-10 rounded-lg border border-brand-gray-100 p-6">
+
           <div>
             <p className="text-body-2 text-brand-gray-300">Alert</p>
             <h1 className="mt-1 text-headline-2">Alert </h1>
@@ -234,94 +237,94 @@ export default function Home() {
           {/* 🔥 NEW: Step Test */}
           <Step
             steps={[
-              { label: "Account" }, 
+              { label: "Account" },
               { label: "Profile" },
               { label: "Confirm" },
             ]}
             currentStep={2}
           />
 
-      <div className="min-h-100 px bg-brand-gray-0 text-white p-10 space-y-8">
+          <div className="min-h-100 px bg-brand-gray-0 text-white p-10 space-y-8">
 
-      <h1 className="text-headline-2">Checkbox</h1>
+            <h1 className="text-headline-2">Checkbox</h1>
 
-      <div className="space-y-6">
+            <div className="space-y-6">
 
-        <Checkbox
-          label="Option 1"
-          checked={checkboxes.option1}
-          onChange={(e) =>
-            setCheckboxes({
-              ...checkboxes,
-              option1: e.target.checked,
-            })
-          }
-        />
+              <Checkbox
+                label="Option 1"
+                checked={checkboxes.option1}
+                onChange={(e) =>
+                  setCheckboxes({
+                    ...checkboxes,
+                    option1: e.target.checked,
+                  })
+                }
+              />
 
-        <Checkbox
-          label="Option 2"
-          checked={checkboxes.option2}
-          onChange={(e) =>
-            setCheckboxes({
-              ...checkboxes,
-              option2: e.target.checked,
-            })
-          }
-        />
+              <Checkbox
+                label="Option 2"
+                checked={checkboxes.option2}
+                onChange={(e) =>
+                  setCheckboxes({
+                    ...checkboxes,
+                    option2: e.target.checked,
+                  })
+                }
+              />
 
-        <Checkbox
-          label="Option 3"
-          checked={checkboxes.option3}
-          onChange={(e) =>
-            setCheckboxes({
-              ...checkboxes,
-              option3: e.target.checked,
-            })
-          }
-        />
+              <Checkbox
+                label="Option 3"
+                checked={checkboxes.option3}
+                onChange={(e) =>
+                  setCheckboxes({
+                    ...checkboxes,
+                    option3: e.target.checked,
+                  })
+                }
+              />
 
-        <Checkbox
-          label="Disabled"
-          checked={false}
-          disabled
-        />
+              <Checkbox
+                label="Disabled"
+                checked={false}
+                disabled
+              />
 
-      </div>
+            </div>
 
-      <h1 className="text-headline-2 mt-10">Radio</h1>
+            <h1 className="text-headline-2 mt-10">Radio</h1>
 
-      <Radio
-        label="Option 1"
-        name="group"
-        value="1"
-        checked={selected === "1"}
-        onChange={(e) => setSelected(e.target.value)}
-      />
+            <Radio
+              label="Option 1"
+              name="group"
+              value="1"
+              checked={selected === "1"}
+              onChange={(e) => setSelected(e.target.value)}
+            />
 
-      <Radio
-        label="Option 2"
-        name="group"
-        value="2"
-        checked={selected === "2"}
-        onChange={(e) => setSelected(e.target.value)}
-      />
+            <Radio
+              label="Option 2"
+              name="group"
+              value="2"
+              checked={selected === "2"}
+              onChange={(e) => setSelected(e.target.value)}
+            />
 
-<Radio
-        label="Option 3"
-        name="group"
-        value="3"
-        checked={selected === "3"}
-        onChange={(e) => setSelected(e.target.value)}
-      />
+            <Radio
+              label="Option 3"
+              name="group"
+              value="3"
+              checked={selected === "3"}
+              onChange={(e) => setSelected(e.target.value)}
+            />
 
-      <Radio
-        label="Disabled"
-        name="group"
-        value="4"
-        checked={false}
-        disabled
-      />
-    </div>
+            <Radio
+              label="Disabled"
+              name="group"
+              value="4"
+              checked={false}
+              disabled
+            />
+          </div>
 
 
         </section>
@@ -361,7 +364,7 @@ export default function Home() {
       />
 
       {/* tabs */}
-      <div className="p-10 bg-brand-gray-0 min-h-screen">
+      <div className="p-10 bg-brand-gray-0">
         {/* 2. ส่ง State และฟังก์ชัน Set State เข้าไปใน Tabs */}
         <Tabs
           tabs={tabItems}
@@ -392,8 +395,68 @@ export default function Home() {
         ante vitae eros suscipit pulvinar.
       </Modal>
 
-      
-</div>
-    
+      {/* MenuLink and Tag Examples */}
+      <div className="space-y-8">
+        <div>
+          <h2 className="text-headline-2 mb-4">MenuLink & Tag Components</h2>
+
+          <div className="space-y-6">
+            <div>
+              <h3 className="text-headline-4 mb-3">MenuLink Examples</h3>
+              <div className="space-y-2">
+                <MenuLink
+                  icon={<UserRound size={24} strokeWidth={0.5}/>}
+                  label="Dashboard"
+                  onClick={() => console.log("Navigate to dashboard")}
+                />
+                <MenuLink
+                  icon={<UserRound size={24} strokeWidth={0.5}/>}
+                  label="Profile"
+                  onClick={() => console.log("Navigate to profile")}
+                />
+                <MenuLink
+                  icon={<UserRound size={24} strokeWidth={0.5}/>}
+                  label="Settings"
+                  variant="selected"
+                />
+              </div>
+            </div>
+
+            <div>
+              <h3 className="text-headline-4 mb-3">Tag Examples</h3>
+              <div className="flex flex-wrap gap-2">
+                <Tag label="Active" variant="genre" />
+                <Tag label="Pending" variant="language" />
+                <Tag label="Completed" variant="genre" />
+                <Tag label="JavaScript" variant="language" />
+                <Tag label="TypeScript" variant="language" />
+              </div>
+            </div>
+
+            <div>
+              <h3 className="text-headline-4 mb-3">Combined Example</h3>
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <MenuLink
+                    icon={<UserRound size={24} strokeWidth={0.5} />}
+                    label="User Management"
+                    onClick={() => console.log("Navigate to users")}
+                  />
+                  <Tag label="5 new" variant="genre" />
+                </div>
+                <div className="flex items-center gap-2">
+                  <MenuLink
+                    icon={<UserRound size={24} strokeWidth={0.5} />}
+                    label="Notifications"
+                    onClick={() => console.log("Navigate to notifications")}
+                  />
+                  <Tag label="3" variant="language" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
