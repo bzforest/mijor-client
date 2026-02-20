@@ -1,3 +1,4 @@
+"use client";
 import InputField from "@/components/ui/InputField";
 import TextArea from "@/components/ui/TextArea";
 import Button from "@/components/ui/Button";
@@ -6,6 +7,8 @@ import { useState } from "react";
 
 import Alert from "@/components/ui/Alert";
 import Step from "@/components/ui/Step";
+import Checkbox from "@/components/ui/Checkbox";
+import Radio from "@/components/ui/Radio";
 
 const baseColors = [
   { name: "Gray 0", hex: "#070C1B", className: "bg-brand-gray-0" },
@@ -28,6 +31,12 @@ export default function Home() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [textArea, setTextArea] = useState("");
+  const [checkboxes, setCheckboxes] = useState({
+    option1: false,
+    option2: false,
+    option3: false,
+  });
+  const [selected, setSelected] = useState("1");
 
 
   return (
@@ -174,8 +183,8 @@ export default function Home() {
           </div>
         </section>
         
-        <section className="mt-16 space-y-10 rounded-lg border border-brand-gray-100 p-6">
-          
+    <section className="mt-16 space-y-10 rounded-lg border border-brand-gray-100 p-6">
+      
           <div>
             <p className="text-body-2 text-brand-gray-300">Alert</p>
             <h1 className="mt-1 text-headline-2">Alert </h1>
@@ -217,6 +226,89 @@ export default function Home() {
             currentStep={2}
           />
 
+      <div className="min-h-100 px bg-brand-gray-0 text-white p-10 space-y-8">
+
+      <h1 className="text-headline-2">Checkbox</h1>
+
+      <div className="space-y-6">
+
+        <Checkbox
+          label="Option 1"
+          checked={checkboxes.option1}
+          onChange={(e) =>
+            setCheckboxes({
+              ...checkboxes,
+              option1: e.target.checked,
+            })
+          }
+        />
+
+        <Checkbox
+          label="Option 2"
+          checked={checkboxes.option2}
+          onChange={(e) =>
+            setCheckboxes({
+              ...checkboxes,
+              option2: e.target.checked,
+            })
+          }
+        />
+
+        <Checkbox
+          label="Option 3"
+          checked={checkboxes.option3}
+          onChange={(e) =>
+            setCheckboxes({
+              ...checkboxes,
+              option3: e.target.checked,
+            })
+          }
+        />
+
+        <Checkbox
+          label="Disabled"
+          checked={false}
+          disabled
+        />
+
+      </div>
+
+      <h1 className="text-headline-2 mt-10">Radio</h1>
+
+      <Radio
+        label="Option 1"
+        name="group"
+        value="1"
+        checked={selected === "1"}
+        onChange={(e) => setSelected(e.target.value)}
+      />
+
+      <Radio
+        label="Option 2"
+        name="group"
+        value="2"
+        checked={selected === "2"}
+        onChange={(e) => setSelected(e.target.value)}
+      />
+
+<Radio
+        label="Option 3"
+        name="group"
+        value="3"
+        checked={selected === "3"}
+        onChange={(e) => setSelected(e.target.value)}
+      />
+
+      <Radio
+        label="Disabled"
+        name="group"
+        value="4"
+        checked={false}
+        disabled
+      />
+    </div>
+
+
         </section>
         <section className="lg:col-span-6" />
       </div>
@@ -257,6 +349,9 @@ export default function Home() {
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum id
         ante vitae eros suscipit pulvinar.
       </Modal>
-    </div>
+
+      
+</div>
+    
   );
 }
