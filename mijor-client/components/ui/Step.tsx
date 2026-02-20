@@ -23,11 +23,11 @@ interface StepItem {
   
           const circleStyle = {
             finished:
-              "bg-[var(--color-brand-blue-200)] border-[var(--color-brand-blue-200)] text-[var(--color-white)]",
+              "bg-brand-blue-200 border-brand-blue-200 text-white",
             current:
-              "bg-[var(--color-brand-blue-100)] border-[var(--color-brand-blue-100)] text-[var(--color-white)]",
+              "bg-brand-blue-100 border-brand-blue-100 text-white",
             default:
-              "bg-transparent border-[var(--color-brand-gray-200)] text-[var(--color-brand-gray-300)]",
+              "bg-transparent border-brand-gray-200 text-brand-gray-300",
           };
   
           return (
@@ -49,7 +49,7 @@ interface StepItem {
                 {status === "finished" ? "✓" : stepNumber}
               </div>
   
-              <p className="text-body-2 text-[var(--color-brand-gray-400)]">
+              <p className="text-body-2 text-brand-gray-400">
                 {step.label}
               </p>
             </div>

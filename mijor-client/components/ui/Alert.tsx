@@ -24,8 +24,8 @@ export default function Alert({
   if (!open) return null;
 
   const bgColor: Record<AlertType, string> = {
-    error: "bg-[var(--color-brand-red)]/60",
-    success: "bg-[var(--color-brand-green)]/60",
+    error: "bg-brand-red/60",
+    success: "bg-brand-green/60",
   };
 
   return (
