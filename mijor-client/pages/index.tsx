@@ -332,20 +332,46 @@ export default function Home() {
       </div>
 
       {/* button */}
-      <div className="flex">
-        <div>
-          <Button variant="primary">Button</Button>
-          <Button variant="secondary">Button</Button>
-          <Button variant="text">Button</Button>
+      <div className="flex flex-row gap-4">
+        <div className="flex flex-col gap-4">
+          <Button variant="primary" state="default">
+            Button
+          </Button>
+          <Button variant="primary" state="hover">
+            Button
+          </Button>
+          <Button variant="primary" state="active">
+            Button
+          </Button>
+          <Button variant="primary" state="disabled">
+            Button
+          </Button>
         </div>
-        <div>
-          <Button variant="primary" disabled={true}>
+        <div className="flex flex-col gap-4">
+          <Button variant="secondary" state="default">
             Button
           </Button>
-          <Button variant="secondary" disabled={true}>
+          <Button variant="secondary" state="hover">
             Button
           </Button>
-          <Button variant="text" disabled={true}>
+          <Button variant="secondary" state="active">
+            Button
+          </Button>
+          <Button variant="secondary" state="disabled">
+            Button
+          </Button>
+        </div>
+        <div className="flex flex-col gap-4">
+          <Button variant="text" state="default">
+            Button
+          </Button>
+          <Button variant="text" state="hover">
+            Button
+          </Button>
+          <Button variant="text" state="active">
+            Button
+          </Button>
+          <Button variant="text" state="disabled">
             Button
           </Button>
         </div>
