@@ -69,7 +69,7 @@ export default function DateSelection() {
           )}
         </div>
 
-        <div className="overflow-x-auto no-scrollbar md:overflow-hidden w-full px-4 md:px-12">
+        <div className="overflow-x-auto no-scrollbar md:overflow-x-auto w-full px-4 md:px-12">
           <div
             className="flex transition-transform duration-300 ease-out"
             style={{
