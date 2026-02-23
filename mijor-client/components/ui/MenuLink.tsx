@@ -1,5 +1,5 @@
 interface MenuLinkProps {
-    icon: React.ReactNode;
+    icon?: React.ReactNode;
     label: string;
     onClick?: () => void;
     variant?: "default" | "selected";
