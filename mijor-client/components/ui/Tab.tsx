@@ -9,7 +9,7 @@ type TabsProps = {
   onChange: (id: string) => void;
 };
 
-export default function Tabs({ tabs, activeTab, onChange }: TabsProps) {
+export default function  Tabs({ tabs, activeTab, onChange }: TabsProps) {
   return (
     <div className="flex gap-8 border-b border-brand-gray-100/20">
       {tabs.map((tab) => {

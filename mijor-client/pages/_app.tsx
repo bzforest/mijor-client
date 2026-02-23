@@ -6,11 +6,12 @@ const robotoCondensed = Roboto_Condensed({
   subsets: ["latin"],
   weight: ["400", "700"],
   variable: "--font-roboto-condensed",
+  display: "swap",
 });
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
-    <div className={robotoCondensed.variable}>
+    <div className={robotoCondensed.className}>
       <Component {...pageProps} />
     </div>
   );
