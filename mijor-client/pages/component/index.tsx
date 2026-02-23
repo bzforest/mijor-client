@@ -9,6 +9,87 @@ import SeatIcon from "@/components/common/seatIcon";
 import BookingCard from "@/components/common/bookingCard";
 import MenuSegmented from "@/components/common/menuSegmented";
 import Segmented from "@/components/common/segmented";
+
+const moviesDataMock = [
+    {
+        id: "1",
+        title: "Django Unchained",
+        picture: "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcT0Y3K-9VNW2z5rUMxiimw6HCzWM7XbBrfihFTm47uFLdHJa75_",
+        date: "24/06/2024",
+        rating: "4.6",
+        genre: ["Action", "Crime"],
+        language: ["TH", "EN"],
+        remainingTime: "04:55",
+        time: "16:30",
+        hall: "Hall 1",
+        cinema: "Minor Cineplex Arkham",
+    },
+    {
+        id: "2",
+        title: "Inception",
+        picture: "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQovCe0H45fWwAtV31ajOdXRPTxSsMQgPIQ3lcZX_mAW0jXV3kH",
+        date: "25/06/2024",
+        rating: "4.8",
+        genre: ["Sci-Fi", "Thriller"],
+        language: ["EN", "TH"],
+        remainingTime: "03:20",
+        time: "18:45",
+        hall: "Hall 3",
+        cinema: "Major Cineplex Central",
+    },
+    {
+        id: "3",
+        title: "Interstellar",
+        picture: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT9oW0XQlu1lo1G_49M-YwGzKR6rUg-CtflZj07HfbT8d2GwKWg",
+        date: "26/06/2024",
+        rating: "4.9",
+        genre: ["Sci-Fi", "Drama"],
+        language: ["EN"],
+        remainingTime: "02:10",
+        time: "20:15",
+        hall: "Hall 2",
+        cinema: "SF Cinema City",
+    },
+];
+
+const cityCardMock = [{
+    cinema: "Cinema branch name",
+    length: "3.4",
+    address: "1224 Arkham bridge, Arkham city ",
+},
+{
+    cinema: "Cinema branch name",
+    length: null,
+    address: "1224 Arkham bridge, Arkham city ",
+}]
+
+const bookingCardMock = {
+    title: "The Dark Knight",
+    picture: "https://m.media-amazon.com/images/M/MV5BMTMxNTMwODM0NF5BMl5BanBnXkFtZTcwODAyMTk2Mw@@._V1_.jpg",
+    cinema: "Minor Cineplex Arkham",
+    date: "24/06/2024",
+    time: "16:30",
+    hall: "Hall 1",
+    bookingNo: "AK11223",
+    bookedDate: "24/06/2024",
+    tickets: 2,
+    selectedSeat: "C9, C10",
+    paymentMethod: "Credit card",
+    status: "paid" as const,
+}
+
+
+import { useState } from "react";
+
+import SummaryBox from "@/components/common/summaryBox";
+import MovieCard from "@/components/common/movieCard";
+import CityCard from "@/components/common/cityCard";
+import BookingStatus from "@/components/common/bookingStatus";
+import MenuSidebar from "@/components/common/menuSidebar";
+import SeatIcon from "@/components/common/seatIcon";
+import BookingCard from "@/components/common/bookingCard";
+import MenuSegmented from "@/components/common/menuSegmented";
+import Segmented from "@/components/common/segmented";
 import Navbar from "@/components/common/navbar";
 import Review from "@/components/common/review";
 import CardCouponVertical from "@/components/common/cardCouponVertical";
@@ -189,10 +270,10 @@ export default function Component() {
     const [checked, setChecked] = useState<boolean>(false)
     const [checked2, setChecked2] = useState<boolean>(false)
 
-  return (
-    <div className="flex flex-col gap-10 p-10 bg-brand-gray-100">
-      {/* first section */}
-            
+    return (
+        <div className="flex flex-col gap-10 p-10 bg-brand-gray-100">
+            {/* first section */}
+
             {/* ================= Movie Card ================= */}
             <div className="grid grid-cols-2 gap-10">
                 <div
