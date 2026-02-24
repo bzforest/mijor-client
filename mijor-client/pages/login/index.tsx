@@ -5,7 +5,7 @@ import InputField from "@/components/ui/InputField";
 import Button from "@/components/ui/Button";
 import Checkbox from "@/components/ui/Checkbox"; // 💡 นำเข้า Checkbox
 import Alert from "@/components/ui/Alert";       // 💡 นำเข้า Alert
-import { supabase } from "../../utils/supabase";
+import axios from "axios";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -31,26 +31,26 @@ export default function Login() {
     setIsLoading(true);
 
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+      const response = await axios.post(`${apiUrl}/api/auth/login`, {
         email: email,
         password: password,
       });
 
-      if (error) throw error;
-
-      console.log("✅ ล็อกอินสำเร็จ:", data);
+      console.log("✅ ล็อกอินผ่าน Backend สำเร็จ:", response.data);
       
-      // ถ้ากด Remember me อาจจะต้องเก็บข้อมูลลง LocalStorage (เดี๋ยวค่อยทำฟีเจอร์นี้เพิ่มได้ครับ)
-      if (remember) {
-        console.log("User wants to be remembered!");
+      // เก็บ Token ลง localStorage เหมือนเดิม
+      if (response.data.session) {
+        localStorage.setItem("access_token", response.data.session.access_token);
+        localStorage.setItem("user", JSON.stringify(response.data.user)); 
       }
 
       router.push("/"); 
       
     } catch (error) {
-      const err = error as Error;
-      console.error("❌ ล็อกอินไม่สำเร็จ:", err.message);
-      
+      const err = error as Error; 
+      console.error("❌ เกิดข้อผิดพลาด:", err.message);
+      // โชว์ Alert Error ตามดีไซน์ Figma
       setErrorMessage("error"); 
     } finally {
       setIsLoading(false);

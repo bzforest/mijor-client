@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import Link from "next/link";
 import InputField from "@/components/ui/InputField";
 import Button from "@/components/ui/Button";
-import { supabase } from "../../utils/supabase";
 import { useRouter } from "next/router";
+import axios from "axios";
 
 export default function Register() {
   const [name, setName] = useState("");
@@ -36,28 +36,16 @@ export default function Register() {
     setIsLoading(true); // เริ่มหมุนติ้วๆ
 
     try {
-      const { data, error } = await supabase.auth.signUp({
+      // 💡 1. ดึง URL มาจาก .env และใช้ axios.post
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+      const response = await axios.post(`${apiUrl}/api/auth/register`, {
         email: email,
         password: password,
-        options: {
-          data: {
-            full_name: name,
-          },
-        },
+        name: name,
       });
 
-      if (error) {
-        throw error;
-      }
-
-      // 💡 1. เพิ่มโค้ดเช็กตรงนี้ครับ: ถ้า identities เป็น array ว่าง แปลว่าอีเมลนี้มีอยู่แล้ว
-      if (data.user && data.user.identities && data.user.identities.length === 0) {
-        setErrorMessage("อีเมลนี้ถูกใช้งานแล้ว กรุณาเข้าสู่ระบบหรือใช้อีเมลอื่น");
-        return; // สั่งให้หยุดการทำงานแค่นี้ ไม่ต้องไปโชว์ข้อความสีเขียว
-      }
-
-      // ถ้าสมัครสำเร็จแบบสดๆ ร้อนๆ
-      console.log("✅ สมัครสำเร็จ:", data);
+      // 💡 2. axios จัดการ JSON ให้แล้ว เรียกใช้ response.data ได้เลย
+      console.log("✅ สมัครผ่าน Backend สำเร็จ:", response.data);
       router.push("/register-success");
       
     } catch (error) {
