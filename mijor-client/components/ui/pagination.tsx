@@ -1,3 +1,4 @@
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useMemo } from "react";
 
 type PaginationProps = {
@@ -67,20 +68,7 @@ export default function Pagination({
         disabled={currentPage === 1}
         className="p-3 text-brand-gray-300 hover:text-white disabled:opacity-20 transition-colors"
       >
-        <svg
-          width="20"
-          height="20"
-          viewBox="0 0 20 20"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-        >
-          <path
-            d="M12.5 15l-5-5 5-5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
+        <ChevronLeft />
       </button>
 
       {/* ปุ่มเลขหน้า */}
@@ -129,20 +117,7 @@ export default function Pagination({
         disabled={currentPage === totalPages}
         className="p-3 text-brand-gray-300 hover:text-white disabled:opacity-20 transition-colors"
       >
-        <svg
-          width="20"
-          height="20"
-          viewBox="0 0 20 20"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-        >
-          <path
-            d="M7.5 15l5-5-5-5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
+        <ChevronRight />
       </button>
     </div>
   );

@@ -7,11 +7,12 @@ const robotoCondensed = Roboto_Condensed({
   subsets: ["latin"],
   weight: ["400", "700"],
   variable: "--font-roboto-condensed",
+  display: "swap",
 });
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
-    <AuthProvider>
+   <AuthProvider>
     <div className={robotoCondensed.variable}>
       <Component {...pageProps} />
     </div>
