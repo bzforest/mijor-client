@@ -1,6 +1,7 @@
 import "@/styles/globals.css";
 import type { AppProps } from "next/app";
 import { Roboto_Condensed } from "next/font/google";
+import { AuthProvider } from "@/context/AuthContext";
 
 const robotoCondensed = Roboto_Condensed({
   subsets: ["latin"],
@@ -11,8 +12,10 @@ const robotoCondensed = Roboto_Condensed({
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
-    <div className={robotoCondensed.className}>
+   <AuthProvider>
+    <div className={robotoCondensed.variable}>
       <Component {...pageProps} />
     </div>
+    </AuthProvider>
   );
 }

@@ -5,13 +5,14 @@ type InputFieldProps = {
     label: string;
     text: string;
     placeholder: string;
-    textTrue: string;
-    textFalse: string;
-    correct: boolean;
+    textTrue?: string;
+    textFalse?: string;
+    correct?: boolean;
     search?: boolean;
     onSearch?: () => void;
     onClear?: () => void;
     onChange?: (value: string) => void;
+    type?: string;
 }
 
 function InputField({
