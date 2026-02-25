@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/router";
 import InputField from "@/components/ui/InputField";
 import Button from "@/components/ui/Button";
 import Checkbox from "@/components/ui/Checkbox"; // 💡 นำเข้า Checkbox
 import Alert from "@/components/ui/Alert";       // 💡 นำเข้า Alert
 import axios from "axios";
+import { useAuth } from "@/context/AuthContext";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -16,7 +16,7 @@ export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   
-  const router = useRouter();
+  const { login } = useAuth();
 
   const isEmailValid = email.includes("@") && email.includes("."); 
   const isPasswordValid = password.length > 0; 
@@ -39,13 +39,9 @@ export default function Login() {
 
       console.log("✅ ล็อกอินผ่าน Backend สำเร็จ:", response.data);
       
-      // เก็บ Token ลง localStorage เหมือนเดิม
       if (response.data.session) {
-        localStorage.setItem("access_token", response.data.session.access_token);
-        localStorage.setItem("user", JSON.stringify(response.data.user)); 
+        login(response.data.user, response.data.session.access_token, remember)
       }
-
-      router.push("/"); 
       
     } catch (error) {
       const err = error as Error; 
