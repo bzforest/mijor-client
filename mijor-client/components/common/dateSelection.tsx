@@ -11,25 +11,18 @@ type DateTabItem = {
 type DateSelectionProps = {
   value?: string;
   onChange?: (date: string) => void;
+  selectedDate?: string; 
+  onDateSelect?: (date: string) => void;
 };
 
-export default function DateSelection({ value, onChange }: DateSelectionProps) {
+// 💡 2. รับค่า Props (ที่อาจจะมีหรือไม่มีก็ได้)
+export default function DateSelection({ value, onChange }: DateSelectionProps{ selectedDate, onDateSelect }: DateSelectionProps) {
   const dateTabs = useMemo((): DateTabItem[] => {
     const days: DateTabItem[] = [];
     const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
     const monthNames = [
-      "Jan",
-      "Feb",
-      "Mar",
-      "Apr",
-      "May",
-      "Jun",
-      "Jul",
-      "Aug",
-      "Sep",
-      "Oct",
-      "Nov",
-      "Dec",
+      "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
     ];
 
     for (let i = 0; i < 28; i++) {
@@ -47,6 +40,21 @@ export default function DateSelection({ value, onChange }: DateSelectionProps) {
 
   const [startIndex, setStartIndex] = useState(0);
   const visibleTabs = 6;
+
+  // 💡 3. เอา State เดิมของพี่เขากลับมา! (เพื่อเอาไว้สำรอง กรณีเพื่อนไม่ได้ส่ง Props มาให้)
+  const [internalDate, setInternalDate] = useState<string>(dateTabs[0].id);
+
+  // 💡 4. ท่าไม้ตาย: ตัวแปรตัดสินใจ (ถ้าไฟล์แม่ส่ง selectedDate มาให้ใช้อันนั้น แต่ถ้าไม่ส่ง ให้ใช้อันสำรอง)
+  const activeTabDate = selectedDate !== undefined ? selectedDate : internalDate;
+
+  // 💡 5. ฟังก์ชันจัดการตอนลูกค้ากดเปลี่ยนวัน
+  const handleTabChange = (id: string) => {
+    setInternalDate(id); // อัปเดตตัวสำรองไว้ก่อนเสมอ
+    
+    if (onDateSelect) {
+      onDateSelect(id); // ถ้าไฟล์แม่ส่งฟังก์ชันมา ให้ฟ้องไฟล์แม่ด้วย!
+    }
+  };
 
   const handleNext = () => {
     if (startIndex + visibleTabs < dateTabs.length) {
@@ -90,6 +98,7 @@ export default function DateSelection({ value, onChange }: DateSelectionProps) {
                   : `translateX(-${startIndex * (100 / visibleTabs)}%)`,
             }}
           >
+            {/* 💡 6. โยนตัวแปร "ตัดสินใจแล้ว" ลงไปใน Tabs */}
             <Tabs
               tabs={dateTabs}
               activeTab={activeDate}
