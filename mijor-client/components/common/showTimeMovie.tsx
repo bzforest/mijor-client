@@ -144,7 +144,7 @@ export default function MovieShowtimeCard({
             <img
               src={posterUrl}
               alt={title}
-              className="object-cover w-[96px] h-[140px] md:w-auto md:h-auto rounded-sm bg-brand-gray-200/30"
+              className="object-cover w-[96px] h-fit md:w-auto md:h-auto rounded-sm bg-brand-gray-200/30"
             />
             <div className="flex flex-col gap-2 w-full">
               <h2 className="mb-2 text-headline-4 font-bold text-white">{title}</h2>

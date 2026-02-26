@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import Navbar from "@/components/common/navbar";
-import SearchFilterBar from "@/components/common/searchFilterBar";
+import SearchFilterBar from "@/components/common/searchFilterBar/searchFilterBar";
 import MovieShowtimeCard from "@/components/common/showTimeMovie";
 import Pagination from "@/components/ui/pagination";
 import { useRouter } from "next/router";
@@ -63,7 +63,7 @@ export default function SearchResultPage() {
             if (filters?.language) params.append("language", filters.language);
             if (filters?.genre) params.append("genre", filters.genre);
             if (filters?.city) params.append("city", filters.city);
-            if (filters?.releaseDate) params.append("releaseDate", filters.releaseDate);
+            if (filters?.date) params.append("showtime.start_time", filters.date);
             if (filters?.hearingAssistance) params.append("hearingAssistance", "true");
             if (filters?.wheelchairAccess) params.append("wheelchairAccess", "true");
             params.append("page", String(page));
@@ -130,8 +130,16 @@ export default function SearchResultPage() {
 
         fetchFilterSearch();
 
-        const { title, language, genre, city, releaseDate, hearingAssistance, wheelchairAccess } = router.query;
-        const hasFilters = title || language || genre || city || releaseDate || hearingAssistance || wheelchairAccess;
+        const queryParams = router.query;
+        const title = queryParams.title;
+        const language = queryParams.language;
+        const genre = queryParams.genre;
+        const city = queryParams.city;
+        const showtimeStartTime = queryParams["showtime.start_time"];
+        const hearingAssistance = queryParams.hearingAssistance;
+        const wheelchairAccess = queryParams.wheelchairAccess;
+
+        const hasFilters = title || language || genre || city || showtimeStartTime || hearingAssistance || wheelchairAccess;
 
         if (hasFilters) {
             const filtersFromQuery = {
@@ -139,7 +147,7 @@ export default function SearchResultPage() {
                 language: (language as string) || "",
                 genre: (genre as string) || "",
                 city: (city as string) || "",
-                releaseDate: (releaseDate as string) || "",
+                date: (showtimeStartTime as string) || "",
                 wheelchairAccess: wheelchairAccess === "true",
                 hearingAssistance: hearingAssistance === "true",
             };
@@ -166,14 +174,14 @@ export default function SearchResultPage() {
         window.scrollTo({ top: 0, behavior: "smooth" });
     };
 
-    const LoggedIn = true;
+    const token = true;
 
     /* ================= View Logic ================= */
     return (
         <div className="flex flex-col bg-brand-gray-100">
             {/* Navbar */}
             <Navbar
-                isLoggedIn={LoggedIn}
+                isLoggedIn={token}
                 userName="Monster hunter"
                 userImage="/logo.png"
             />

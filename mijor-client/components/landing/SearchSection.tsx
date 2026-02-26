@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/router";
 import axios from "axios";
 
-import SearchFilterBar from "@/components/common/searchFilterBar";
+import SearchFilterBar from "@/components/common/searchFilterBar/searchFilterBarDestop";
 import Banner from "@/assets/landing/banner.jpg";
 
 // ===== Constants =====
@@ -66,7 +66,7 @@ function SearchSection() {
         if (filters.language) query.language = filters.language;
         if (filters.genre) query.genre = filters.genre;
         if (filters.city) query.city = filters.city;
-        if (filters.releaseDate) query.releaseDate = filters.releaseDate;
+        if (filters.date) query["showtime.start_time"] = filters.date;
 
         router.push({
             pathname: "/search-result",
