@@ -503,8 +503,10 @@ export default function Component() {
             <MovieShowtimeCard
                 title="The Dark Knight"
                 posterUrl="/path-to-your-poster.jpg"
-                tags={["Action", "Crime", "TH"]}
+                genres={["Action", "Crime"]}
+                language={["TH"]}
                 halls={cinemas[0].halls}
+                onClick={() => console.log("Clicked")}
             />
         </div>
     );
