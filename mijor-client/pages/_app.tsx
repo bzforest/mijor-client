@@ -6,16 +6,16 @@ import { AuthProvider } from "@/context/AuthContext";
 const robotoCondensed = Roboto_Condensed({
   subsets: ["latin"],
   weight: ["400", "700"],
-  variable: "--font-roboto-condensed",
+  variable: "--font-sans", 
   display: "swap",
 });
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
-   <AuthProvider>
-    <div className={robotoCondensed.variable}>
-      <Component {...pageProps} />
-    </div>
+    <AuthProvider>
+      <div className={`${robotoCondensed.variable} font-sans`}>
+        <Component {...pageProps} />
+      </div>
     </AuthProvider>
   );
 }
