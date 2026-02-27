@@ -206,11 +206,11 @@ export default function Component() {
                     <h1 className="text-headline-3 text-brand-gray-300 text-center">
                         Moivie Card
                     </h1>
-
+{/* 
                     <div className="flex flex-row gap-[16px]">
                         <MovieCard movie={moviesDataMock[0]} variant="desktop" />
                         <MovieCard movie={moviesDataMock[0]} variant="mobile" />
-                    </div>
+                    </div> */}
                 </div>
 
                 {/* ================= Right Column ================= */}

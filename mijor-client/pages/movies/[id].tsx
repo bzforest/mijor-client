@@ -1,12 +1,13 @@
 "use client";
 
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import Navbar from "@/components/common/navbar";
 import DateSelection from "@/components/common/dateSelection";
 import CinemaShowTime from "@/components/common/showTimeCinema";
 import InputField from "@/components/ui/InputField";
+import { ChevronDown } from "lucide-react";
 
 const API_URL =
   process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
@@ -19,9 +20,6 @@ type Movie = {
   release_date?: string;
   genre: string[];
   language: string;
-  rating?: number;
-  duration_mins?: number;
-  status?: string;
 };
 
 type Showtime = {
@@ -45,64 +43,53 @@ export default function MovieDetailPage() {
   const [movie, setMovie] = useState<Movie | null>(null);
   const [showtimes, setShowtimes] = useState<Showtime[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   const [searchText, setSearchText] = useState("");
   const [selectedCity, setSelectedCity] = useState("City");
-  const [isOpen, setIsOpen] = useState(false);
   const [cityList, setCityList] = useState<string[]>([]);
+  const [isOpen, setIsOpen] = useState(false);
+
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   // ================= Fetch Cities =================
   useEffect(() => {
     const fetchCities = async () => {
       try {
-        const { data: result } = await axios.get(`${API_URL}/cities`);
-        if (Array.isArray(result.data)) {
-          setCityList(result.data);
+        const { data } = await axios.get(`${API_URL}/cities`);
+        if (Array.isArray(data.data)) {
+          setCityList(data.data);
         }
-      } catch (err) {
-        console.error("Failed to fetch cities:", err);
-        setCityList(["Bangkok", "Chiang Mai", "Phuket", "Khon Kaen"]);
+      } catch {
+        setCityList(["Bangkok", "Chiang Mai", "Phuket"]);
       }
     };
     fetchCities();
   }, []);
 
-  // ================= Fetch Movie + Showtimes + Genres =================
+  // ================= Fetch Movie + Showtimes =================
   useEffect(() => {
-    if (!router.isReady) return;
-    if (!id) return;
+    if (!router.isReady || !id) return;
 
     const fetchData = async () => {
       try {
         setLoading(true);
-        setError(null);
 
         const [movieRes, showtimeRes, genreRes] = await Promise.all([
           axios.get(`${API_URL}/movies/${id}`),
-          axios
-            .get(`${API_URL}/showtimes/movie/${id}?date=${selectedDate}`)
-            .catch(() => ({ data: { data: [] } })),
-          axios
-            .get(`${API_URL}/moviegenres/${id}`)
-            .catch(() => ({ data: { data: [] } })),
+          axios.get(
+            `${API_URL}/showtimes/movie/${id}?date=${selectedDate}`
+          ),
+          axios.get(`${API_URL}/moviegenres/${id}`),
         ]);
 
-        const movieData = movieRes.data.data;
-
-        const genres: string[] = Array.isArray(genreRes.data.data)
-          ? genreRes.data.data.map((g: any) => g.name)
-          : [];
+        const genres = genreRes.data.data.map((g: any) => g.name);
 
         setMovie({
-          ...movieData,
+          ...movieRes.data.data,
           genre: genres,
         });
 
         setShowtimes(showtimeRes.data.data || []);
-      } catch (err: any) {
-        console.error("Fetch error:", err);
-        setError(err.message);
       } finally {
         setLoading(false);
       }
@@ -111,186 +98,215 @@ export default function MovieDetailPage() {
     fetchData();
   }, [router.isReady, id, selectedDate]);
 
-  if (!router.isReady || loading) {
+  // ================= Close Dropdown =================
+  useEffect(() => {
+    const handleClickOutside = (event: any) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target)
+      ) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () =>
+      document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  if (loading || !router.isReady) {
     return (
-      <div className="min-h-screen bg-brand-gray-900 text-white flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-[#0E1628] text-white">
         Loading...
       </div>
     );
   }
 
-  if (error || !movie) {
-    return (
-      <div className="min-h-screen bg-brand-gray-900 text-white flex flex-col items-center justify-center gap-4">
-        <h1 className="text-2xl font-bold">
-          {error || "Movie not found"}
-        </h1>
-        <button
-          onClick={() => router.push("/landing")}
-          className="px-6 py-2 bg-brand-primary rounded-md"
-        >
-          Back to landing
-        </button>
-      </div>
-    );
-  }
+  if (!movie) return null;
 
   const filteredShowtimes = showtimes.filter((cinema) => {
     const matchCity =
       selectedCity === "City" || cinema.city === selectedCity;
+
     const matchSearch = cinema.cinema_name
       .toLowerCase()
       .includes(searchText.toLowerCase());
+
     return matchCity && matchSearch;
   });
 
   return (
-    <div className="min-h-screen bg-brand-gray-900 text-white pt-[80px]">
-      <Navbar isLoggedIn={false} />
+    <div className="min-h-screen bg-[#0E1628] text-white ">
+      <Navbar />
 
-      {/* ================= Hero Section ================= */}
-      <section className="px-4 md:px-[100px] py-10 md:py-16 flex justify-center">
-        <div className="w-full max-w-[1200px]">
-
-          {/* ===== Mobile ===== */}
-          <div className="block md:hidden space-y-6">
-
-            <div className="relative w-full h-[450px] rounded-xl overflow-hidden shadow-xl">
+      {/* ================= HERO ================= */}
+      <section className="px-4 md:px-[100px] py-10 flex justify-center">
+        <div className="w-full max-w-[1600px]">
+          <div
+            className="
+              flex flex-col md:flex-row
+              gap-8 md:gap-12
+              bg-[#070C1B]/70
+              backdrop-blur-[24px]
+              rounded-2xl
+              border border-white/5
+              overflow-hidden
+            "
+          >
+            {/* Poster */}
+            <div
+              className="
+                w-full md:w-[420px]
+                h-[450px] md:h-[600px]
+                flex-shrink-0
+                overflow-hidden
+              "
+            >
               <img
                 src={movie.poster_url}
                 alt={movie.title}
                 className="w-full h-full object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
             </div>
 
-            <div className="space-y-4">
-              <h1 className="text-3xl font-bold">{movie.title}</h1>
+            {/* Content */}
+            <div className="flex flex-col gap-6 p-6 md:pt-[60px] md:pr-[120px] w-full">
+              <h1 className="text-2xl md:text-4xl font-bold">
+                {movie.title}
+              </h1>
 
-              <div className="flex flex-wrap gap-2">
-                {movie.genre?.map((g, i) => (
+              <div className="flex flex-wrap items-center gap-3">
+                {movie.genre.map((g, i) => (
                   <span
                     key={i}
-                    className="px-3 py-1 bg-brand-gray-100 rounded-md text-xs"
+                    className="px-4 py-2 bg-[#1C2333] rounded-md text-sm"
                   >
                     {g}
                   </span>
                 ))}
 
                 {movie.language && (
-                  <span className="px-3 py-1 bg-brand-gray-100 rounded-md text-xs">
+                  <span className="px-4 py-2 bg-[#1C2333] rounded-md text-sm">
                     {movie.language}
                   </span>
                 )}
-              </div>
 
               {movie.release_date && (
-                <p className="text-brand-gray-400 text-sm">
-                  Release date: {movie.release_date}
+                <p className="mt-2 text-sm text-gray-400">
+                  Release date:{" "}
+                  {new Date(movie.release_date).toLocaleDateString("en-GB", {
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric",
+                  })}
                 </p>
               )}
-
-              <button
-                onClick={() =>
-                  router.push(`/movies/${movie.id}/detail`)
-                }
-                className="w-full py-3 bg-brand-blue-100 rounded-md font-semibold"
-              >
-                Movie detail
-              </button>
-
-              <p className="text-brand-gray-300 leading-6 text-sm">
-                {movie.synopsis || "No description available."}
-              </p>
-            </div>
-          </div>
-
-          {/* ===== Desktop ===== */}
-          <div className="hidden md:flex gap-12 w-full h-[600px] bg-brand-gray-800/40 rounded-xl shadow-2xl border border-white/5 overflow-hidden">
-
-            <div className="w-[420px] h-full flex-shrink-0 overflow-hidden">
-              <img
-                src={movie.poster_url}
-                alt={movie.title}
-                className="w-full h-full object-cover"
-              />
-            </div>
-
-            <div className="flex flex-col gap-6 w-full h-full pt-[60px] pr-[120px]">
-              <h1 className="text-4xl font-bold">{movie.title}</h1>
-
-              <div className="flex items-center gap-3 flex-wrap">
-                {movie.genre?.map((g, i) => (
-                  <span
-                    key={i}
-                    className="px-4 py-2 bg-brand-gray-100 rounded-md text-sm"
-                  >
-                    {g}
-                  </span>
-                ))}
-
-                {movie.language && (
-                  <span className="px-4 py-2 bg-brand-gray-100 rounded-md text-sm">
-                    {movie.language}
-                  </span>
-                )}
-
-                {movie.release_date && (
-                  <>
-                    <span className="text-brand-gray-400">|</span>
-                    <span className="text-brand-gray-300 text-sm">
-                      Release date: {movie.release_date}
-                    </span>
-                  </>
-                )}
               </div>
 
               <button
                 onClick={() =>
                   router.push(`/movies/${movie.id}/detail`)
                 }
-                className="w-fit px-6 py-3 bg-brand-blue-100 rounded-md font-semibold hover:opacity-90 transition"
+                className="w-fit px-6 py-3 bg-blue-500 rounded-md font-semibold"
               >
                 Movie detail
               </button>
 
-              <p className="text-brand-gray-300 leading-7 line-clamp-6">
-                {movie.synopsis || "No description available."}
+              {/* 🔥 SYNOPSIS ตัดข้อความอัตโนมัติ */}
+              <p
+                className="text-gray-300 leading-7"
+                style={{
+                  display: "-webkit-box",
+                  WebkitLineClamp: 5, // จำนวนบรรทัด
+                  WebkitBoxOrient: "vertical",
+                  overflow: "hidden",
+                }}
+              >
+                {movie.synopsis}
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Date Selection */}
-      <div className="px-6 md:px-[80px] py-10">
-        <DateSelection
-          selectedDate={selectedDate}
-          onDateSelect={(newDate) => setSelectedDate(newDate)}
-        />
-      </div>
-
-      {/* Search + City */}
-      <div className="px-6 md:px-[80px] pb-6">
-        <div className="flex flex-col md:flex-row gap-4 items-center">
-          <div className="w-full">
-            <InputField
-              label=""
-              text={searchText}
-              placeholder="Search cinema"
-              textTrue=""
-              textFalse=""
-              correct={true}
-              search
-              onChange={setSearchText}
-              onClear={() => setSearchText("")}
-            />
-          </div>
+      {/* ส่วนล่างเหมือนเดิม (Date / Filter / Showtimes) */}
+      {/* ================= DATE BAR ================= */}
+      <div className="w-full bg-[#0B1220] pt-6 pb-4">
+        <div className="px-6 md:px-[80px]">
+          <DateSelection
+            value={selectedDate}
+            onChange={(newDate) => setSelectedDate(newDate)}
+          />
         </div>
       </div>
 
-      {/* Showtimes */}
-      <div className="space-y-6 pb-10">
+      {/* ================= FILTER ================= */}
+      <div className="px-6 md:px-[80px] py-6 flex flex-col md:flex-row gap-4">
+        <div className="w-full md:flex-1">
+          <InputField
+            label=""
+            text={searchText}
+            placeholder="Search cinema"
+            textTrue=""
+            textFalse=""
+            correct={true}
+            search
+            onChange={setSearchText}
+            onClear={() => setSearchText("")}
+          />
+        </div>
+
+        <div ref={dropdownRef} className="relative w-full md:w-[240px]">
+          <div
+            onClick={() => setIsOpen(!isOpen)}
+            className="
+              h-[55px]
+              bg-[#21263F]
+              border-2 border-[#565F7E]
+              rounded-[6px]
+              px-4
+              flex items-center justify-between
+              text-sm text-white
+              cursor-pointer
+            "
+          >
+            <span>{selectedCity}</span>
+            <ChevronDown
+              size={18}
+              className={`${isOpen ? "rotate-180" : ""} transition`}
+            />
+          </div>
+
+          {isOpen && (
+            <div className="absolute mt-2 w-full bg-[#21263F] border border-[#565F7E] rounded-[6px] overflow-hidden z-50">
+              <div
+                onClick={() => {
+                  setSelectedCity("City");
+                  setIsOpen(false);
+                }}
+                className="px-4 py-3 hover:bg-[#2A3154] cursor-pointer"
+              >
+                All Cities
+              </div>
+
+              {cityList.map((city, index) => (
+                <div
+                  key={index}
+                  onClick={() => {
+                    setSelectedCity(city);
+                    setIsOpen(false);
+                  }}
+                  className="px-4 py-3 hover:bg-[#2A3154] cursor-pointer"
+                >
+                  {city}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* ================= SHOWTIMES ================= */}
+      <div className="space-y-6 pb-16 px-6 md:px-[80px]">
         {filteredShowtimes.length > 0 ? (
           filteredShowtimes.map((cinema) => (
             <CinemaShowTime
@@ -304,7 +320,7 @@ export default function MovieDetailPage() {
             />
           ))
         ) : (
-          <div className="text-center text-brand-gray-400 py-10">
+          <div className="text-center text-gray-400 py-10">
             No showtimes found.
           </div>
         )}
