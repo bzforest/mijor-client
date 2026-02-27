@@ -427,7 +427,7 @@ export default function SearchResultDestop({
                 </div>
                 <button
                     onClick={handleSearch}
-                    className="w-full md:w-[72px] px-[24px] py-[12px] bg-brand-blue-100 cursor-pointer rounded-[4px] hover:bg-brand-blue-100/50 active:bg-brand-blue-100 md:col-span-1 md:col-start-6 md:row-start-1 md:w-auto transition-all active:scale-[0.95]"
+                    className="w-[72px] px-[24px] py-[12px] bg-brand-blue-100 cursor-pointer rounded-[4px] hover:bg-brand-blue-100/50 active:bg-brand-blue-100 md:col-span-1 md:col-start-6 md:row-start-1 md:w-auto transition-all active:scale-[0.95]"
                 >
                     <Search size={24} strokeWidth={1.5} className="mx-auto text-white" />
                 </button>
