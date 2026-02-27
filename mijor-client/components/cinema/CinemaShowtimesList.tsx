@@ -37,6 +37,7 @@ export default function CinemaShowtimesList({ loading, movies }: CinemaShowtimes
                     posterUrl={movie.posterUrl}
                     tags={movie.tags}
                     halls={movie.halls}
+                    onClick={() => { }}
                 />
             ))}
         </>

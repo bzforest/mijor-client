@@ -21,10 +21,11 @@ type MovieStatus = "Now Showing" | "Coming Soon" | "Out of Theater" | string;
 interface MovieShowtimeProps {
   title: string;
   posterUrl: string;
-  genres: string[];
-  language: string[];
+  genres?: string[];
+  language?: string[];
   halls: HallData[];
   location?: string;
+  tags?: string[];
   status?: MovieStatus;
   hearingAssistance?: boolean;
   wheelchairAccess?: boolean;
@@ -44,6 +45,7 @@ export default function MovieShowtimeCard({
   isShow = false,
   hearingAssistance = false,
   wheelchairAccess = false,
+  tags,
   onClick,
   onClickMovieDetail,
 }: MovieShowtimeProps) {
