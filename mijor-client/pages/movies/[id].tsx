@@ -80,14 +80,12 @@ export default function MovieDetailPage() {
 
         const [movieRes, showtimeRes, genreRes] = await Promise.all([
           axios.get(`${API_URL}/movies/${id}`),
-          // 💡 ส่ง selectedDate ไปกับ API ด้วย
-          axios.get(`${API_URL}/showtimes/movie/${id}?date=${selectedDate}`).catch((err) => {
-            console.error("❌ API Showtime พังจ้า:", err); // เพิ่มบรรทัดนี้!
-            return { data: { data: [] } };
-          }),
-          axios.get(`${API_URL}/moviegenres/${id}`).catch(() => ({
-            data: { data: [] },
-          })),
+          axios
+            .get(`${API_URL}/showtimes/movie/${id}?date=${selectedDate}`)
+            .catch(() => ({ data: { data: [] } })),
+          axios
+            .get(`${API_URL}/moviegenres/${id}`)
+            .catch(() => ({ data: { data: [] } })),
         ]);
 
         const movieData = movieRes.data.data;
@@ -113,7 +111,6 @@ export default function MovieDetailPage() {
     fetchData();
   }, [router.isReady, id, selectedDate]);
 
-  // ================= Loading =================
   if (!router.isReady || loading) {
     return (
       <div className="min-h-screen bg-brand-gray-900 text-white flex items-center justify-center">
@@ -122,11 +119,12 @@ export default function MovieDetailPage() {
     );
   }
 
-  // ================= Error =================
   if (error || !movie) {
     return (
       <div className="min-h-screen bg-brand-gray-900 text-white flex flex-col items-center justify-center gap-4">
-        <h1 className="text-2xl font-bold">{error || "Movie not found"}</h1>
+        <h1 className="text-2xl font-bold">
+          {error || "Movie not found"}
+        </h1>
         <button
           onClick={() => router.push("/landing")}
           className="px-6 py-2 bg-brand-primary rounded-md"
@@ -137,7 +135,6 @@ export default function MovieDetailPage() {
     );
   }
 
-  // ================= Filter Showtimes =================
   const filteredShowtimes = showtimes.filter((cinema) => {
     const matchCity =
       selectedCity === "City" || cinema.city === selectedCity;
@@ -152,70 +149,124 @@ export default function MovieDetailPage() {
       <Navbar isLoggedIn={false} />
 
       {/* ================= Hero Section ================= */}
-      <section className="px-6 md:px-[100px] py-16 flex justify-center">
-        <div className="flex flex-col md:flex-row  gap-15 w-full h-[600px] bg-brand-gray-800/40 rounded-xl shadow-2xl border border-white/5 overflow-hidden">
+      <section className="px-4 md:px-[100px] py-10 md:py-16 flex justify-center">
+        <div className="w-full max-w-[1200px]">
 
-          {/* Poster Full Height */}
-          <div className="w-[420px] h-full flex-shrink-0 overflow-hidden rounded-lg">
-            <img
-              src={movie.poster_url}
-              alt={movie.title}
-              className="w-full h-full object-cover rounded-lg"
-            />
-          </div>
+          {/* ===== Mobile ===== */}
+          <div className="block md:hidden space-y-6">
 
-          {/* Content */}
-          <div className="flex flex-col gap-6 w-full h-full pt-[50px] pr-[150px]">
-            <h1 className="text-4xl font-bold">{movie.title}</h1>
-
-            {/* Genre + Language + Release */}
-            <div className="flex items-center gap-3 flex-wrap">
-              {movie.genre?.map((g, i) => (
-                <span
-                  key={i}
-                  className="px-4 py-2 border border-brand-gray-100 bg-brand-gray-100 rounded-md text-sm"
-                >
-                  {g}
-                </span>
-              ))}
-
-              {movie.language && (
-                <span className="px-4 py-2 border border-brand-gray-100 bg-brand-gray-100 rounded-md text-sm">
-                  {movie.language}
-                </span>
-              )}
-
-              {movie.release_date && (
-                <>
-                  <span className="text-brand-gray-400">|</span>
-                  <span className="text-brand-gray-300 text-sm">
-                    Release date: {movie.release_date}
-                  </span>
-                </>
-              )}
+            <div className="relative w-full h-[450px] rounded-xl overflow-hidden shadow-xl">
+              <img
+                src={movie.poster_url}
+                alt={movie.title}
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
             </div>
 
-            {/* Blue Button */}
-            <button
-              onClick={() => router.push(`/movies/${movie.id}/detail`)}
-              className="w-fit px-6 py-2 bg-brand-blue-100 text-white rounded-md font-semibold hover:opacity-90 transition"
-            >
-              Movie detail
-            </button>
+            <div className="space-y-4">
+              <h1 className="text-3xl font-bold">{movie.title}</h1>
 
-            <p className="text-brand-gray-300 leading-7 line-clamp-6">
-              {movie.synopsis || "No description available."}
-            </p>
+              <div className="flex flex-wrap gap-2">
+                {movie.genre?.map((g, i) => (
+                  <span
+                    key={i}
+                    className="px-3 py-1 bg-brand-gray-100 rounded-md text-xs"
+                  >
+                    {g}
+                  </span>
+                ))}
+
+                {movie.language && (
+                  <span className="px-3 py-1 bg-brand-gray-100 rounded-md text-xs">
+                    {movie.language}
+                  </span>
+                )}
+              </div>
+
+              {movie.release_date && (
+                <p className="text-brand-gray-400 text-sm">
+                  Release date: {movie.release_date}
+                </p>
+              )}
+
+              <button
+                onClick={() =>
+                  router.push(`/movies/${movie.id}/detail`)
+                }
+                className="w-full py-3 bg-brand-blue-100 rounded-md font-semibold"
+              >
+                Movie detail
+              </button>
+
+              <p className="text-brand-gray-300 leading-6 text-sm">
+                {movie.synopsis || "No description available."}
+              </p>
+            </div>
+          </div>
+
+          {/* ===== Desktop ===== */}
+          <div className="hidden md:flex gap-12 w-full h-[600px] bg-brand-gray-800/40 rounded-xl shadow-2xl border border-white/5 overflow-hidden">
+
+            <div className="w-[420px] h-full flex-shrink-0 overflow-hidden">
+              <img
+                src={movie.poster_url}
+                alt={movie.title}
+                className="w-full h-full object-cover"
+              />
+            </div>
+
+            <div className="flex flex-col gap-6 w-full h-full pt-[60px] pr-[120px]">
+              <h1 className="text-4xl font-bold">{movie.title}</h1>
+
+              <div className="flex items-center gap-3 flex-wrap">
+                {movie.genre?.map((g, i) => (
+                  <span
+                    key={i}
+                    className="px-4 py-2 bg-brand-gray-100 rounded-md text-sm"
+                  >
+                    {g}
+                  </span>
+                ))}
+
+                {movie.language && (
+                  <span className="px-4 py-2 bg-brand-gray-100 rounded-md text-sm">
+                    {movie.language}
+                  </span>
+                )}
+
+                {movie.release_date && (
+                  <>
+                    <span className="text-brand-gray-400">|</span>
+                    <span className="text-brand-gray-300 text-sm">
+                      Release date: {movie.release_date}
+                    </span>
+                  </>
+                )}
+              </div>
+
+              <button
+                onClick={() =>
+                  router.push(`/movies/${movie.id}/detail`)
+                }
+                className="w-fit px-6 py-3 bg-brand-blue-100 rounded-md font-semibold hover:opacity-90 transition"
+              >
+                Movie detail
+              </button>
+
+              <p className="text-brand-gray-300 leading-7 line-clamp-6">
+                {movie.synopsis || "No description available."}
+              </p>
+            </div>
           </div>
         </div>
       </section>
 
-        {/* Date Selection */}
+      {/* Date Selection */}
       <div className="px-6 md:px-[80px] py-10">
-        {/* 💡 ส่งค่าและฟังก์ชันไปให้ DateSelection */}
-        <DateSelection 
-          selectedDate={selectedDate} 
-          onDateSelect={(newDate) => setSelectedDate(newDate)} 
+        <DateSelection
+          selectedDate={selectedDate}
+          onDateSelect={(newDate) => setSelectedDate(newDate)}
         />
       </div>
 
@@ -235,65 +286,29 @@ export default function MovieDetailPage() {
               onClear={() => setSearchText("")}
             />
           </div>
-
-          <div className="relative w-full md:w-[220px]">
-            <button
-              onClick={() => setIsOpen(!isOpen)}
-              className="w-full h-[48px] px-4 bg-brand-gray-100 border border-brand-gray-600 rounded-md flex items-center justify-between text-brand-gray-300"
-            >
-              {selectedCity}
-              <span>▼</span>
-            </button>
-
-            {isOpen && (
-              <div className="absolute left-0 top-[52px] w-full bg-brand-gray-100 border border-brand-gray-600 rounded-md shadow-lg z-50">
-                <div
-                  onClick={() => {
-                    setSelectedCity("City");
-                    setIsOpen(false);
-                  }}
-                  className="px-4 py-3 hover:bg-brand-gray-200 cursor-pointer"
-                >
-                  All cities
-                </div>
-                {cityList.map((city) => (
-                  <div
-                    key={city}
-                    onClick={() => {
-                      setSelectedCity(city);
-                      setIsOpen(false);
-                    }}
-                    className="px-4 py-3 hover:bg-brand-gray-200 cursor-pointer"
-                  >
-                    {city}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
         </div>
       </div>
 
       {/* Showtimes */}
       <div className="space-y-6 pb-10">
-          {filteredShowtimes.length > 0 ? (
-            filteredShowtimes.map((cinema) => (
-              <CinemaShowTime
-                key={cinema.cinema_id}
-                nameCinema={cinema.cinema_name}
-                halls={cinema.halls.map((hall, index) => ({
-                  id: String(index),
-                  name: hall.hall_name,
-                  schedules: hall.schedules,
-                }))}
-              />
-            ))
-          ) : (
-            <div className="text-center text-brand-gray-400 py-10">
-              No showtimes found.
-            </div>
-          )}
-        </div>
+        {filteredShowtimes.length > 0 ? (
+          filteredShowtimes.map((cinema) => (
+            <CinemaShowTime
+              key={cinema.cinema_id}
+              nameCinema={cinema.cinema_name}
+              halls={cinema.halls.map((hall, index) => ({
+                id: String(index),
+                name: hall.hall_name,
+                schedules: hall.schedules,
+              }))}
+            />
+          ))
+        ) : (
+          <div className="text-center text-brand-gray-400 py-10">
+            No showtimes found.
+          </div>
+        )}
+      </div>
     </div>
   );
 }
