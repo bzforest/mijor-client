@@ -8,6 +8,7 @@ import Footer from "@/components/common/footer";
 import { useAuth } from "@/context/AuthContext";
 import { fetchUserCoupons } from "@/services/couponService";
 import Alert from "@/components/ui/Alert";
+import SearchSection from "@/components/landing/SearchSection";
 
 function LandingPage() {
   /* ===== Hooks ===== */
@@ -79,9 +80,12 @@ function LandingPage() {
   };
 
   /* ===== Render ===== */
+
+
   return (
       <div>
         <div id="search-section">
+                <SearchSection />
         </div>
 
         <div id="movie-list-section">
