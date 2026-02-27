@@ -234,6 +234,7 @@ export default function Component() {
                         {cityCardMock.map((card, index) => (
                             <CityCard
                                 key={index}
+                                id={`mock-${index}`}
                                 cinema={card.cinema}
                                 length={card.length ?? null}
                                 address={card.address}

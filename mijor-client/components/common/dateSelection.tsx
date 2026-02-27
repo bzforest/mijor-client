@@ -8,7 +8,12 @@ type DateTabItem = {
   subLabel: string;
 };
 
-export default function DateSelection() {
+type DateSelectionProps = {
+  value?: string;
+  onChange?: (date: string) => void;
+};
+
+export default function DateSelection({ value, onChange }: DateSelectionProps) {
   const dateTabs = useMemo((): DateTabItem[] => {
     const days: DateTabItem[] = [];
     const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -55,7 +60,13 @@ export default function DateSelection() {
     }
   };
 
-  const [activeDate, setActiveDate] = useState<string>(dateTabs[0].id);
+  const [internalActiveDate, setInternalActiveDate] = useState<string>(dateTabs[0].id);
+  const activeDate = value !== undefined ? value : internalActiveDate;
+
+  const handleTabChange = (id: string) => {
+    setInternalActiveDate(id);
+    if (onChange) onChange(id);
+  };
 
   return (
     <>
@@ -82,7 +93,7 @@ export default function DateSelection() {
             <Tabs
               tabs={dateTabs}
               activeTab={activeDate}
-              onChange={(id: string) => setActiveDate(id)}
+              onChange={handleTabChange}
               viewType="date"
             />
           </div>
