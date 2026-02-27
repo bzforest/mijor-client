@@ -7,23 +7,28 @@ interface DropdownItem {
   icon?: React.ReactNode;
   divider?: boolean; // 👉 ถ้า true = มีเส้นด้านล่าง item นี้
   danger?: boolean;
+  onclick?: () => void;
 }
 
 interface DropdownProps {
   items: DropdownItem[];
   mobile?: boolean;
+  onClick?:() => void
+  className?: string;
 }
 
 export default function Dropdown({
   items,
   mobile = false,
+  onClick,
+  className = "",
 }: DropdownProps) {
   return (
     <div
       className={
         mobile
-          ? "w-full bg-gradient-to-b from-[#0F172A] to-[#020617] text-white p-6"
-          : "absolute right-0 mt-3 w-56 bg-[#111827] text-white rounded-xl shadow-lg p-2 border border-white/10"
+          ? "w-full text-white p-6"
+          : `absolute right-0 mt-3 w-56 bg-brand-gray-0 text-white rounded-xl shadow-lg p-2 border border-white/10 ${className}`
       }
     >
       <div className="flex flex-col">
@@ -41,6 +46,10 @@ export default function Dropdown({
                     : "text-gray-400 hover:bg-white/5"
                 }
               `}
+              onClick={() => {
+                item.onclick?.();
+                onClick?.();
+              }}
             >
               {item.icon}
               <span>{item.label}</span>

@@ -31,7 +31,7 @@ export default function Alert({
   return (
     <div
       className={`
-        w-[480px]
+        w-full
         h-[100px]
         flex
         justify-between

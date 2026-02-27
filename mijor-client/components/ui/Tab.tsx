@@ -45,7 +45,7 @@ export default function Tabs({
             `}
             >
               {/* ข้อความหลัก */}
-              <span className="text-heading-3 font-bold leading-tight">
+              <span className="text-headline-4 font-bold leading-tight">
                 {tab.label}
               </span>
               {/* ข้อความรอง มีหรือไม่มีก็ได้ */}

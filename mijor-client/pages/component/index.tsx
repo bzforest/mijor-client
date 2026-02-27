@@ -443,11 +443,7 @@ export default function Component() {
             <section className="min-h-screen bg-brand-gray-900 text-white flex flex-col">
 
                 {/* Navbar */}
-                <Navbar
-                    isLoggedIn={true}
-                    userName="Tony Stark"
-                    userImage="/stark.jpg"
-                />
+                <Navbar />
 
                 <section className=" in-h-screen p-10 flex items-center justify-center">
 
