@@ -160,7 +160,6 @@ export default function CouponDetail() {
   /* ===== Main Render ===== */
   return (
     <div className="flex flex-col min-h-screen bg-brand-gray-100/30 text-white">
-      <Navbar />
       
       <main className="flex-1 mx-auto max-w-6xl md:py-16 md:px-4">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-10">
@@ -269,7 +268,6 @@ export default function CouponDetail() {
         Please log in to get this coupon.
       </Modal>
 
-      <Footer />
     </div>
   );
 }

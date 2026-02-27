@@ -108,11 +108,9 @@ export default function CouponPage() {
 
   return (
     <>
-      <Navbar />
-      
       {/* ===== Category Tabs ===== */}
-      <div className="bg-brand-gray-100/30">
-        <div className="relative w-full bg-brand-gray-0 px-4 py-6 sm:px-6 sm:py-8 md:px-30 md:py-10 shadow-2xl">
+      <div className="bg-brand-gray-100/30 flex flex-col items-center">
+        <div className="w-full bg-brand-gray-0 px-4 py-6 sm:px-6 sm:py-8 md:px-30 md:py-10 shadow-2xl">
           <div className="overflow-x-auto overflow-y-hidden no-scrollbar">
             <Tabs
               tabs={tabItems}
@@ -123,7 +121,7 @@ export default function CouponPage() {
         </div>
 
         {/* ===== Coupon Cards ===== */}
-        <div className="flex flex-wrap justify-center gap-3 sm:gap-4 min-h-[550px]">
+        <div className="grid grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4 max-w-[1200px] min-h-[550px] justify-items-center">
           {loading ? (
             <div className="flex justify-center items-center h-64">
               <div className="h-12 w-12 animate-spin rounded-full border-b-2 border-brand-primary" />
@@ -167,8 +165,6 @@ export default function CouponPage() {
           />
         </div>
       )}
-      
-      <Footer />
     </>
   );
 }
