@@ -1,13 +1,12 @@
 /* ===== Imports ===== */
 import { useState, useEffect } from "react";
-import Navbar from "@/components/common/navbar";
 import Tabs from "@/components/ui/Tab";
 import CardCouponVertical from "@/components/common/cardCouponVertical";
 import Pagination from "@/components/ui/pagination";
 import Footer from "@/components/common/footer";
 import { formatDate } from "@/utils/dateUtils";
 import { fetchCoupons, Coupon } from "@/services/couponApi";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/contexts/AuthContext";
 import router from "next/router";
 import { fetchUserCoupons } from "@/services/couponService";
 import Alert from "@/components/ui/Alert";

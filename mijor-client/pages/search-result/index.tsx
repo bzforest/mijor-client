@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef } from "react";
 import axios from "axios";
-import Navbar from "@/components/common/navbar";
 import SearchFilterBar from "@/components/common/searchFilterBar/searchFilterBar";
 import MovieShowtimeCard from "@/components/common/showTimeMovie";
 import Pagination from "@/components/ui/pagination";
@@ -177,8 +176,6 @@ export default function SearchResultPage() {
     /* ================= View Logic ================= */
     return (
         <div className="flex flex-col bg-brand-gray-100">
-            {/* Navbar */}
-            <Navbar/>
 
             {/* Search Filters */}
             <SearchFilterBar

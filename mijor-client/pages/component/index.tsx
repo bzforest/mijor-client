@@ -14,7 +14,6 @@ import ShowTimeSelection from "@/components/common/showTimeSelection";
 import Review from "@/components/common/review";
 import CardCouponHorizontal from "@/components/common/cardCouponHorizontal";
 import CardCouponVertical from "@/components/common/cardCouponVertical";
-import Navbar from "@/components/common/navbar";
 import CinemaShowTime from "@/components/common/showTimeCinema";
 import MovieShowtimeCard from "@/components/common/showTimeMovie";
 

@@ -4,7 +4,7 @@
 import { useState } from "react";
 import Button from "@/components/ui/Button";
 import Modal from "../ui/Modal";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/contexts/AuthContext";
 import router from "next/router";
 import { saveCoupon } from "@/services/couponService";
 

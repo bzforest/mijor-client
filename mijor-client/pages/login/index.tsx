@@ -5,7 +5,7 @@ import Button from "@/components/ui/Button";
 import Checkbox from "@/components/ui/Checkbox"; // 💡 นำเข้า Checkbox
 import Alert from "@/components/ui/Alert";       // 💡 นำเข้า Alert
 import axios from "axios";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function Login() {
   const [email, setEmail] = useState("");

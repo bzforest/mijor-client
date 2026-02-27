@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
 import DateSelection from "@/components/common/dateSelection";
-import Navbar from "@/components/common/navbar";
 import CinemaHero from "@/components/cinema/CinemaHero";
 import CinemaShowtimesList from "@/components/cinema/CinemaShowtimesList";
 import { useCinemaDetails } from "@/hooks/useCinemaDetails";
@@ -50,7 +49,6 @@ function CinemaDetail() {
 
                 {/* Main Content (Z-10 to stay above blur) */}
                 <div className="relative z-10 w-full flex flex-col">
-                    <Navbar />
 
                     <div className="flex justify-center pt-4 pb-6 md:pt-10 md:pb-12 px-0 md:px-6 lg:px-24">
                         <div className="flex flex-col items-center w-full max-w-5xl">

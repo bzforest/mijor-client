@@ -2,13 +2,22 @@
 
 import { useState, useRef } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import Dropdown from "./dropdown";
 import { History, Ticket, User, Key, LogOut, Menu, X, ChevronDown } from "lucide-react";
-import { useAuth } from "@/context/AuthContext";
-import router from "next/router";
+import { useAuth } from "@/contexts/AuthContext";
+import { useRouter } from "next/router";
 
 export default function Navbar() {
+  const router = useRouter();
   const { user, logout } = useAuth();
+  /* ===== Route Handlers ===== */
+  const isActive = (path: string) => router.pathname === path;
+
+  // We are on the root homepage now
+  const isHomePage = isActive('/');
+
+  /* ===== Utility Handlers ===== */
   const isLoggedIn = !!user;
   const userName = user?.name || user?.email || "";
   const [isOpen, setIsOpen] = useState(false);
@@ -40,7 +49,7 @@ export default function Navbar() {
           height={36}
           style={{ width: 36, height: 36 }}
           className="object-contain"
-          onClick={() => router.push("/landing")}
+          onClick={() => router.push("/")}
         />
 
         <div className="hidden md:flex items-center gap-6">
@@ -71,12 +80,11 @@ export default function Navbar() {
                   className="w-8 h-8 rounded-full object-cover border border-white/20"
                 />
                 <span className="text-white text-sm font-medium">
-                  {userName} 
+                  {userName}
                 </span>
                 <ChevronDown
-                  className={`w-4 h-4 text-brand-gray-300 transform duration-200 ${
-                    isOpen ? "-rotate-180" : ""
-                  }`}
+                  className={`w-4 h-4 text-brand-gray-300 transform duration-200 ${isOpen ? "-rotate-180" : ""
+                    }`}
                 />
               </button>
               {isOpen && <Dropdown items={dropdownItems} />}
@@ -92,7 +100,7 @@ export default function Navbar() {
         </button>
       </nav>
 
-      
+
       <div
         className={`
         md:hidden overflow-hidden transition-all duration-500 ease-in-out

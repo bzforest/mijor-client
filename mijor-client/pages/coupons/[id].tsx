@@ -8,7 +8,7 @@ import axios from "axios";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { formatDate } from "@/utils/dateUtils";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { saveCoupon, fetchUserCoupons } from "@/services/couponService";
 
 /* ===== Type Definitions ===== */
@@ -64,7 +64,7 @@ export default function CouponDetail() {
 
     try {
       const result = await saveCoupon(coupon?.id || '');
-      
+
       if (result.success) {
         setIsCouponSaved(true);
         setShowAlert(true);
@@ -109,7 +109,7 @@ export default function CouponDetail() {
 
         if (isMounted) {
           setCoupon(response.data.data[0] || response.data.data);
-          
+
           // Fetch user's coupons if logged in
           if (user) {
             const userCoupons = await fetchUserCoupons();
@@ -160,7 +160,7 @@ export default function CouponDetail() {
   /* ===== Main Render ===== */
   return (
     <div className="flex flex-col min-h-screen bg-brand-gray-100/30 text-white">
-      
+
       <main className="flex-1 mx-auto max-w-6xl md:py-16 md:px-4">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-10">
           {/* ===== Coupon Image ===== */}
@@ -268,7 +268,7 @@ export default function CouponDetail() {
         Please log in to get this coupon.
       </Modal>
 
-    </div>
+    </div >
   );
 }
 

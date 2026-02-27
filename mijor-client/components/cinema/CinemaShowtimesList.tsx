@@ -30,7 +30,7 @@ export default function CinemaShowtimesList({ loading, movies }: CinemaShowtimes
 
     return (
         <>
-            {movies.slice(0, 4).map((movie) => (
+            {movies.map((movie) => (
                 <MovieShowtimeCard
                     key={movie.id}
                     title={movie.title}
