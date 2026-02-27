@@ -136,8 +136,6 @@ export default function MovieDetailPage() {
 
   return (
     <div className="min-h-screen bg-[#0E1628] text-white ">
-      <Navbar />
-
       {/* ================= HERO ================= */}
       <section className="px-4 md:px-[100px] py-10 flex justify-center">
         <div className="w-full max-w-[1600px]">
