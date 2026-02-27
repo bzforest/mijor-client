@@ -174,17 +174,11 @@ export default function SearchResultPage() {
         window.scrollTo({ top: 0, behavior: "smooth" });
     };
 
-    const token = true;
-
     /* ================= View Logic ================= */
     return (
         <div className="flex flex-col bg-brand-gray-100">
             {/* Navbar */}
-            <Navbar
-                isLoggedIn={token}
-                userName="Monster hunter"
-                userImage="/logo.png"
-            />
+            <Navbar/>
 
             {/* Search Filters */}
             <SearchFilterBar
