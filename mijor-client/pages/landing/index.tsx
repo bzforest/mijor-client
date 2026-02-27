@@ -8,7 +8,6 @@ import Footer from "@/components/common/footer";
 import { useAuth } from "@/context/AuthContext";
 import { fetchUserCoupons } from "@/services/couponService";
 import Alert from "@/components/ui/Alert";
-
 import SearchSection from "@/components/landing/SearchSection";
 
 function LandingPage() {
@@ -81,6 +80,7 @@ function LandingPage() {
   };
 
   /* ===== Render ===== */
+
 
   return (
       <div>
