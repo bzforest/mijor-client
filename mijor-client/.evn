@@ -1,0 +1,5 @@
+NEXT_PUBLIC_SUPABASE_URL=https://gqisktdvbtzjwedogtdh.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdxaXNrdGR2YnR6andlZG9ndGRoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE0MDI3MTksImV4cCI6MjA4Njk3ODcxOX0.H9YNjRxQBLTgNLFItrAFf2vElpHPMCTffHdJz-8yorg
+CONNECTION_STRING=postgresql://postgres.gqisktdvbtzjwedogtdh:Teamfinalmijor3@aws-1-ap-southeast-2.pooler.supabase.com:6543/postgres
+
+NEXT_PUBLIC_API_URL=http://localhost:4000

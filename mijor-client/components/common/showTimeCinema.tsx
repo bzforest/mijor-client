@@ -17,9 +17,10 @@ type HallData = {
 type CinemaShowTimeProps = {
   nameCinema: string;
   halls: HallData[];
+  date?: string;
 };
 
-export default function CinemaShowTime({ nameCinema, halls }: CinemaShowTimeProps) {
+export default function CinemaShowTime({ nameCinema, halls, date }: CinemaShowTimeProps) {
   const [isOpen, setIsOpen] = useState(true);
 
   return (
@@ -61,17 +62,15 @@ export default function CinemaShowTime({ nameCinema, halls }: CinemaShowTimeProp
           </div>
         </div>
         <ChevronDown
-          className={`w-6 h-6 text-brand-gray-400 transition-transform duration-300 ${
-            isOpen ? "" : "-rotate-90"
-          }`}
+          className={`w-6 h-6 text-brand-gray-400 transition-transform duration-300 ${isOpen ? "" : "-rotate-90"
+            }`}
         />
       </div>
 
       {/* --- Hall List --- */}
       <div
-        className={`transition-all duration-300 ease-in-out overflow-hidden ${
-          isOpen ? "opacity-100 p-10" : "max-h-0 opacity-0 p-0"
-        }`}
+        className={`transition-all duration-300 ease-in-out overflow-hidden ${isOpen ? "opacity-100 p-10" : "max-h-0 opacity-0 p-0"
+          }`}
       >
         <div className="flex flex-col gap-6 border-t border-brand-gray-0">
           {halls &&
