@@ -16,6 +16,7 @@ import CardCouponHorizontal from "@/components/common/cardCouponHorizontal";
 import CardCouponVertical from "@/components/common/cardCouponVertical";
 import CinemaShowTime from "@/components/common/showTimeCinema";
 import MovieShowtimeCard from "@/components/common/showTimeMovie";
+import Navbar from "@/components/common/navbar";
 
 const moviesDataMock = [
     {

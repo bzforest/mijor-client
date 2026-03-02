@@ -7,10 +7,14 @@ function Tag({ label, variant }: TagProps) {
     return (
         <div
             className="
+                flex
+                items-center
+                justify-center
                 w-auto
                 px-[12px] py-[6px]
                 bg-brand-gray-100
                 rounded-[4px]
+                
             "
         >
             <span

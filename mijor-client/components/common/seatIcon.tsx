@@ -40,7 +40,7 @@ function SeatIcon({ variant, onClick, onChange }: SeatIconProps) {
             <img
                 src={icon.src}
                 alt={`${variant} icon`}
-                width={40}
+                className='w-[18px] md:w-[40px]'
             />
         </button>
     );
