@@ -14,7 +14,6 @@ import ShowTimeSelection from "@/components/common/showTimeSelection";
 import Review from "@/components/common/review";
 import CardCouponHorizontal from "@/components/common/cardCouponHorizontal";
 import CardCouponVertical from "@/components/common/cardCouponVertical";
-import Navbar from "@/components/common/navbar";
 import CinemaShowTime from "@/components/common/showTimeCinema";
 import MovieShowtimeCard from "@/components/common/showTimeMovie";
 
@@ -206,11 +205,11 @@ export default function Component() {
                     <h1 className="text-headline-3 text-brand-gray-300 text-center">
                         Moivie Card
                     </h1>
-
+{/* 
                     <div className="flex flex-row gap-[16px]">
                         <MovieCard movie={moviesDataMock[0]} variant="desktop" />
                         <MovieCard movie={moviesDataMock[0]} variant="mobile" />
-                    </div>
+                    </div> */}
                 </div>
 
                 {/* ================= Right Column ================= */}
@@ -234,6 +233,7 @@ export default function Component() {
                         {cityCardMock.map((card, index) => (
                             <CityCard
                                 key={index}
+                                id={`mock-${index}`}
                                 cinema={card.cinema}
                                 length={card.length ?? null}
                                 address={card.address}
@@ -443,11 +443,7 @@ export default function Component() {
             <section className="min-h-screen bg-brand-gray-900 text-white flex flex-col">
 
                 {/* Navbar */}
-                <Navbar
-                    isLoggedIn={true}
-                    userName="Tony Stark"
-                    userImage="/stark.jpg"
-                />
+                <Navbar />
 
                 <section className=" in-h-screen p-10 flex items-center justify-center">
 
@@ -503,8 +499,10 @@ export default function Component() {
             <MovieShowtimeCard
                 title="The Dark Knight"
                 posterUrl="/path-to-your-poster.jpg"
-                tags={["Action", "Crime", "TH"]}
+                genres={["Action", "Crime"]}
+                language={["TH"]}
                 halls={cinemas[0].halls}
+                onClick={() => console.log("Clicked")}
             />
         </div>
     );

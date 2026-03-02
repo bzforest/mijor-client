@@ -1,38 +1,52 @@
+"use client";
 import formatMyDate from "@/utils/formatDate";
 import Tag from "../ui/Tag";
 import { Star } from 'lucide-react';
+import { useRouter } from "next/router";
 
 type MovieCardProps = {
     movie: {
         id: string;
         title: string;
-        picture: string;
-        date: string;
+        poster_url: string;
+        release_date?: string;
         rating: string;
         genre: string[];
         language: string[];
     };
     variant: "desktop" | "mobile";
-}
+};
 
 function MovieCard({ movie, variant }: MovieCardProps) {
+    const router = useRouter();
+
+    const handleClick = () => {
+        router.push(`/movies/${movie.id}`);
+    };
+
+
     return (
         <div
+            onClick={handleClick}
             className={`
-        flex flex-col
-        gap-[16px]
+        flex flex-col gap-[16px] cursor-pointer
+        transition-transform duration-200 hover:scale-[1.02]
         ${variant === "desktop" ? "w-[285px]" : "w-[161px]"}
     `}
         >
-            <img src={movie.picture} alt={movie.title} />
+            <img
+                src={movie.poster_url}
+                alt={movie.title}
+                className={`w-full object-cover rounded-sm ${variant === "desktop" ? "h-[380px]" : "h-[220px]"}`}
+            />
 
             {/* ===== Movie Info ===== */}
-            <div className="flex flex-col">
+            <div className="flex flex-col gap-1">
 
                 <div className="flex flex-row items-center justify-between">
 
                     <span className="text-body-2 text-brand-gray-300">
-                        {formatMyDate(movie.date)}
+                        {formatMyDate(movie.release_date)}
                     </span>
 
                     <div
@@ -51,7 +65,7 @@ function MovieCard({ movie, variant }: MovieCardProps) {
                     </div>
                 </div>
 
-                <h1 className="text-headline-4">
+                <h1 className="text-headline-4 line-clamp-2">
                     {movie.title}
                 </h1>
             </div>

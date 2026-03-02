@@ -63,6 +63,7 @@ export default function Pagination({
         onClick={() => {
           if (currentPage > 1) {
             onPageChange(currentPage - 1);
+            setTimeout(() => {window.scrollTo({ top: 0, behavior: 'smooth' });}, 0);
           }
         }}
         disabled={currentPage === 1}
@@ -112,6 +113,7 @@ export default function Pagination({
         onClick={() => {
           if (currentPage < totalPages) {
             onPageChange(currentPage + 1);
+            setTimeout(() => {window.scrollTo({ top: 0, behavior: 'smooth' });}, 0);
           }
         }}
         disabled={currentPage === totalPages}
