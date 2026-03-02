@@ -3,107 +3,103 @@ import Step from "@/components/ui/Step";
 import SummaryBox from "@/components/common/summaryBox";
 import SeatIcon from "@/components/common/seatIcon";
 import Tag from "@/components/ui/Tag";
+import Navbar from "@/components/common/navbar";
 
 // ===== Constants & Mock Data =====
-const moviesDataMock = [
-  {
-    id: "3",
-    title: "Interstellar",
-    picture:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT9oW0XQlu1lo1G_49M-YwGzKR6rUg-CtflZj07HfbT8d2GwKWg",
-    date: "26/06/2024",
-    rating: "4.9",
-    genre: ["Sci-Fi", "Drama"],
-    language: ["EN"],
-    remainingTime: "02:10",
-    time: "20:15",
-    hall: "Hall 2",
-    cinema: "SF Cinema City",
-  },
-];
+const moviesDataMock = {
+  id: "3",
+  title: "Interstellar",
+  picture:
+    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT9oW0XQlu1lo1G_49M-YwGzKR6rUg-CtflZj07HfbT8d2GwKWg",
+  date: "26/06/2024",
+  rating: "4.9",
+  genre: ["Sci-Fi", "Drama"],
+  language: ["EN"],
+  time: "20:15",
+  cinema: "SF Cinema City",
+  hall: "Hall 2",
+  basePrice: 150,
+};
 
-const seatMockData = [
-  {
-    row: "E",
-    seats: [
-      { id: "1", status: "available" },
-      { id: "2", status: "available" },
-      { id: "3", status: "unavailable" },
-      { id: "4", status: "available" },
-      { id: "5", status: "available" },
-      { id: "6", status: "available" },
-      { id: "7", status: "available" },
-      { id: "8", status: "available" },
-      { id: "9", status: "available" },
-      { id: "10", status: "available" },
-    ],
-    price: 150,
-  },
-  {
-    row: "D",
-    seats: [
-      { id: "1", status: "available" },
-      { id: "2", status: "available" },
-      { id: "3", status: "available" },
-      { id: "4", status: "available" },
-      { id: "5", status: "available" },
-      { id: "6", status: "available" },
-      { id: "7", status: "available" },
-      { id: "8", status: "available" },
-      { id: "9", status: "available" },
-      { id: "10", status: "available" },
-    ],
-    price: 180,
-  },
-  {
-    row: "C",
-    seats: [
-      { id: "1", status: "available" },
-      { id: "2", status: "available" },
-      { id: "3", status: "pending" },
-      { id: "4", status: "pending" },
-      { id: "5", status: "available" },
-      { id: "6", status: "unavailable" },
-      { id: "7", status: "unavailable" },
-      { id: "8", status: "available" },
-      { id: "9", status: "available" },
-      { id: "10", status: "available" },
-    ],
-    price: 190,
-  },
-  {
-    row: "B",
-    seats: [
-      { id: "1", status: "unavailable" },
-      { id: "2", status: "unavailable" },
-      { id: "3", status: "unavailable" },
-      { id: "4", status: "available" },
-      { id: "5", status: "available" },
-      { id: "6", status: "available" },
-      { id: "7", status: "unavailable" },
-      { id: "8", status: "unavailable" },
-      { id: "9", status: "available" },
-      { id: "10", status: "unavailable" },
-    ],
-    price: 200,
-  },
-  {
-    row: "A",
-    seats: [
-      { id: "1", status: "available" },
-      { id: "2", status: "available" },
-      { id: "3", status: "unavailable" },
-      { id: "4", status: "unavailable" },
-      { id: "5", status: "available" },
-      { id: "6", status: "available" },
-      { id: "7", status: "unavailable" },
-      { id: "8", status: "unavailable" },
-      { id: "9", status: "pending" },
-      { id: "10", status: "available" },
-    ],
-    price: 220,
-  },
-];
+const seatMockData = {
+  rows: [
+    {
+      row: "E",
+      seats: [
+        { seat_number: 1, status: "available" },
+        { seat_number: 2, status: "available" },
+        { seat_number: 3, status: "unavailable" },
+        { seat_number: 4, status: "available" },
+        { seat_number: 5, status: "available" },
+        { seat_number: 6, status: "available" },
+        { seat_number: 7, status: "available" },
+        { seat_number: 8, status: "available" },
+        { seat_number: 9, status: "available" },
+        { seat_number: 10, status: "available" },
+      ],
+    },
+    {
+      row: "D",
+      seats: [
+        { seat_number: 1, status: "available" },
+        { seat_number: 2, status: "available" },
+        { seat_number: 3, status: "available" },
+        { seat_number: 4, status: "available" },
+        { seat_number: 5, status: "available" },
+        { seat_number: 6, status: "available" },
+        { seat_number: 7, status: "available" },
+        { seat_number: 8, status: "available" },
+        { seat_number: 9, status: "available" },
+        { seat_number: 10, status: "available" },
+      ],
+    },
+    {
+      row: "C",
+      seats: [
+        { seat_number: 1, status: "available" },
+        { seat_number: 2, status: "available" },
+        { seat_number: 3, status: "pending" },
+        { seat_number: 4, status: "pending" },
+        { seat_number: 5, status: "available" },
+        { seat_number: 6, status: "unavailable" },
+        { seat_number: 7, status: "unavailable" },
+        { seat_number: 8, status: "available" },
+        { seat_number: 9, status: "available" },
+        { seat_number: 10, status: "available" },
+      ],
+    },
+    {
+      row: "B",
+      seats: [
+        { seat_number: 1, status: "unavailable" },
+        { seat_number: 2, status: "unavailable" },
+        { seat_number: 3, status: "unavailable" },
+        { seat_number: 4, status: "available" },
+        { seat_number: 5, status: "available" },
+        { seat_number: 6, status: "available" },
+        { seat_number: 7, status: "unavailable" },
+        { seat_number: 8, status: "unavailable" },
+        { seat_number: 9, status: "available" },
+        { seat_number: 10, status: "unavailable" },
+      ],
+    },
+    {
+      row: "A",
+      seats: [
+        { seat_number: 1, status: "available" },
+        { seat_number: 2, status: "available" },
+        { seat_number: 3, status: "unavailable" },
+        { seat_number: 4, status: "unavailable" },
+        { seat_number: 5, status: "available" },
+        { seat_number: 6, status: "available" },
+        { seat_number: 7, status: "unavailable" },
+        { seat_number: 8, status: "unavailable" },
+        { seat_number: 9, status: "pending" },
+        { seat_number: 10, status: "available" },
+      ],
+    },
+  ],
+};
 
 function Booking() {
   /* ================= State Management ================= */
@@ -121,26 +117,22 @@ function Booking() {
 
   /* ================= Derived State ================= */
   // Responsibility: Resolve visual variant for a seat based on its global status and local user selection.
-  const getSeatVariant = (status: string, uniqueId: string) => {
-    if (selectedSeats.includes(uniqueId)) return "selected";
+  const getSeatVariant = (status: string, seatId: string) => {
+    if (selectedSeats.includes(seatId)) return "selected";
     if (status === "available") return "available";
     if (status === "unavailable") return "booked";
     if (status === "pending") return "reserved";
     return "available";
   };
 
-  // Responsibility: Calculate total price by matching selected seat IDs (e.g., 'E1') to row pricing in mock data.
-  const totalPrice = selectedSeats.reduce((sum, fullSeatId) => {
-    const rowLabel = fullSeatId.charAt(0);
-    const rowData = seatMockData.find((r) => r.row === rowLabel);
-    return sum + (rowData?.price || 0);
-  }, 0);
+  // Responsibility: Calculate total price dynamically based on the number of selected seats and base price.
+  const totalPrice = selectedSeats.length * moviesDataMock.basePrice;
 
   /* ================= View Logic ================= */
   return (
     <main className="flex flex-col">
       {/* Header */}
-      <header className="flex justify-center px-[120px] py-[16px] bg-brand-gray-0">
+      <header className="flex justify-center py-[16px] px-[120px] bg-brand-gray-0">
         <Step
           steps={[{ label: "1" }, { label: "2" }, { label: "3" }]}
           currentStep={2}
@@ -148,19 +140,19 @@ function Booking() {
       </header>
 
       {/* Body */}
-      <section className="flex flex-row h-full px-[120px] py-[80px] gap-[102px] bg-[#101525]">
+      <section className="flex flex-row h-full py-[80px] px-[120px] gap-[102px] bg-[#101525]">
         
         {/* Screen & Seating Area */}
         <article className="hidden flex-col gap-[60px] w-[793px] md:flex">
           
           {/* Screen */}
-          <div className="flex flex-col w-full text-center bg-gradient-to-r from-[#2C344E] to-[#516199] rounded-tl-[80px] rounded-tr-[80px]">
-            <span className="text-body-1-bold text-brand-gray-400">screen</span>
+          <div className="flex flex-col text-center w-full bg-gradient-to-r from-[#2C344E] to-[#516199] rounded-tl-[80px] rounded-tr-[80px]">
+            <span className="text-brand-gray-400 text-body-1-bold">screen</span>
           </div>
 
           {/* Seat Grid */}
           <div className="flex flex-col gap-[16px]">
-            {seatMockData.map((row) => (
+            {seatMockData.rows.map((row) => (
               <div key={row.row} className="flex flex-col">
                 <div className="flex justify-between">
                   
@@ -170,14 +162,14 @@ function Booking() {
                       {row.row}
                     </span>
                     {row.seats.slice(0, 5).map((seat) => {
-                      const uniqueId = `${row.row}${seat.id}`;
+                      const fullSeatId = `${row.row}${seat.seat_number}`;
                       return (
                         <SeatIcon
-                          key={seat.id}
-                          variant={getSeatVariant(seat.status, uniqueId)}
+                          key={seat.seat_number}
+                          variant={getSeatVariant(seat.status, fullSeatId)}
                           onClick={
                             seat.status === "available"
-                              ? () => toggleSeat(uniqueId)
+                              ? () => toggleSeat(fullSeatId)
                               : undefined
                           }
                         />
@@ -188,20 +180,20 @@ function Booking() {
                   {/* Right Block (Seats 6-10) */}
                   <div className="flex items-center gap-[24px]">
                     {row.seats.slice(5).map((seat) => {
-                      const uniqueId = `${row.row}${seat.id}`;
+                      const fullSeatId = `${row.row}${seat.seat_number}`;
                       return (
                         <SeatIcon
-                          key={seat.id}
-                          variant={getSeatVariant(seat.status, uniqueId)}
+                          key={seat.seat_number}
+                          variant={getSeatVariant(seat.status, fullSeatId)}
                           onClick={
                             seat.status === "available"
-                              ? () => toggleSeat(uniqueId)
+                              ? () => toggleSeat(fullSeatId)
                               : undefined
                           }
                         />
                       );
                     })}
-                    <span className="w-[24px] text-right text-brand-gray-300 text-body-1-bold">
+                    <span className="text-right w-[24px] text-brand-gray-300 text-body-1-bold">
                       {row.row}
                     </span>
                   </div>
@@ -213,13 +205,13 @@ function Booking() {
 
           {/* Legend */}
           <footer className="flex flex-row py-[16px] gap-[40px] border-t border-brand-gray-100">
-            <Tag label="Hall 1" variant="language" />
+            <Tag label={moviesDataMock.hall} variant="language" />
 
             <div className="flex flex-row gap-[16px]">
               <SeatIcon variant="available" />
               <div className="flex flex-col justify-between text-body-2">
                 <span>Available Seat</span>
-                <span>THB 100</span>
+                <span>THB {moviesDataMock.basePrice}</span>
               </div>
             </div>
 
@@ -238,16 +230,17 @@ function Booking() {
         {/* Summary Box */}
         <aside>
           <SummaryBox
-            title={moviesDataMock[0].title}
-            picture={moviesDataMock[0].picture}
-            date={moviesDataMock[0].date}
-            genre={moviesDataMock[0].genre}
-            language={moviesDataMock[0].language.join(", ")}
-            time={moviesDataMock[0].time}
-            hall={moviesDataMock[0].hall}
-            cinema={moviesDataMock[0].cinema}
+            title={moviesDataMock.title}
+            picture={moviesDataMock.picture}
+            date={moviesDataMock.date}
+            genre={moviesDataMock.genre}
+            language={moviesDataMock.language.join(", ")}
+            time={moviesDataMock.time}
+            hall={moviesDataMock.hall}
+            cinema={moviesDataMock.cinema}
             selectedSeats={selectedSeats}
             totalPrice={totalPrice}
+            onNext={() => alert("Proceeding to next step!")}
           />
         </aside>
       </section>
