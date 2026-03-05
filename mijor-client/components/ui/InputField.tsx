@@ -27,6 +27,7 @@ function InputField({
     onSearch,
     onClear,
     onChange,
+    type,
 }: InputFieldProps) {
     return (
         <div
@@ -65,7 +66,7 @@ function InputField({
 
                 {/* ================= Text Input ================= */}
                 <input
-                    type="text"
+                    type={type || "text"}
                     value={text}
                     placeholder={placeholder}
                     disabled={disabled}
@@ -90,6 +91,7 @@ function InputField({
                 />
 
                 {/* ================= Clear Button ================= */}
+                {onClear && (
                 <button
                     type="button"
                     onClick={onClear}
@@ -106,6 +108,7 @@ function InputField({
                 >
                     <X size={24} />
                 </button>
+                )}
             </div>
 
             {/* ===== Validation Message ===== */}
