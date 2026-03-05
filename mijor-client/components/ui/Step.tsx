@@ -9,7 +9,7 @@ interface StepItem {
   
   export default function Step({ steps, currentStep }: StepProps) {
     return (
-      <div className="flex gap-12">
+      <div className="flex md:gap-12">
         {steps.map((step, index) => {
           const stepNumber = index + 1;
   
@@ -33,11 +33,11 @@ interface StepItem {
           return (
             <div
               key={index}
-              className="w-[140px] h-[74px] flex flex-col items-center gap-[6px]"
+              className="md:w-[140px] md:h-[74px] w-[100px] h-[70px] flex flex-col items-center gap-[6px]"
             >
               <div
                 className={`
-                  w-12 h-12
+                  md:w-12 md:h-12 w-11 h-11
                   flex items-center justify-center
                   rounded-full
                   border-2
@@ -48,7 +48,6 @@ interface StepItem {
               >
                 {status === "finished" ? "✓" : stepNumber}
               </div>
-  
               <p className="text-body-2 text-brand-gray-400">
                 {step.label}
               </p>

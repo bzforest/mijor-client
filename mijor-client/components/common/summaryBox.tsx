@@ -1,4 +1,3 @@
-import formatMyDate from "@/utils/formatDate";
 import Tag from "../ui/Tag";
 import { MapPin, CalendarDays, Clock3, Store } from "lucide-react";
 import Button from "../ui/Button";
@@ -33,7 +32,7 @@ function SummaryBox({
   onNext,
 }: SummaryBoxProps) {
   return (
-    <div className="md:sticky flex flex-col gap-[24px] rounded-[8px] w-full md:w-[305px] px-[16px] pt-[16px] pb-[24px] h-fit bg-brand-gray-0 border border-brand-gray-100/50">
+    <div className="md:sticky md:top-[80px] flex flex-col items-center gap-[24px] rounded-[8px] w-full md:w-[305px] px-[16px] pt-[16px] pb-[24px] h-fit bg-brand-gray-0 border border-brand-gray-100/50">
       {/* Time remaining */}
       {remainingTime && (
         <div className="flex flex-row items-center gap-[8px]">
@@ -49,7 +48,7 @@ function SummaryBox({
       {/* Movie info row */}
       <div className="flex flex-row gap-[16px]">
         <img
-          src={picture}
+          src={picture || undefined}
           alt={title}
           className="w-[82px] h-[120px] rounded-[4px] object-cover"
         />
@@ -79,9 +78,7 @@ function SummaryBox({
             className="text-brand-gray-200"
             strokeWidth={2}
           />
-          <span className="text-body-2 text-brand-gray-400">
-            {formatMyDate(date || "")}
-          </span>
+          <span className="text-body-2 text-brand-gray-400">{date}</span>
         </div>
 
         <div className="flex flex-row items-center gap-[12px]">

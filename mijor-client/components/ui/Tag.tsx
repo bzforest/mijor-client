@@ -1,9 +1,10 @@
 interface TagProps {
     label: string;
     variant: "genre" | "language";
+    textType?: string;
 }
 
-function Tag({ label, variant }: TagProps) {
+function Tag({ label, variant, textType = "body-2-bold" }: TagProps) {
     return (
         <div
             className="
@@ -19,7 +20,7 @@ function Tag({ label, variant }: TagProps) {
         >
             <span
                 className={`
-                    text-body-2-bold
+                    text-${textType}
                     ${
                         variant === "genre"
                             ? "text-brand-gray-300"
