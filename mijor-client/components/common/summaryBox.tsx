@@ -69,7 +69,7 @@ function SummaryBox({
       )}
 
       {/* Movie info row */}
-      <div className="flex flex-row gap-[16px]">
+      <div className="flex flex-row gap-[16px] w-full">
         <img
           src={picture || undefined}
           alt={title}
@@ -89,7 +89,7 @@ function SummaryBox({
       </div>
 
       {/* Details section */}
-      <div className="flex flex-col gap-[12px]">
+      <div className="flex flex-col gap-[12px] w-full">
         <div className="flex flex-row items-center gap-[12px]">
           <MapPin size={24} className="text-brand-gray-200" strokeWidth={2} />
           <span className="text-body-2 text-brand-gray-400">{cinema}</span>
@@ -117,7 +117,7 @@ function SummaryBox({
 
       {/* ================= Coupon Section ================= */}
       {userCoupons.length > 0 && (
-        <div className="flex flex-col pt-[16px] gap-4 border-t border-brand-gray-100">
+        <div className="flex flex-col pt-[16px] gap-4 border-t border-brand-gray-100 w-full">
           <div className="flex flex-row justify-between items-center w-full">
             <span className="text-body-2 text-brand-gray-400">Coupon</span>
 
@@ -151,7 +151,7 @@ function SummaryBox({
 
       {/* Booking info section */}
       {selectedSeats.length > 0 && (
-        <div className="flex flex-col pt-[24px] gap-[24px] border-t border-brand-gray-100">
+        <div className="flex flex-col pt-[24px] gap-[24px] border-t border-brand-gray-100 w-full">
           <div className="flex flex-col gap-[12px]">
             <div className="flex flex-row justify-between items-center w-full">
               <span className="text-body-2 text-brand-gray-400">

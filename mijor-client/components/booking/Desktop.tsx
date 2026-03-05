@@ -5,7 +5,8 @@ import Tag from "@/components/ui/Tag";
 import formatDate from "@/utils/formatDate";
 import { formatTime } from "@/utils/formatTime";
 import { formatRemainingTime } from "@/utils/formatRemainingTime";
-import { Seat, SeatRow, ShowtimeInfo } from "@/types/booking";
+import { Seat, SeatRow, ShowtimeInfo, PaymentParams } from "@/types/booking";
+import PaymentStep from "@/components/booking/PaymentStep";
 
 interface DesktopProps {
   seats: SeatRow[];
@@ -16,7 +17,7 @@ interface DesktopProps {
   next: boolean;
   toggleSeat: (seatId: string) => void;
   handleSelect: () => Promise<void>;
-  handleConfirm: () => Promise<void>;
+  handleConfirm: (params: PaymentParams) => Promise<void>;
 }
 
 function Desktop({
@@ -43,7 +44,7 @@ function Desktop({
       {/* ===== Header Section ===== */}
       <header className="flex justify-center bg-brand-gray-0 px-[120px] py-[16px]">
         <Step
-          steps={[{ label: "1" }, { label: "2" }, { label: "3" }]}
+          steps={[{ label: "Select showtime" }, { label: "Select seat" }, { label: "Payment" }]}
           currentStep={2}
         />
       </header>
@@ -151,25 +152,14 @@ function Desktop({
       </section>
     </main>
   ) : (
-    /* ===== Confirmation Step ===== */
-    <div className="hidden h-screen items-center justify-center md:flex">
-      <SummaryBox
-        title={movieInfo?.title || ""}
-        picture={movieInfo?.posterUrl || ""}
-        date={formatDate(movieInfo?.date || "")}
-        genre={movieInfo?.genres || []}
-        language={movieInfo?.languages?.join(", ") || ""}
-        time={formatTime(movieInfo?.time || "")}
-        hall={movieInfo?.hall || ""}
-        cinema={movieInfo?.cinema || ""}
-        selectedSeats={selectedSeatLabels}
-        totalPrice={selectedSeats.length * (movieInfo?.price || 0)}
-        remainingTime={
-          remainingTime > 0 ? formatRemainingTime(remainingTime) : ""
-        }
-        onNext={handleConfirm}
-      />
-    </div>
+    <PaymentStep
+      movieInfo={movieInfo}
+      selectedSeatLabels={selectedSeatLabels}
+      totalPrice={selectedSeats.length * (movieInfo?.price || 0)}
+      remainingTime={remainingTime}
+      onPaymentSuccess={handleConfirm}
+      className="hidden md:flex"
+    />
   );
 }
 
