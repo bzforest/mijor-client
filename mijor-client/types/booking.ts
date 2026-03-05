@@ -23,3 +23,12 @@ export type ShowtimeInfo = {
   genres: string[];
   price: number;
 };
+
+export type PaymentParams = {
+  selectedCouponId: string;
+  finalPrice: number;
+  paymentMethod: string;
+  cardOwner?: string;
+  cardnumber?: string;
+};
+
