@@ -24,9 +24,12 @@ export default function Register() {
 
   // ตัวแปรเช็กว่ารหัสผ่าน 2 ช่องพิมพ์เหมือนกันเป๊ะๆ
   const isPasswordMatch = password === confirmPassword
+  // เช็คว่า กรอกข้อมูลครบหรือยัง
+  const isFormComplete = isNameValid && isEmailValid && isPasswordValid && confirmPassword.length > 0;
   // เช็คว่า Confirm Password มีปัญหามั้ย
-  const isConfirmPasswordError = isSubmitted && (!isPasswordMatch || confirmPassword === "");
-  const isFormDisabled = isLoading;
+  const isConfirmPasswordError = isSubmitted && !isPasswordMatch;
+  // คุมสถานะปุ่ม
+  const isFormDisabled = isLoading || !isFormComplete;
   
   const router = useRouter();
 

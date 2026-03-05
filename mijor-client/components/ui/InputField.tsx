@@ -1,4 +1,5 @@
-import { Search, X } from "lucide-react";
+import { Search, X, Eye, EyeOff } from "lucide-react";
+import { useState } from "react";
 
 type InputFieldProps = {
     disabled?: boolean;
@@ -29,6 +30,12 @@ function InputField({
     onChange,
     type,
 }: InputFieldProps) {
+
+    const [showPassword, setShowPassword] = useState(false);
+    
+    //ถ้าส่ง type "password" มา และ showPassword === true (เปิดตา) ให้เปลี่ยนเป็น type: "text"
+    const actualType = type === "password" ? (showPassword ? "text" : "password") : (type || "text");
+
     return (
         <div
             className={`flex flex-col gap-[4px] ${
@@ -66,7 +73,7 @@ function InputField({
 
                 {/* ================= Text Input ================= */}
                 <input
-                    type={type || "text"}
+                    type={actualType}
                     value={text}
                     placeholder={placeholder}
                     disabled={disabled}
@@ -90,8 +97,25 @@ function InputField({
                     `}
                 />
 
+                {/* ================= Eye / EyeOff ================= */}
+                {type === "password" && (
+                    <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    disabled={disabled}
+                    className={`
+                         absolute right-[12px] top-1/2 -translate-y-1/2 
+                         text-brand-gray-300 hover:text-white
+                         ${disabled ? "cursor-not-allowed" : "cursor-pointer"}
+                        `}
+                    >
+                        {/* เช็กว่าถ้าเปิดตาอยู่ให้ใช้ไอคอน EyeOff ถ้าปิดอยู่ให้ใช้ Eye */}
+                        {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                    </button>
+                )}
+
                 {/* ================= Clear Button ================= */}
-                {onClear && (
+                {onClear && type !== "password" && (
                 <button
                     type="button"
                     onClick={onClear}
