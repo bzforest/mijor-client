@@ -1,4 +1,5 @@
 import { useState } from "react";
+import router from "next/router";
 import Step from "@/components/ui/Step";
 import SummaryBox from "@/components/common/summaryBox";
 import SeatIcon from "@/components/common/seatIcon";
@@ -240,7 +241,21 @@ function Booking() {
             cinema={moviesDataMock.cinema}
             selectedSeats={selectedSeats}
             totalPrice={totalPrice}
-            onNext={() => alert("Proceeding to next step!")}
+            onNext={() => {
+              const query = new URLSearchParams({
+                title: moviesDataMock.title,
+                picture: moviesDataMock.picture,
+                date: moviesDataMock.date,
+                genre: JSON.stringify(moviesDataMock.genre),
+                language: moviesDataMock.language.join(", "),
+                time: moviesDataMock.time,
+                hall: moviesDataMock.hall,
+                cinema: moviesDataMock.cinema,
+                selectedSeats: JSON.stringify(selectedSeats),
+                totalPrice: totalPrice.toString(),
+              }).toString();
+              router.push(`/payment?${query}`);
+            }}
           />
         </aside>
       </section>
