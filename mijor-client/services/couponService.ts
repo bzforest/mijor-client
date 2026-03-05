@@ -22,6 +22,10 @@ export interface UserCoupon {
     image_url: string;
     valid_until: string;
     description: string;
+    is_active: boolean;
+    discount_type: string;
+    discount_value: number;
+    min_purchase: number;
   };
 }
 
@@ -106,5 +110,13 @@ export async function fetchUserCoupons(): Promise<UserCoupon[]> {
  * @returns Token string or null
  */
 function getAuthToken(): string | null {
-  return localStorage.getItem("access_token") || sessionStorage.getItem("access_token");
+  // เช็คว่ารันบน Browser หรือไม่
+  if (typeof window === 'undefined') return null;
+
+  try {
+    // ดึงค่าได้ทั้งจาก localStorage และ sessionStorage
+    return localStorage.getItem("access_token") || sessionStorage.getItem("access_token");
+  } catch (error) {
+    return null;
+  }
 }
