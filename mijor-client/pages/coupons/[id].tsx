@@ -256,17 +256,19 @@ export default function CouponDetail() {
       </main>
 
       {/* ===== Login Modal ===== */}
-      <Modal
-        isOpen={isOpen}
-        onClose={() => setIsOpen(false)}
-        title="Create an account to continue"
-        primaryActionButton="Sign up"
-        secondaryActionButton="Log in"
-        onPrimaryAction={() => router.push("/register")}
-        onSecondaryAction={() => router.push("/login")}
-      >
-        Please log in to get this coupon.
-      </Modal>
+      <div className="max-w-lg">
+        <Modal
+          isOpen={isOpen}
+          onClose={() => setIsOpen(false)}
+          title="Create an account to continue"
+          primaryActionButton="Sign up"
+          secondaryActionButton="Log in"
+          onPrimaryAction={() => router.push("/register")}
+          onSecondaryAction={() => router.push("/login")}
+        >
+          Please log in to get this coupon.
+        </Modal>
+      </div>
 
     </div >
   );

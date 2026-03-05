@@ -2,8 +2,11 @@
 
 import Image from "next/image";
 import { useState } from "react";
+import { useRouter } from "next/router";
+import Button from "../ui/Button";
 
 interface CardCouponHorizontalProps {
+  id?: string;
   couponImage: string;
   title: string;
   validDate: string;
@@ -11,11 +14,13 @@ interface CardCouponHorizontalProps {
 }
 
 export default function CardCouponHorizontal({
+  id,
   couponImage,
   title,
   validDate,
   onSelect,
 }: CardCouponHorizontalProps) {
+  const router = useRouter();
   const [selected, setSelected] = useState(false);
 
   const handleClick = () => {
@@ -29,7 +34,7 @@ export default function CardCouponHorizontal({
       className={`
         flex cursor-pointer overflow-hidden
         transition-all duration-200
-        border
+        bg-brand-gray-0/80
 
         /* Desktop */
         md:w-[464px] md:h-[174px] md:rounded-[8px]
@@ -60,25 +65,26 @@ export default function CardCouponHorizontal({
       {/* Right Content */}
       <div className="flex flex-col justify-between p-3 md:p-4 flex-1">
         <div>
-          <h3 className="text-white font-semibold 
+          <h3 className="text-white font-semibold text-left
             md:text-base text-xs leading-snug"
           >
             {title}
           </h3>
 
-          <p className="text-gray-300 
+          <p className="text-gray-300 text-left
             md:text-sm text-[10px] mt-1 md:mt-2"
           >
             Valid until {validDate}
           </p>
         </div>
 
-        <div className="flex items-center gap-2 text-white 
-          md:text-sm text-[10px] font-medium"
+        <Button
+          variant="text"
+          className="cursor-pointer"
+          onClick={() => router.push(`/coupons/${id}`)}
         >
-          <span className="underline">View details</span>
-          <span>›</span>
-        </div>
+          View details
+        </Button>
       </div>
     </div>
   );

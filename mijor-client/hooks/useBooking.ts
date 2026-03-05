@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { api } from "@/lib/booking/api";
 import { socket } from "@/lib/booking/socket";
 import { useAuth } from "@/contexts/AuthContext";
-import { SeatRow, ShowtimeInfo } from "@/types/booking";
+import { SeatRow, ShowtimeInfo, PaymentParams } from "@/types/booking";
 
 export const useBooking = () => {
   const router = useRouter();
@@ -200,7 +200,7 @@ export const useBooking = () => {
     }
   };
 
-  const handleConfirm = async () => {
+  const handleConfirm = async (params: PaymentParams) => {
     if (!selectedSeats.length) return;
 
     try {
@@ -209,10 +209,33 @@ export const useBooking = () => {
         seatIds: selectedSeats,
       });
 
+      const nextQuery: any = {
+        title: movieInfo?.title || "",
+        picture: movieInfo?.posterUrl || "",
+        date: movieInfo?.date || "",
+        genre: JSON.stringify(movieInfo?.genres || []),
+        language: movieInfo?.languages?.join(", ") || "",
+        time: movieInfo?.time || "",
+        hall: movieInfo?.hall || "",
+        cinema: movieInfo?.cinema || "",
+        selectedSeats: JSON.stringify(selectedSeatLabels),
+        totalPrice: (selectedSeats.length * (movieInfo?.price || 0)).toString(),
+        selectedCouponId: params.selectedCouponId,
+        finalPrice: params.finalPrice.toString(),
+        paymentMethod: params.paymentMethod,
+      };
+
+      if (params.paymentMethod === "CreditCard") {
+        nextQuery.cardOwner = params.cardOwner;
+        nextQuery.cardnumber = params.cardnumber;
+      }
+
+      const searchParams = new URLSearchParams(nextQuery).toString();
+      router.push(`/payment-success?${searchParams}`);
+
       setSelectedSeats([]);
       setExpireTime(null);
       setRemainingTime(0);
-      alert("Booking confirmed successfully");
     } catch (error) {
       console.error("Failed to confirm booking:", error);
       alert("Failed to confirm booking. Please try again.");
