@@ -1,16 +1,20 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import Dropdown from "./dropdown";
 import { History, Ticket, User, Key, LogOut, Menu, X, ChevronDown } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/router";
+import { supabase } from "@/utils/supabase";
 
 export default function Navbar() {
   const router = useRouter();
   const { user, logout , navigateToLogin} = useAuth();
+
+  /* ===== state avatar ===== */
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   /* ===== Route Handlers ===== */
   const isActive = (path: string) => router.pathname === path;
 
@@ -18,18 +22,96 @@ export default function Navbar() {
   const isHomePage = isActive('/');
 
   /* ===== Utility Handlers ===== */
+  const [name, setName] = useState<string | null>(null);
   const isLoggedIn = !!user;
-  const userName = user?.name || user?.email || "";
+  const userName = name || user?.email || "";
   const [isOpen, setIsOpen] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
+  useEffect(() => {
+
+    const loadAvatar = async () => {
+  
+      if (!user) return;
+  
+      const { data } = await supabase
+        .from("profiles")
+        .select("name, avatar_url")
+        .eq("id", user.id)
+        .single();
+  
+      if (data) {
+  
+        if (data.avatar_url) {
+          setAvatarUrl(data.avatar_url + "?t=" + Date.now());
+        }
+  
+        if (data.name) {
+          setName(data.name);
+        }
+  
+      }
+  
+    };
+  
+    loadAvatar();
+  
+    /* ===== listen auth change ===== */
+    const { data: listener } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+  
+        if (event === "USER_UPDATED" && session?.user) {
+  
+          const updatedUser = session.user;
+  
+          if (updatedUser.user_metadata?.avatar_url) {
+            setAvatarUrl(updatedUser.user_metadata.avatar_url + "?t=" + Date.now());
+          }
+  
+          if (updatedUser.user_metadata?.name) {
+            setName(updatedUser.user_metadata.name);
+          }
+  
+        }
+  
+      }
+    );
+  
+    return () => {
+      listener.subscription.unsubscribe();
+    };
+  
+  }, [user]);
+
   const dropdownItems = [
-    { label: "Booking history", icon: <History size={18} /> },
-    { label: "My coupons", icon: <Ticket size={18} /> },
-    { label: "Profile", icon: <User size={18} /> },
-    { label: "Reset password", icon: <Key size={18} />, divider: true },
-    { label: "Log out", icon: <LogOut size={18} />, danger: true, onclick: logout },
+    {
+      label: "Booking history",
+      icon: <History size={18} />,
+      onclick: () => router.push("/user-manage/booking-history"), // 🔥 เพิ่ม
+    },
+    {
+      label: "My coupons",
+      icon: <Ticket size={18} />,
+      onclick: () => router.push("/user-manage/my-coupons"), // 🔥 เพิ่ม
+    },
+    {
+      label: "Profile",
+      icon: <User size={18} />,
+      onclick: () => router.push("/user-manage/profile"), // 🔥 เพิ่ม
+    },
+    {
+      label: "Reset password",
+      icon: <Key size={18} />,
+      divider: true,
+      onclick: () => router.push("/user-manage/reset-password"), // 🔥 เพิ่ม
+    },
+    {
+      label: "Log out",
+      icon: <LogOut size={18} />,
+      danger: true,
+      onclick: logout,
+    },
   ];
 
   return (
@@ -75,7 +157,7 @@ export default function Navbar() {
                 className="flex items-center gap-3 outline-none"
               >
                 <img
-                  src="/logo.png"
+                  src={avatarUrl || "/logo.png"}
                   alt="avatar"
                   className="w-8 h-8 rounded-full object-cover border border-white/20"
                 />
@@ -131,7 +213,7 @@ export default function Navbar() {
               {/* Profile Area */}
               <div className="flex items-center gap-4 p-8">
                 <img
-                  src="/logo.png"
+                  src={avatarUrl || "/logo.png"}
                   alt="avatar"
                   className="w-14 h-14 rounded-full object-cover border-2 border-white/20 shadow-xl"
                 />
