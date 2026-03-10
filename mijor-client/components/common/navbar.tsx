@@ -10,7 +10,7 @@ import { useRouter } from "next/router";
 
 export default function Navbar() {
   const router = useRouter();
-  const { user, logout } = useAuth();
+  const { user, logout , navigateToLogin} = useAuth();
   /* ===== Route Handlers ===== */
   const isActive = (path: string) => router.pathname === path;
 
@@ -57,7 +57,7 @@ export default function Navbar() {
             <div className="flex gap-4">
               <button
                 className="text-white font-light"
-                onClick={() => router.push("/login")}
+                onClick={navigateToLogin}
               >
                 Login
               </button>

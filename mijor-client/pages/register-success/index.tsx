@@ -29,7 +29,7 @@ export default function RegisterSuccess() {
         <div className="w-full pt-4">
           <Button 
             variant="primary" 
-            className="w-full" 
+            className="w-full cursor-pointer" 
             onClick={() => router.push("/login")}
           >
             <span className="w-full text-center block">Go to login</span>

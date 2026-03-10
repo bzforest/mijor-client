@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { useRouter } from "next/router";
+import axios from "axios";
 
 interface User {
     id: string;
@@ -12,6 +13,7 @@ interface AuthContextType {
     login: (userData: User , token: string , remember: boolean) => void;
     logout: () => void;
     isAuthLoading: boolean;
+    navigateToLogin: () => void;
 }
 
 //  สร้าง context
@@ -24,14 +26,66 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const router = useRouter();
 
     useEffect(() => {
-        const token = localStorage.getItem("access_token") || sessionStorage.getItem("access_token");
-        const storedUser = localStorage.getItem("user") || sessionStorage.getItem("user");
+        try {
+            const token = localStorage.getItem("access_token") || sessionStorage.getItem("access_token");
+            const storedUser = localStorage.getItem("user") || sessionStorage.getItem("user");
 
-        if (token && storedUser) {
-            setUser(JSON.parse(storedUser)); // ถ้ามีของในตู้เซฟ ให้จับใส่ state
+            if (token && storedUser) {
+                setUser(JSON.parse(storedUser));
+            }
+        } catch (error) {
+            console.error("เกิดข้อผิดพลาดในการอ่านข้อมูล User จาก Storage:", error);
+            localStorage.removeItem("user");
+            sessionStorage.removeItem("user");
+        } finally {
+            // ไม่ว่าจะสำเร็จหรือพัง ถือว่าเปิดตู้เซฟแล้ว
+            setIsAuthLoading(false)
         }
-        setIsAuthLoading(false); // เปิดตู้เซฟเสร็จแล้ว
     }, [])
+
+    // สำหรับดักจับ token ที่หมดอายุ
+    useEffect(() => {
+        const interceptor = axios.interceptors.response.use(
+            (response) => {
+                return response
+            },
+            (error) => {
+                // ถ้า API ตอบกลับมาเป็น Error 401 (Unauthorized) จาก Supabase หรือ Backend
+                if (error.response && error.response.status === 401) {
+                    console.error("Supabase บอกว่า Token หมดอายุ!");
+
+                    // ล้างข้อมูลในตู้เซฟ
+                    localStorage.removeItem("access_token");
+                    localStorage.removeItem("user");
+                    sessionStorage.removeItem("access_token");
+                    sessionStorage.removeItem("user");
+
+                    setUser(null);
+
+                    // ส่งกลับไปที่หน้า Login พร้อมแนบ url ไปด้วย เพื่อที่ login เสร็จแล้ว จะได้กลับมาหน้าเดิม
+                    const currentPath = router.asPath;
+                    if (!currentPath.includes('/login')) {
+                        router.push(`/login?returnTo=${encodeURIComponent(currentPath)}`);
+                    }
+                }
+                return Promise.reject(error)
+            }
+        );
+        // Clenup Function ป้องกันไม่ให้ inrerception ทำงานซ้อนกันหลายรอบ
+        return () => {
+            axios.interceptors.response.eject(interceptor);
+        };
+    }, [router, router.asPath]);
+
+    const navigateToLogin = () => {
+        const currentPath = router.asPath;
+        // ป้องกันไม่ให้มันแนบ /login ซ้อนกันถ้าอยู่หน้า login อยู่แล้ว
+        if (!currentPath.includes('/login')) {
+            router.push(`/login?returnTo=${encodeURIComponent(currentPath)}`);
+        } else {
+            router.push('/login');
+        }
+    };
 
     // function สำหรับ login แล้วรับข้อมูลมาเซฟลงตู้ และ อัปเดต state
     const login = (userData: User, token: string, remember: boolean) => {
@@ -44,7 +98,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             sessionStorage.setItem("user", JSON.stringify(userData));
         }
         setUser(userData);
-        router.push("/")  // ล็อคอินเสร็จแล้ว ให้เด้งไปที่หน้า Home
+        const returnUrl = (router.query.returnTo as string) || "/";
+        router.push(returnUrl);
     };
 
     // function สำหรับ logout
@@ -58,7 +113,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
 
     return (
-        <AuthContext.Provider value={{ user , login , logout , isAuthLoading }}>
+        <AuthContext.Provider value={{ user , login , logout , isAuthLoading, navigateToLogin }}>
             {children}
         </AuthContext.Provider>
     );

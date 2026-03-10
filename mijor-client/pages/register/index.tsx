@@ -9,10 +9,11 @@ export default function Register() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword , setConfirmPassword] = useState("");
   
   const [isSubmitted, setIsSubmitted] = useState(false);
   
-  // 💡 2. สร้าง State เพิ่มสำหรับคุมการ Loading และแสดง Error จาก Backend
+  // State เพิ่มสำหรับคุมการ Loading และแสดง Error จาก Backend
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
@@ -20,10 +21,18 @@ export default function Register() {
   const isNameValid = name.trim() !== "";
   const isEmailValid = email.includes("@") && email.includes("."); 
   const isPasswordValid = password.length >= 6;
+
+  // ตัวแปรเช็กว่ารหัสผ่าน 2 ช่องพิมพ์เหมือนกันเป๊ะๆ
+  const isPasswordMatch = password === confirmPassword
+  // เช็คว่า กรอกข้อมูลครบหรือยัง
+  const isFormComplete = isNameValid && isEmailValid && isPasswordValid && confirmPassword.length > 0;
+  // เช็คว่า Confirm Password มีปัญหามั้ย
+  const isConfirmPasswordError = isSubmitted && !isPasswordMatch;
+  // คุมสถานะปุ่ม
+  const isFormDisabled = isLoading || !isFormComplete;
   
   const router = useRouter();
 
-  // 💡 3. เปลี่ยนเป็น async function
   const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitted(true);
@@ -31,12 +40,12 @@ export default function Register() {
     setSuccessMessage("");
 
     // ถ้าข้อมูลไม่ครบ ไม่ต้องยิง API
-    if (!isNameValid || !isEmailValid || !isPasswordValid) return;
+    if (!isNameValid || !isEmailValid || !isPasswordValid || !isPasswordMatch) return;
 
     setIsLoading(true); // เริ่มหมุนติ้วๆ
 
     try {
-      // 💡 1. ดึง URL มาจาก .env และใช้ axios.post
+      //  ดึง URL มาจาก .env และใช้ axios.post
       const apiUrl = process.env.NEXT_PUBLIC_API_URL;
       const response = await axios.post(`${apiUrl}/api/auth/register`, {
         email: email,
@@ -44,7 +53,7 @@ export default function Register() {
         name: name,
       });
 
-      // 💡 2. axios จัดการ JSON ให้แล้ว เรียกใช้ response.data ได้เลย
+      // axios จัดการ JSON ให้แล้ว เรียกใช้ response.data ได้เลย
       console.log("✅ สมัครผ่าน Backend สำเร็จ:", response.data);
       router.push("/register-success");
       
@@ -99,6 +108,18 @@ export default function Register() {
               textFalse="Password must be at least 6 characters"
               disabled={isLoading}
             />
+
+            <InputField 
+              label="Confirm Password"
+              placeholder="Confirm Password"
+              text={confirmPassword}
+              onChange={(val) => {setConfirmPassword(val); setErrorMessage(""); }}
+              type="password"
+              correct={!isConfirmPasswordError}
+              textTrue=""
+              textFalse={isConfirmPasswordError ? "Password do not match" : ""}
+              disabled={isLoading}
+            />
           </div>
 
           {/* 💡 แสดงข้อความ Error หรือ Success จาก Database */}
@@ -106,8 +127,8 @@ export default function Register() {
           {successMessage && <p className="text-brand-green text-sm text-center">{successMessage}</p>}
 
           <div className="pt-4 flex justify-center">
-            {/* 💡 เปลี่ยนข้อความปุ่มตอนกำลังโหลด และ disable ปุ่ม */}
-            <Button variant="primary" type="submit" className="w-full" disabled={isLoading}>
+            {/* เปลี่ยนข้อความปุ่มตอนกำลังโหลด และ disable ปุ่ม */}
+            <Button variant="primary" type="submit" className="w-full cursor-pointer" disabled={isFormDisabled} state={isFormDisabled ? "disabled" : "default"}>
               <span className="w-full text-center block">
                 {isLoading ? "Registering..." : "Register"}
               </span>

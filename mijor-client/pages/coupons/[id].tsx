@@ -41,7 +41,7 @@ export default function CouponDetail() {
   /* ===== Hooks ===== */
   const router = useRouter();
   const { id } = router.query;
-  const { user } = useAuth();
+  const { user , navigateToLogin } = useAuth();
 
   /* ===== Component State ===== */
   const [isOpen, setIsOpen] = useState(false);
@@ -263,7 +263,7 @@ export default function CouponDetail() {
         primaryActionButton="Sign up"
         secondaryActionButton="Log in"
         onPrimaryAction={() => router.push("/register")}
-        onSecondaryAction={() => router.push("/login")}
+        onSecondaryAction={navigateToLogin}
       >
         Please log in to get this coupon.
       </Modal>

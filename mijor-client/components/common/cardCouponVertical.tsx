@@ -34,7 +34,7 @@ export default function CardCouponVertical({
   /* ===== State ===== */
   const [isCollected, setIsCollected] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const { user } = useAuth();
+  const { user , navigateToLogin } = useAuth();
 
   /* ===== Derived State ===== */
   const hasCoupon = userCoupons?.includes(coupon_id || "");
@@ -154,7 +154,7 @@ export default function CardCouponVertical({
         primaryActionButton="Sign up"
         secondaryActionButton="Log in"
         onPrimaryAction={() => router.push("/register")}
-        onSecondaryAction={() => router.push("/login")}
+        onSecondaryAction={navigateToLogin}
       >
         Please log in to get this coupon.
       </Modal>
