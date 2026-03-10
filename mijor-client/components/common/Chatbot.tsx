@@ -76,7 +76,7 @@ export default function Chatbot () {
                                 key={index}
                                 className={`flex mb-6 ${msg.role === "user" ? "justify-end" : "justify-start"}`}
                             >
-                                <div className={`max-w-[80%] rounded-lg px-4 py-2 text-sm ${
+                                <div className={`max-w-[80%] rounded-lg px-4 py-2 text-sm whitespace-pre-wrap ${
                                     msg.role === "user"
                                     ? "bg-brand-blue-300 text-white rounded-br-none"
                                     : "bg-brand-gray-200 text-white rounded-bl-none"
