@@ -1,5 +1,4 @@
 /* ===== Component: QRCodeForm ===== */
-/* Responsibility: Render a placeholder for QR code payment generation and display */
 
 export default function QRCodeForm() {
     return (
@@ -8,5 +7,5 @@ export default function QRCodeForm() {
                 <p className="text-body-2 text-brand-gray-400">QR Code Payment</p>
             </div>
         </div>
-    )
+    );
 }
