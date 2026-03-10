@@ -16,6 +16,7 @@ import { formatRemainingTime } from "@/utils/formatRemainingTime";
 import { formatTime } from "@/utils/formatTime";
 import formatDate from "@/utils/formatDate";
 import { ShowtimeInfo, PaymentParams } from "@/types/booking";
+import axios from "axios";
 
 type AlertConfig = {
     type: "error" | "success";
@@ -166,20 +167,16 @@ export default function PaymentStep({
             const selectedCoupon = userCoupons.find((c) => c.id === selectedCouponId);
             const actualCouponId = selectedCoupon?.coupons?.id || "";
 
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/payments/create-payment-intent`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    amount: roundedAmount,
-                    bookingId: movieInfo?.title || "booking",
-                    totalPrice: Math.round(totalPrice * 100) / 100,
-                    selectedCouponId: actualCouponId,
-                }),
+            const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/payments/create-payment-intent`, {
+                amount: roundedAmount,
+                bookingId: movieInfo?.title || "booking",
+                totalPrice: Math.round(totalPrice * 100) / 100,
+                selectedCouponId: actualCouponId,
             });
 
-            if (!response.ok) {
+            if (response.status !== 200) {
                 // อ่าน body ก่อนเพื่อดู error จาก server จริงๆ
-                const errorData = await response.json().catch(() => null);
+                const errorData = response.data;
                 const serverMessage = errorData?.message || errorData?.error || `HTTP ${response.status}`;
                 console.error('❌ Payment API error:', { status: response.status, body: errorData });
                 setAlertConfig({
@@ -190,7 +187,7 @@ export default function PaymentStep({
                 return null;
             }
 
-            const data = await response.json();
+            const data = response.data;
             console.log('🔵 Payment intent response:', data);
 
             if (data.success && data.clientSecret) {

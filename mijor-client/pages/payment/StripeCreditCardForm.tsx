@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import {
   CardNumberElement,
   CardExpiryElement,
@@ -34,6 +36,11 @@ export default function StripeCreditCardForm({
   selectedCouponId,
   finalPrice,
 }: any) {
+
+    if (typeof window === 'undefined') {
+    return <div>Loading payment form...</div>;
+  }
+  
   const stripe = useStripe();
   const elements = useElements();
 
