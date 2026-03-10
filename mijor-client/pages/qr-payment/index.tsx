@@ -60,7 +60,7 @@ export default function QRPayment() {
   } = usePaymentStatus(paymentIntentId);
 
   // Generate QR Code
-  useEffect(() => {
+useEffect(() => {
     if (!isReady) return;
     if (hasGeneratedRef.current) return;
     hasGeneratedRef.current = true;
@@ -103,10 +103,11 @@ export default function QRPayment() {
           console.log("🔵 QR Payment Created:", data);
           setQrData(data.qrData);
           setPaymentIntentId(data.paymentIntentId);
+          if (data.expiresIn) {
+            setTimeRemaining(data.expiresIn);
+          }
         } else {
-          throw new Error(
-            data.error || data.message || "Failed to create QR payment",
-          );
+          throw new Error(data.error || data.message || "Failed to create QR payment");
         }
 
         setIsLoading(false);
@@ -160,7 +161,7 @@ export default function QRPayment() {
 
   /* ===== Payment Status Handler ===== */
   // Responsibility: Handle payment status changes and redirects
-  useEffect(() => {
+useEffect(() => {
     if (paymentStatus === "succeeded") {
       const confirmBooking = async () => {
         try {
