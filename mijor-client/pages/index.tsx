@@ -17,6 +17,7 @@ import SearchSection from "@/components/landing/SearchSection";
 import Button from "@/components/ui/Button";
 import Alert from "@/components/ui/Alert";
 import Footer from "@/components/common/footer";
+import CouponMinigameModal from "@/components/ui/CouponMinigameModal";
 
 import { formatDate } from "@/utils/dateUtils";
 
@@ -51,6 +52,7 @@ function LandingPage() {
   const [coupons, setCoupons] = useState<Coupon[]>([]);
   const [userCouponIds, setUserCouponIds] = useState<string[]>([]);
   const [showAlert, setShowAlert] = useState(false);
+  const [isMinigameOpen, setIsMinigameOpen] = useState(false);
 
   /* ================= CINEMA ================= */
   const { cinemas, isNearestFirst, toggleSort, loading, errorAlert } =
@@ -254,10 +256,12 @@ function LandingPage() {
 
       {/* COUPONS */}
       <section className="px-6 py-12">
-        <div className="flex justify-between mb-6">
-          <h2 className="text-3xl font-bold">
-            Special Coupons
-          </h2>
+        <div className="flex justify-between items-center mb-6">
+          <div className="flex items-center gap-4">
+            <h2 className="text-3xl font-bold">
+              Special Coupons
+            </h2>
+          </div>
           <Button
             variant="text"
             onClick={() => router.push("/coupons")}
@@ -349,6 +353,21 @@ function LandingPage() {
       )}
 
       <Footer />
+
+      {/* FLOATING ACTION BUTTON FOR MINIGAMES */}
+      <button
+        onClick={() => setIsMinigameOpen(true)}
+        className="fixed bottom-6 right-6 z-40 bg-gradient-to-r from-pink-500 to-purple-500 text-white w-14 h-14 rounded-full flex items-center justify-center text-3xl shadow-[0_4px_15px_rgba(236,72,153,0.5)] hover:scale-110 transition-transform animate-bounce"
+        aria-label="Play Minigames"
+        title="Play Minigames to earn discount coupons!"
+      >
+        🎮
+      </button>
+
+      <CouponMinigameModal
+        isOpen={isMinigameOpen}
+        onClose={() => setIsMinigameOpen(false)}
+      />
     </div>
   );
 }
