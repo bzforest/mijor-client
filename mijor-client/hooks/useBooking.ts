@@ -5,11 +5,27 @@ import { api } from "@/lib/booking/api";
 import { socket } from "@/lib/booking/socket";
 import { useAuth } from "@/contexts/AuthContext";
 import { SeatRow, ShowtimeInfo, PaymentParams } from "@/types/booking";
+import { useMemo as useMemoReact } from "react";
 
 export const useBooking = () => {
   const router = useRouter();
   const { user } = useAuth();
   const { showtimeId } = router.query;
+
+  // ===== Friend Seat Data (from share link) =====
+  // The share API returns seats.id, but the booking grid uses showtime_seats.id.
+  // So we pass seat labels (e.g., "A3", "B5") instead, and resolve to showtime_seat IDs here.
+  const friendSeatLabels = useMemoReact(() => {
+    const raw = router.query.friendSeatLabels;
+    if (!raw) return [] as string[];
+    try {
+      return JSON.parse(raw as string) as string[];
+    } catch {
+      return [] as string[];
+    }
+  }, [router.query.friendSeatLabels]);
+  const friendName = (router.query.friendName as string) || null;
+  const friendAvatar = (router.query.friendAvatar as string) || null;
 
   // ===== State Management =====
   const [next, setNext] = useState<boolean>(false);
@@ -22,7 +38,8 @@ export const useBooking = () => {
   // ===== Selectors & Derived State =====
   const selectedSeatLabels = useMemo(() => {
     /* ================= Label Extraction ================= */
-    // Responsibility: Map seat IDs to their corresponding row letters and seat numbers
+    // Responsibility: Map seat IDs to their corresponding row let
+    // ters and seat numbers
     const labels = selectedSeats.map((id) => {
       const row = seats.find((r) => r.seats.some((s) => s.id === id));
       const seat = row?.seats.find((s) => s.id === id);
@@ -96,6 +113,7 @@ export const useBooking = () => {
         clearInterval(interval);
         setRemainingTime(0);
         setExpireTime(null);
+        updateSeatStatus(selectedSeats, "available");
         setSelectedSeats([]);
         setNext(false);
       } else {
@@ -119,22 +137,26 @@ export const useBooking = () => {
 
   /* ================= Realtime Seat Updates ================= */
   useEffect(() => {
-    socket.on("seatSelected", ({ seatIds }) => {
+    const handleSeatSelected = ({ seatIds }: { seatIds: string[] }) => {
       updateSeatStatus(seatIds, "selected");
-    });
+    };
 
-    socket.on("seatBooked", ({ seatIds }) => {
+    const handleSeatBooked = ({ seatIds }: { seatIds: string[] }) => {
       updateSeatStatus(seatIds, "booked");
-    });
+    };
 
-    socket.on("seatExpired", ({ seatIds }) => {
+    const handleSeatExpired = ({ seatIds }: { seatIds: string[] }) => {
       updateSeatStatus(seatIds, "available");
-    });
+    };
+
+    socket.on("seatSelected", handleSeatSelected);
+    socket.on("seatBooked", handleSeatBooked);
+    socket.on("seatExpired", handleSeatExpired);
 
     return () => {
-      socket.off("seatSelected");
-      socket.off("seatBooked");
-      socket.off("seatExpired");
+      socket.off("seatSelected", handleSeatSelected);
+      socket.off("seatBooked", handleSeatBooked);
+      socket.off("seatExpired", handleSeatExpired);
     };
   }, []);
 
@@ -204,12 +226,16 @@ export const useBooking = () => {
     if (!selectedSeats.length) return;
 
     try {
-      await api.post("/showtimeSeat/confirm", {
+      const bookingResult = await api.post("/showtimeSeat/confirm", {
         showtimeId,
         seatIds: selectedSeats,
       });
 
+      const bookingId = bookingResult.data.bookingId;
+
       const nextQuery: any = {
+        bookingId: bookingId,
+        showtimeId: showtimeId as string,
         title: movieInfo?.title || "",
         picture: movieInfo?.posterUrl || "",
         date: movieInfo?.date || "",
@@ -242,6 +268,28 @@ export const useBooking = () => {
     }
   };
 
+  // ===== Resolve Friend Seat Labels to showtime_seat IDs =====
+  // friendSeatLabels contains labels like ["A3", "B5"]
+  // We need to find the corresponding showtime_seats.id in the loaded seat grid
+  const friendSeatIds = useMemoReact(() => {
+    if (friendSeatLabels.length === 0 || seats.length === 0)
+      return [] as string[];
+
+    const resolved: string[] = [];
+    for (const label of friendSeatLabels) {
+      for (const row of seats) {
+        const matchingSeat = row.seats.find(
+          (seat) => `${row.row_letter}${seat.seat_number}` === label,
+        );
+        if (matchingSeat) {
+          resolved.push(matchingSeat.id);
+          break;
+        }
+      }
+    }
+    return resolved;
+  }, [friendSeatLabels, seats]);
+
   return {
     seats,
     movieInfo,
@@ -253,5 +301,8 @@ export const useBooking = () => {
     toggleSeat,
     handleSelect,
     handleConfirm,
+    friendSeatIds,
+    friendName,
+    friendAvatar,
   };
 };
