@@ -4,15 +4,11 @@
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import Button from "@/components/ui/Button";
-import {
-  ArrowLeft,
-  Clock,
-  CheckCircle,
-  AlertCircle,
-  RefreshCw,
-} from "lucide-react";
+import Modal from "@/components/ui/Modal";
+import { CheckCircle, AlertCircle } from "lucide-react";
 import QRCodeDisplay from "@/components/payment/QRCodeDisplay";
 import { usePaymentStatus } from "@/hooks/usePaymentStatus";
+import axios from "axios";
 
 export default function QRPayment() {
   const router = useRouter();
@@ -28,6 +24,8 @@ export default function QRPayment() {
   const seatExpiresAt = (query.seatExpiresAt as string) || "";
   const finalPrice = (query.finalPrice as string) || "0";
   const selectedSeats = JSON.parse((query.selectedSeats as string) || "[]");
+  const bookingId = (query.bookingId as string) || "";
+  const selectedCouponId = (query.selectedCouponId as string) || "";
 
   // QR Code state management
   const [qrData, setQrData] = useState<any>(null);
@@ -69,35 +67,36 @@ export default function QRPayment() {
           amount: parseFloat(finalPrice),
           bookingId: "QR-" + Date.now(),
           totalPrice: parseFloat(finalPrice),
-          selectedCouponId: query.selectedCouponId,
+          selectedCouponId: selectedCouponId,
         });
 
         // Call server API to create QR payment
-        const response = await fetch(
+        const response = await axios.post(
           `${process.env.NEXT_PUBLIC_API_URL}/api/payments/create-qr-payment`,
           {
-            method: "POST",
+            amount: parseFloat(finalPrice),
+            bookingId: bookingId,
+            totalPrice: parseFloat(finalPrice),
+            selectedCouponId: selectedCouponId,
+          },
+          {
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({
-              amount: parseFloat(finalPrice),
-              bookingId: "QR-" + Date.now(),
-              totalPrice: parseFloat(finalPrice),
-              selectedCouponId: query.selectedCouponId,
-            }),
           },
         );
 
         console.log("📡 API Response status:", response.status);
 
-        if (!response.ok) {
-          const errorText = await response.text();
+        if (response.status !== 200) {
+          const errorText = response.data;
           console.error("❌ API Error Response:", errorText);
-          throw new Error(`Failed to create QR payment: ${response.status} ${errorText}`);
+          throw new Error(
+            `Failed to create QR payment: ${response.status} ${errorText}`,
+          );
         }
 
-        const data = await response.json();
+        const data = response.data;
         console.log("📊 API Response data:", data);
 
         if (data.success) {
@@ -342,6 +341,15 @@ export default function QRPayment() {
             </section>
           </div>
         </div>
+      </div>
+      <div className="flex justify-center items-center pt-8">
+        <Button
+          variant="secondary"
+          onClick={handleBack}
+          className="flex items-center gap-2"
+        >
+          Back
+        </Button>
       </div>
     </main>
   );

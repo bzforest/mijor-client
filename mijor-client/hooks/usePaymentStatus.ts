@@ -2,6 +2,7 @@
 /* Responsibility: Poll payment status from server with demo mode fallback */
 
 import { useState, useEffect, useCallback } from "react";
+import axios from "axios";
 
 interface PaymentStatusReturn {
   status: 'pending' | 'processing' | 'succeeded' | 'canceled' | 'expired' | 'failed';
@@ -46,15 +47,15 @@ export const usePaymentStatus = (paymentIntentId: string): PaymentStatusReturn =
       }
       
       // Real API call for production payments
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/payments/status/${paymentIntentId}`);
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/payments/status/${paymentIntentId}`);
       
-      if (!response.ok) {
+      if (response.status !== 200) {
         console.log('🔄 Status API not working, keeping demo mode');
         setIsLoading(false);
         return;
       }
       
-      const data = await response.json();
+      const data = response.data;
       console.log('📊 Payment status response:', data);
       
       if (data.success) {
