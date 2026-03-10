@@ -33,7 +33,7 @@ export const usePaymentStatus = (paymentIntentId: string): PaymentStatusReturn =
         console.log('🔄 Demo payment detected, simulating status check');
         
         // Simulate random payment success (10% chance)
-        const randomSuccess = Math.random() > 0.9;
+        const randomSuccess = Math.random() > 0.5;
         
         if (randomSuccess) {
           setStatus('succeeded');
