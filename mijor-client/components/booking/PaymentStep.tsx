@@ -52,6 +52,7 @@ export default function PaymentStep({
     const [clientSecret, setClientSecret] = useState<string>("");
     const [stripeAction, setStripeAction] = useState<any>(null);
     const [isProcessingPayment, setIsProcessingPayment] = useState<boolean>(false);
+    const [isCreatingIntent, setIsCreatingIntent] = useState<boolean>(false);
     const [paymentSuccess, setPaymentSuccess] = useState<boolean>(false);
 
     /* ===== Data Fetching ===== */
@@ -144,81 +145,86 @@ export default function PaymentStep({
     }, [alertConfig]);
 
     /* ===== Payment Intent Creation ===== */
-    // Responsibility: Create Stripe payment intent for credit card payments
-    useEffect(() => {
-        if (useStripe && finalPrice > 0 && !clientSecret) {
-            const createPaymentIntent = async () => {
-                try {
-                    console.log('🔵 Creating payment intent with data:', {
-                        amount: finalPrice,
-                        bookingId: movieInfo?.title || "booking",
-                        totalPrice,
-                        selectedCouponId,
+    // Responsibility: Create Stripe payment intent on demand (called when user clicks Next)
+    const createPaymentIntent = async (): Promise<string | null> => {
+        // Reuse existing clientSecret if already created
+        if (clientSecret) return clientSecret;
+
+        setIsCreatingIntent(true);
+        try {
+            console.log('🔵 Creating payment intent with data:', {
+                amount: finalPrice,
+                bookingId: movieInfo?.title || "booking",
+                totalPrice,
+                selectedCouponId,
+            });
+
+            const roundedAmount = Math.round(finalPrice * 100) / 100;
+
+            // selectedCouponId ใน state = profile_coupons.id
+            // แต่ server ต้องการ coupons.id → resolve ก่อนส่ง
+            const selectedCoupon = userCoupons.find((c) => c.id === selectedCouponId);
+            const actualCouponId = selectedCoupon?.coupons?.id || "";
+
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/payments/create-payment-intent`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    amount: roundedAmount,
+                    bookingId: movieInfo?.title || "booking",
+                    totalPrice: Math.round(totalPrice * 100) / 100,
+                    selectedCouponId: actualCouponId,
+                }),
+            });
+
+            if (!response.ok) {
+                // อ่าน body ก่อนเพื่อดู error จาก server จริงๆ
+                const errorData = await response.json().catch(() => null);
+                const serverMessage = errorData?.message || errorData?.error || `HTTP ${response.status}`;
+                console.error('❌ Payment API error:', { status: response.status, body: errorData });
+                setAlertConfig({
+                    type: "error",
+                    title: "Payment Error",
+                    message: serverMessage,
+                });
+                return null;
+            }
+
+            const data = await response.json();
+            console.log('🔵 Payment intent response:', data);
+
+            if (data.success && data.clientSecret) {
+                setClientSecret(data.clientSecret);
+                console.log('✅ Payment intent created successfully');
+                return data.clientSecret;
+            } else {
+                if (data.debug) {
+                    setAlertConfig({
+                        type: "error",
+                        title: "Price Validation Failed",
+                        message: `Server price: ${data.debug.serverPrice}, Client price: ${data.debug.clientPrice}, Difference: ${data.debug.difference}`,
                     });
-                    
-                    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/payments/create-payment-intent`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            amount: finalPrice,
-                            bookingId: movieInfo?.title || "booking",
-                            totalPrice,
-                            selectedCouponId,
-                        }),
-                    });
-                    
-                    if (!response.ok) {
-                        if (response.status === 429) {
-                            console.error('🔴 Rate limit exceeded. Please wait a moment.');
-                            setAlertConfig({
-                                type: "error",
-                                title: "Too Many Requests",
-                                message: "Please wait a moment before trying again.",
-                            });
-                            return;
-                        }
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    
-                    const data = await response.json();
-                    console.log('🔵 Payment intent response:', data);
-                    
-                    if (data.success && data.clientSecret) {
-                        setClientSecret(data.clientSecret);
-                        console.log('✅ Payment intent created successfully');
-                    } else {
-                        console.error('Failed to create payment intent:', data.error || 'Unknown error');
-                        if (data.debug) {
-                            console.error('Debug info:', data.debug);
-                            setAlertConfig({
-                                type: "error",
-                                title: "Price Validation Failed",
-                                message: `Server price: ${data.debug.serverPrice}, Client price: ${data.debug.clientPrice}, Difference: ${data.debug.difference}`,
-                            });
-                        } else {
-                            setAlertConfig({
-                                type: "error",
-                                title: "Payment Error",
-                                message: data.message || "Failed to initialize payment. Please try again.",
-                            });
-                        }
-                    }
-                } catch (error) {
-                    console.error('Error creating payment intent:', error);
+                } else {
                     setAlertConfig({
                         type: "error",
                         title: "Payment Error",
-                        message: "Failed to initialize payment. Please try again.",
+                        message: data.message || "Failed to initialize payment. Please try again.",
                     });
                 }
-            };
-            
-            const timeoutId = setTimeout(createPaymentIntent, 500);
-            return () => clearTimeout(timeoutId);
+                return null;
+            }
+        } catch (error) {
+            console.error('Error creating payment intent:', error);
+            setAlertConfig({
+                type: "error",
+                title: "Payment Error",
+                message: "Failed to initialize payment. Please try again.",
+            });
+            return null;
+        } finally {
+            setIsCreatingIntent(false);
         }
-    }, [useStripe, finalPrice, movieInfo?.title, totalPrice, selectedCouponId, clientSecret]);
+    };
 
     /* ===== Payment Processing ===== */
     // Responsibility: Handle payment confirmation for both Credit Card and QR Code
@@ -227,15 +233,18 @@ export default function PaymentStep({
             console.log('🔒 Already processing, ignoring duplicate request');
             return;
         }
-        
+
         setIsProcessingPayment(true);
-        
+
         try {
             if (activeTab === "CreditCard") {
                 if (useStripe && stripeAction) {
                     await stripeAction();
                 }
             } else if (activeTab === "QRCode") {
+                // คำนวณ expiresAt จาก remainingTime เพื่อส่งให้หน้า QR ใช้ timer เดียวกัน
+                const seatExpiresAt = new Date(Date.now() + remainingTime * 1000).toISOString();
+
                 const params = {
                     title: movieInfo?.title || "",
                     picture: movieInfo?.posterUrl || "",
@@ -250,6 +259,7 @@ export default function PaymentStep({
                     selectedCouponId,
                     finalPrice: finalPrice.toString(),
                     paymentMethod: "QRCode",
+                    seatExpiresAt,
                 };
 
                 const searchParams = new URLSearchParams(params).toString();
@@ -260,15 +270,15 @@ export default function PaymentStep({
             }
 
             setPaymentSuccess(true);
-            
+
             const selectedCoupon = userCoupons.find((c) => c.id === selectedCouponId);
-            
+
             console.log('🔵 [PaymentStep] Selected coupon:', {
                 selectedCouponId,
                 foundCoupon: selectedCoupon,
                 couponId: selectedCoupon?.coupons?.id
             });
-            
+
             const params: PaymentParams = {
                 selectedCouponId: selectedCoupon?.coupons?.id || selectedCouponId,
                 finalPrice,
@@ -283,13 +293,13 @@ export default function PaymentStep({
             console.log('🔵 Calling onPaymentSuccess with params:', params);
             onPaymentSuccess(params);
             setIsConfirmModalOpen(false);
-            
+
             setAlertConfig({
                 type: "success",
                 title: "Payment Successful!",
                 message: "Your payment has been processed successfully.",
             });
-            
+
         } catch (error) {
             console.error('Payment failed:', error);
             setAlertConfig({
@@ -329,35 +339,22 @@ export default function PaymentStep({
                     />
                     <article className="flex flex-col gap-4">
                         {activeTab === "CreditCard" && (
-                            <>
-                                {useStripe && clientSecret ? (
-                                    <StripeProvider clientSecret={clientSecret}>
-                                        <StripeCreditCardForm 
-                                            setHandleStripePayment={setStripeAction}
-                                            onPaymentSuccess={() => {
-                                                console.log('🔵 [PaymentStep] Before onPaymentSuccess:', {
-                                                    selectedCouponId,
-                                                    finalPrice,
-                                                    paymentMethod: "CreditCard"
-                                                });
-                                                onPaymentSuccess({
-                                                    selectedCouponId,
-                                                    finalPrice,
-                                                    paymentMethod: "CreditCard",
-                                                });
-                                            }}
-                                            clientSecret={clientSecret}
-                                            onFormValidChange={setIsFormValid}
-                                            selectedCouponId={selectedCouponId}
-                                            finalPrice={finalPrice}
-                                        />
-                                    </StripeProvider>
-                                ) : (
-                                    <div className="text-center text-white p-8">
-                                        <p className="text-gray-400">Loading payment form...</p>
-                                    </div>
-                                )}
-                            </>
+                            <StripeProvider clientSecret={clientSecret}>
+                                <StripeCreditCardForm
+                                    setHandleStripePayment={setStripeAction}
+                                    onPaymentSuccess={() => {
+                                        onPaymentSuccess({
+                                            selectedCouponId,
+                                            finalPrice,
+                                            paymentMethod: "CreditCard",
+                                        });
+                                    }}
+                                    clientSecret={clientSecret}
+                                    onFormValidChange={setIsFormValid}
+                                    selectedCouponId={selectedCouponId}
+                                    finalPrice={finalPrice}
+                                />
+                            </StripeProvider>
                         )}
                         {activeTab === "QRCode" && <QRCodeForm />}
                     </article>
@@ -381,10 +378,17 @@ export default function PaymentStep({
                         selectedCouponId={selectedCouponId}
                         onCouponChange={(id) => setSelectedCouponId(id)}
                         remainingTime={remainingTime > 0 ? formatRemainingTime(remainingTime) : ""}
-                        isNextDisabled={!isFormValid || isProcessingPayment}
-                        onNext={() => setIsConfirmModalOpen(true)}
+                        isNextDisabled={!isFormValid || isProcessingPayment || isCreatingIntent}
+                        onNext={async () => {
+                            if (activeTab === "CreditCard") {
+                                // Create PaymentIntent lazily on Next click
+                                const secret = await createPaymentIntent();
+                                if (!secret) return; // abort if creation failed
+                            }
+                            setIsConfirmModalOpen(true);
+                        }}
                         paymentMethod={activeTab}
-                        isProcessing={isProcessingPayment}
+                        isProcessing={isProcessingPayment || isCreatingIntent}
                         paymentSuccess={paymentSuccess}
                     />
                 </section>
