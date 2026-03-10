@@ -48,7 +48,7 @@ export default function ForgotPassword() {
     };
 
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen bg-brand-gray-0 px-4 sm:px-6 lg:px-8">
+        <div className="flex flex-col items-center min-h-screen bg-brand-gray-0 px-4 sm:px-6 lg:px-8 pt-30">
             <div className="w-full max-w-md space-y-8">
 
                 {/* Header */}
