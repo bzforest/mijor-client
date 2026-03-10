@@ -3,6 +3,8 @@ export type Seat = {
   seat_number: number;
   status: "available" | "selected" | "booked";
   selected_by: string;
+  booked_by_name: string | null;
+  booked_by_avatar: string | null;
 };
 
 export type SeatRow = {
@@ -31,4 +33,3 @@ export type PaymentParams = {
   cardOwner?: string;
   cardnumber?: string;
 };
-
