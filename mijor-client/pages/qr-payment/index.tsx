@@ -65,7 +65,7 @@ export default function QRPayment() {
 
         console.log("🔵 Creating QR payment with data:", {
           amount: parseFloat(finalPrice),
-          bookingId: "QR-" + Date.now(),
+          bookingId: bookingId || "QR-" + Date.now(),
           totalPrice: parseFloat(finalPrice),
           selectedCouponId: selectedCouponId,
         });
@@ -75,7 +75,7 @@ export default function QRPayment() {
           `${process.env.NEXT_PUBLIC_API_URL}/api/payments/create-qr-payment`,
           {
             amount: parseFloat(finalPrice),
-            bookingId: bookingId,
+            bookingId: bookingId || "QR-" + Date.now(),
             totalPrice: parseFloat(finalPrice),
             selectedCouponId: selectedCouponId,
           },
