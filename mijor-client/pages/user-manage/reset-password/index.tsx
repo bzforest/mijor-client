@@ -5,10 +5,16 @@ import { useState } from "react";
 import MenuSidebar from "@/components/common/menuSidebar";
 import Alert from "@/components/ui/Alert";
 import { Eye, EyeOff } from "lucide-react";
+import axios from "axios";
+import { useAuth } from "@/contexts/AuthContext";
+import { useRouter } from "next/navigation";
 
 /* ===== Component ===== */
 export default function ResetPasswordPage() {
 
+  const { updateSession } = useAuth();
+  const routerDirect = useRouter();
+  
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -21,8 +27,6 @@ export default function ResetPasswordPage() {
   const [alertType, setAlertType] = useState<"success" | "error">("success");
   const [alertTitle, setAlertTitle] = useState("");
   const [alertMessage, setAlertMessage] = useState("");
-
-
 
   /* ===== Reset Logic ===== */
   const handleReset = async () => {
@@ -48,47 +52,44 @@ export default function ResetPasswordPage() {
     }
   
     try {
-  
-      const res = await fetch("http://localhost:4000/api/auth/reset-password", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          email: email,
-          currentPassword: currentPassword,
-          newPassword: newPassword
-        })
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+      
+      const res = await axios.post(`${apiUrl}/api/auth/reset-password`, {
+        email: email,
+        currentPassword: currentPassword,
+        newPassword: newPassword
       });
   
-      const data = await res.json();
+      const data = res.data;
 
       if (!data.success) {
-
         setAlertType("error");
         setAlertTitle("Error");
         setAlertMessage(data.message);
         setShowAlert(true);
-
         return;
+      }
+
+      // เมื่อเปลี่ยนสำเร็จแล้ว ให้อัปเดต Session ในเครื่องเราด้วยข้อมูลใหม่ที่ได้จาก API (ไม่มีการ redirect)
+      if (data.session && data.user) {
+        updateSession(data.user, data.session.access_token);
       }
 
       setAlertType("success");
       setAlertTitle("Password updated");
-      setAlertMessage("Your password has been successfully reset");
+      setAlertMessage("Your password has been successfully reset.");
       setShowAlert(true);
 
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
 
-    } catch (err) {
-
+    } catch (err: any) {
+      console.error("Reset error:", err);
       setAlertType("error");
-      setAlertTitle("Server error");
-      setAlertMessage("Something went wrong");
+      setAlertTitle("Error");
+      setAlertMessage(err.response?.data?.message || "Something went wrong");
       setShowAlert(true);
-
     }
 
   };

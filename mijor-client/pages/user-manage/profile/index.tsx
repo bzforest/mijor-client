@@ -7,6 +7,8 @@ import Alert from "@/components/ui/Alert";
 import { User } from "lucide-react";
 import { supabase } from "@/utils/supabase";
 import { useRouter } from "next/navigation";
+import axios from "axios";
+import { useAuth } from "@/contexts/AuthContext";
 
 /* ===== Component ===== */
 export default function ProfilePage() {
@@ -23,42 +25,51 @@ export default function ProfilePage() {
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
+  const { user, updateUser } = useAuth();
+
   /* ============================= */
-  /* โหลด user + avatar */
+  /* โหลดข้อมูลจาก Backend (avatars.ts) */
   /* ============================= */
   useEffect(() => {
 
-    const loadUser = async () => {
+    const loadProfile = async () => {
+      try {
+        setLoading(true);
 
-      const { data } = await supabase.auth.getSession();
+        const token = localStorage.getItem("access_token") || sessionStorage.getItem("access_token");
 
-      const session = data.session;
-
-      if (!session) return;
-
-      const user = session.user;
-
-      setEmail(user.email || "");
-
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("name, avatar_url")
-        .eq("id", user.id)
-        .single();
-
-      if (profile) {
-
-        setName(profile.name || "");
-
-        if (profile.avatar_url) {
-          setImagePreview(profile.avatar_url + "?t=" + Date.now());
+        if (!token) {
+          console.log("No token found");
+          return;
         }
 
-      }
+        // ดึงข้อมูลผ่าน Backend Server (avatars.ts) ครั้งเดียว
+        const res = await axios.get("http://localhost:4000/api/avatars", {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
 
+        if (res.data.success) {
+          setName(res.data.name || "");
+          setEmail(res.data.email || "");
+          if (res.data.avatar_url) {
+            setImagePreview(res.data.avatar_url);
+          }
+        }
+      } catch (err: any) {
+        console.error("Profile fetch error:", err);
+        // ⭐ ถ้ากุญแจหมดอายุ (401) ให้สั่ง Logout หรือเด้งไปหน้า Login
+        if (err.response?.status === 401) {
+          alert("Session expired, please login again.");
+          router.push("/login"); 
+        }
+      } finally {
+        setLoading(false);
+      }
     };
 
-    loadUser();
+    loadProfile();
 
   }, []);
 
@@ -98,7 +109,7 @@ export default function ProfilePage() {
   };
 
   /* ============================= */
-  /* Save profile */
+  /* Save profile ผ่าน Backend */
   /* ============================= */
   const handleSave = async () => {
 
@@ -106,89 +117,58 @@ export default function ProfilePage() {
 
       setLoading(true);
 
-      const { data } = await supabase.auth.getSession();
+      const token = localStorage.getItem("access_token") || sessionStorage.getItem("access_token");
+      const isRemember = !!localStorage.getItem("access_token");
 
-      const session = data.session;
-
-      if (!session) {
-        alert("Session expired");
+      if (!token || !user) {
+        alert("Session expired, please login again.");
         return;
       }
 
-      const user = session.user;
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
-      let uploadedImageUrl = imagePreview || "";
-
-      /* ============================= */
-      /* Upload avatar */
-      /* ============================= */
-
+      /* 1. อัปเดต Avatar (ถ้ามีการเลือกไฟล์) */
       if (selectedFile) {
+        const formData = new FormData();
+        formData.append("avatar", selectedFile);
 
-        const fileExt = selectedFile.name.split(".").pop();
+        const avatarRes = await axios.post(
+          `${apiUrl}/api/avatars`,
+          formData,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          }
+        );
 
-        const filePath = `${user.id}/avatar.${fileExt}`;
-
-        const { error } = await supabase.storage
-          .from("avatars")
-          .upload(filePath, selectedFile, {
-            upsert: true
-          });
-
-        if (error) {
-
-          console.log(error);
-          alert("Upload failed");
-          return;
-
+        if (avatarRes.data.avatar_url) {
+          setImagePreview(avatarRes.data.avatar_url);
         }
-
-        const { data: publicUrl } = supabase.storage
-          .from("avatars")
-          .getPublicUrl(filePath);
-
-        uploadedImageUrl = publicUrl.publicUrl + "?t=" + Date.now();
-
-        setImagePreview(uploadedImageUrl);
-
       }
 
-      /* ============================= */
-      /* update auth metadata */
-      /* ============================= */
-
-      await supabase.auth.updateUser({
-        data: {
-          name: name,
-          avatar_url: uploadedImageUrl
+      /* 2. อัปเดต Name ผ่าน Backend (avatars.ts หมวด PUT) */
+      console.log("Saving name:", name);
+      await axios.put(
+        `${apiUrl}/api/avatars`,
+        { name },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
         }
-      });
+      );
 
-      /* ============================= */
-      /* update profiles table */
-      /* ============================= */
-
-      await supabase
-        .from("profiles")
-        .update({
-          name: name,
-          avatar_url: uploadedImageUrl
-        })
-        .eq("id", user.id);
+      // อัปเดตข้อมูลผู้ใช้ใน Context และ Storage (เพื่อให้ชื่อที่อื่นเปลี่ยนตาม)
+      updateUser({ ...user, name: name });
 
       setShowAlert(true);
 
-      
-
-    } catch (err) {
-
-      console.log(err);
-      alert("Something went wrong");
-
+    } catch (err: any) {
+      console.error("Save error detailed:", err.response?.data || err.message);
+      alert(err.response?.data?.message || err.message || "Internal Server Error");
     } finally {
-
       setLoading(false);
-
     }
 
   };
@@ -210,8 +190,13 @@ export default function ProfilePage() {
             </h1>
 
             <p className="text-gray-400 text-sm mb-10 max-w-xl">
-              Keep your personal details private.
+              Keep your personal details private. 
+              <br />
+              Information you add here is visible to anyone who can view your profile
             </p>
+            
+
+
 
             {/* Avatar */}
 
