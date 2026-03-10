@@ -22,6 +22,7 @@ export default function QRPayment() {
   const hall = (query.hall as string) || "";
   const cinema = (query.cinema as string) || "";
   const seatExpiresAt = (query.seatExpiresAt as string) || "";
+  const totalPrice = (query.totalPrice as string) || "0"; 
   const finalPrice = (query.finalPrice as string) || "0";
   const selectedSeats = JSON.parse((query.selectedSeats as string) || "[]");
   const bookingId = (query.bookingId as string) || "";
@@ -80,7 +81,7 @@ useEffect(() => {
           {
             amount: parseFloat(finalPrice),
             bookingId: bookingId || "QR-" + Date.now(),
-            totalPrice: parseFloat(finalPrice),
+            totalPrice: parseFloat(totalPrice),
             selectedCouponId: selectedCouponId,
           },
           {

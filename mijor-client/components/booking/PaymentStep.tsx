@@ -349,8 +349,10 @@ export default function PaymentStep({
                                 <StripeCreditCardForm
                                     setHandleStripePayment={setStripeAction}
                                     onPaymentSuccess={() => {
+                                        const selectedCoupon = userCoupons.find((c) => c.id === selectedCouponId);
+                                        const actualCouponId = selectedCoupon?.coupons?.id || "";
                                         onPaymentSuccess({
-                                            selectedCouponId,
+                                            selectedCouponId: actualCouponId,  // ✅ coupons.id
                                             finalPrice,
                                             paymentMethod: "CreditCard",
                                         });
