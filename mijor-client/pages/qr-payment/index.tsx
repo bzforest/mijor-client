@@ -19,6 +19,7 @@ export default function QRPayment() {
     const time = query.time as string || "";
     const hall = query.hall as string || "";
     const cinema = query.cinema as string || "";
+    const seatExpiresAt = query.seatExpiresAt as string || "";
     const finalPrice = query.finalPrice as string || "0";
     const selectedSeats = JSON.parse((query.selectedSeats as string) || "[]");
 
@@ -27,7 +28,16 @@ export default function QRPayment() {
     const [paymentIntentId, setPaymentIntentId] = useState<string>("");
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string>("");
-    const [timeRemaining, setTimeRemaining] = useState(900); // 15 minutes
+
+    // คำนวณ initial timeRemaining จาก seatExpiresAt ที่ส่งมาจากหน้า booking
+    // ถ้าไม่มี fallback เป็น 900 วินาที (15 นาที)
+    const getSecondsRemaining = () => {
+        if (!seatExpiresAt) return 900;
+        const diff = Math.floor((new Date(seatExpiresAt).getTime() - Date.now()) / 1000);
+        return Math.max(0, diff);
+    };
+
+    const [timeRemaining, setTimeRemaining] = useState(() => getSecondsRemaining());
 
     // Payment status tracking
     const { status: paymentStatus, isLoading: statusLoading, error: statusError } = usePaymentStatus(paymentIntentId);
@@ -40,14 +50,14 @@ export default function QRPayment() {
             try {
                 setIsLoading(true);
                 setError("");
-                
+
                 console.log('🔵 Creating QR payment with data:', {
                     amount: parseFloat(finalPrice),
                     bookingId: "QR-" + Date.now(),
                     totalPrice: parseFloat(finalPrice),
                     selectedCouponId: query.selectedCouponId,
                 });
-                
+
                 // Call server API to create QR payment
                 const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/payments/create-qr-payment`, {
                     method: 'POST',
@@ -63,11 +73,11 @@ export default function QRPayment() {
                 });
 
                 console.log('📡 API Response status:', response.status);
-                
+
                 if (!response.ok) {
                     const errorText = await response.text();
                     console.error('❌ API Error Response:', errorText);
-                    
+
                     // If API is not working, create demo QR data
                     console.log('🔄 API not successful, using demo data');
                     const demoQrData = {
@@ -88,7 +98,7 @@ export default function QRPayment() {
                             amount: parseFloat(finalPrice).toFixed(2)
                         }
                     };
-                    
+
                     setQrData(demoQrData);
                     setPaymentIntentId(demoQrData.paymentIntentId);
                     setTimeRemaining(900);
@@ -98,24 +108,24 @@ export default function QRPayment() {
 
                 const data = await response.json();
                 console.log('📊 API Response data:', data);
-                
+
                 if (data.success) {
                     console.log('🔵 QR Payment Created:', data);
-                    
+
                     // Set QR data for new component
                     setQrData(data.qrData);
                     setPaymentIntentId(data.paymentIntentId);
-                    
+
                     // Set expiration time from backend
                     if (data.expiresIn) {
                         setTimeRemaining(data.expiresIn);
                     }
-                    
+
                 } else {
                     console.error('❌ Payment creation failed:', data);
                     throw new Error(data.error || data.message || 'Failed to create QR payment');
                 }
-                
+
                 setIsLoading(false);
             } catch (error) {
                 console.error("❌ Failed to generate QR code:", error);
@@ -132,38 +142,31 @@ export default function QRPayment() {
     // Responsibility: Display countdown timer with proper formatting
     const TimerDisplay = () => {
         return (
-            <span className={`font-mono ${
-                paymentStatus === "expired" ? "text-red-500" : 
-                paymentStatus === "succeeded" ? "text-green-500" : 
-                "text-yellow-500"
-            }`}>
+            <span className={`font-mono ${paymentStatus === "expired" ? "text-red-500" :
+                paymentStatus === "succeeded" ? "text-green-500" :
+                    "text-yellow-500"
+                }`}>
                 {paymentStatus === "succeeded" ? "Paid!" : formatTime(timeRemaining)} ({timeRemaining}s)
             </span>
         );
     };
 
     /* ===== Timer Countdown ===== */
-    // Responsibility: Manage payment countdown timer
+    // Responsibility: นับถอยหลังจาก seatExpiresAt (timestamp จริง) เพื่อ sync กับ seat lock
     useEffect(() => {
-        if (timeRemaining <= 0 || paymentStatus === 'expired' || paymentStatus === 'succeeded') {
-            return;
-        }
+        if (paymentStatus === 'expired' || paymentStatus === 'succeeded') return;
 
-        console.log('⏰ Starting timer with', timeRemaining, 'seconds remaining');
-        
-        const timer = setInterval(() => {
-            setTimeRemaining(prev => {
-                const newValue = prev <= 1 ? 0 : prev - 1;
-                console.log('⏰ Timer tick:', prev, '->', newValue);
-                return newValue;
-            });
-        }, 1000);
-
-        return () => {
-            console.log('⏰ Clearing timer');
-            clearInterval(timer);
+        const tick = () => {
+            const remaining = getSecondsRemaining();
+            setTimeRemaining(remaining);
         };
-    }, []); // Empty dependency - run only once when component mounts
+
+        // อัปเดตทันทีเพื่อให้ตรงกับเวลาจริง
+        tick();
+
+        const timer = setInterval(tick, 1000);
+        return () => clearInterval(timer);
+    }, [seatExpiresAt, paymentStatus]); // re-run ถ้า seatExpiresAt เปลี่ยน (router ready)
 
     /* ===== Payment Status Handler ===== */
     // Responsibility: Handle payment status changes and redirects
@@ -195,7 +198,7 @@ export default function QRPayment() {
         <main className="min-h-screen bg-[#101525]">
             <div className="container mx-auto px-4 py-8">
                 {/* ===== Header ===== */}
-                <header className="flex items-center justify-between mb-8">
+                {/* <header className="flex items-center justify-between mb-8">
                     <Button
                         variant="secondary"
                         onClick={handleBack}
@@ -213,7 +216,7 @@ export default function QRPayment() {
                         <TimerDisplay />
                         {statusLoading && <RefreshCw size={16} className="animate-spin text-blue-500" />}
                     </div>
-                </header>
+                </header> */}
 
                 {/* ===== Main Content ===== */}
                 <div className="max-w-4xl mx-auto">
@@ -223,7 +226,7 @@ export default function QRPayment() {
                             <h2 className="text-xl font-bold text-white mb-6 text-center">
                                 Scan QR Code to Pay
                             </h2>
-                            
+
                             {isLoading ? (
                                 <div className="flex items-center justify-center h-64">
                                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
@@ -269,7 +272,7 @@ export default function QRPayment() {
                                     </div>
                                 </div>
                             ) : (
-                                <QRCodeDisplay 
+                                <QRCodeDisplay
                                     qrData={qrData}
                                     isLoading={statusLoading}
                                     size={256}
@@ -282,28 +285,28 @@ export default function QRPayment() {
                         {/* ===== Booking Details Section ===== */}
                         <section className="bg-brand-gray-100 rounded-xl p-8">
                             <h2 className="text-xl font-bold text-white mb-6">Booking Details</h2>
-                            
+
                             <div className="space-y-4">
                                 <div className="text-white">
                                     <p className="text-gray-400 text-sm">Movie</p>
                                     <p className="font-semibold">{title}</p>
                                 </div>
-                                
+
                                 <div className="text-white">
                                     <p className="text-gray-400 text-sm">Date & Time</p>
                                     <p className="font-semibold">{date} at {time}</p>
                                 </div>
-                                
+
                                 <div className="text-white">
                                     <p className="text-gray-400 text-sm">Cinema & Hall</p>
                                     <p className="font-semibold">{cinema} - {hall}</p>
                                 </div>
-                                
+
                                 <div className="text-white">
                                     <p className="text-gray-400 text-sm">Seats</p>
                                     <p className="font-semibold">{selectedSeats.join(", ")}</p>
                                 </div>
-                                
+
                                 <div className="border-t border-brand-gray-0 pt-4">
                                     <div className="flex justify-between items-center">
                                         <span className="text-white">Total Amount</span>
@@ -314,7 +317,7 @@ export default function QRPayment() {
 
                             <div className="mt-6 p-4 bg-yellow-500/20 rounded-lg">
                                 <p className="text-yellow-500 text-sm text-center">
-                                    ⚠️ Please complete payment within 15 minutes
+                                    ⚠️ Please complete payment within 5 minutes
                                 </p>
                             </div>
                         </section>
