@@ -3,6 +3,7 @@ import Button from "./Button";
 
 type ModalProps = {
   isOpen: boolean;
+  className?: string;
   onClose: () => void;
   title: string;
   children: ReactNode;
@@ -14,6 +15,7 @@ type ModalProps = {
 
 export default function Modal({
   isOpen,
+  className,
   onClose,
   title,
   children,
@@ -33,11 +35,11 @@ export default function Modal({
       />
 
       {/* 2. Modal Card */}
-      <div className="relative w-full max-w-lg bg-brand-gray-100 border border-brand-gray-200 rounded-[8px] p-6">
+      <div className={`relative w-full bg-brand-gray-100 border border-brand-gray-200 rounded-[8px] p-6 ${className}`}>
         {/* Close Button Icon */}
         <button
           onClick={onClose}
-          className="absolute top-6 right-6 text-brand-gray-400 hover:text-white transition-colors"
+          className="absolute top-6 right-6 text-brand-gray-400 hover:text-white transition-colors cursor-pointer"
         >
           <svg
             width="24"

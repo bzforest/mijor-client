@@ -345,7 +345,6 @@ export default function Component() {
                             title={movie.title}
                             picture={movie.picture}
                             date={movie.date}
-                            rating={movie.rating}
                             genre={movie.genre}
                             language={movie.language[0]}
                             remainingTime={movie.remainingTime}
