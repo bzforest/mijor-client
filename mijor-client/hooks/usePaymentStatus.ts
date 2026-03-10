@@ -1,7 +1,7 @@
 /* ===== Hook: usePaymentStatus ===== */
 /* Responsibility: Poll payment status from server with demo mode fallback */
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import axios from "axios";
 
 interface PaymentStatusReturn {
@@ -16,98 +16,65 @@ export const usePaymentStatus = (paymentIntentId: string): PaymentStatusReturn =
   const [status, setStatus] = useState<PaymentStatusReturn['status']>('pending');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [isPolling, setIsPolling] = useState(false);
+  const isPollingRef = useRef(false);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+    /* ===== Stop Polling Function ===== */
+  const stopPolling = useCallback(() => {
+    isPollingRef.current = false;
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+  }, []);
 
   /* ===== Status Check Function ===== */
   // Responsibility: Check payment status via API or demo mode
   const checkStatus = useCallback(async () => {
     if (!paymentIntentId) return;
-
     setIsLoading(true);
     setError(null);
 
     try {
-      console.log('🔍 Checking payment status for:', paymentIntentId);
-      
-      // Demo mode simulation for test payments
-      if (paymentIntentId.startsWith('pi_demo_')) {
-        console.log('🔄 Demo payment detected, simulating status check');
-        
-        // Simulate random payment success (10% chance)
-        const randomSuccess = Math.random() > 0.5;
-        
-        if (randomSuccess) {
-          setStatus('succeeded');
-        } else {
-          setStatus('pending');
-        }
-        
-        setIsLoading(false);
-        return;
-      }
-      
-      // Real API call for production payments
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/payments/status/${paymentIntentId}`);
-      
-      if (response.status !== 200) {
-        console.log('🔄 Status API not working, keeping demo mode');
-        setIsLoading(false);
-        return;
-      }
-      
+      console.log('🔍 Polling payment status for:', paymentIntentId);
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/payments/status/${paymentIntentId}`
+      );
       const data = response.data;
-      console.log('📊 Payment status response:', data);
-      
+      console.log('📊 Payment status response:', data.status);
+
       if (data.success) {
         setStatus(data.status);
-        
-        // Stop polling when payment is complete
-        if (data.status === 'succeeded' || data.status === 'canceled' || data.status === 'expired' || data.status === 'failed') {
-          setIsPolling(false);
+        if (['succeeded', 'canceled', 'failed'].includes(data.status)) {
+          console.log('🛑 Stopping polling:', data.status);
+          stopPolling();
         }
-      } else {
-        throw new Error(data.error || 'Failed to check payment status');
       }
-      
-    } catch (error) {
-      console.error('❌ Status check failed:', error);
-      setError(error instanceof Error ? error.message : 'Unknown error');
+    } catch (err) {
+      console.error('❌ Status check failed:', err);
+      setError(err instanceof Error ? err.message : 'Unknown error');
     } finally {
       setIsLoading(false);
     }
-  }, [paymentIntentId]);
-
-  /* ===== Stop Polling Function ===== */
-  const stopPolling = useCallback(() => {
-    setIsPolling(false);
-  }, []);
+  }, [paymentIntentId, stopPolling]);
 
   /* ===== Auto-Polling Effect ===== */
   // Responsibility: Continuously poll status while payment is pending
   useEffect(() => {
-    if (!paymentIntentId || status !== 'pending' || !isPolling) return;
+    if (!paymentIntentId) return;
 
-    const interval = setInterval(() => {
+    console.log('🚀 Starting polling for:', paymentIntentId);
+    isPollingRef.current = true;
+    
+    checkStatus(); // เช็คทันทีรอบแรก
+
+    intervalRef.current = setInterval(() => {
+      if (!isPollingRef.current) return;
       checkStatus();
-    }, 3000); // Check every 3 seconds
+    }, 3000);
 
-    return () => clearInterval(interval);
-  }, [paymentIntentId, status, isPolling, checkStatus]);
+    return () => stopPolling();
+  }, [paymentIntentId]); // eslint-disable-line
 
-  /* ===== Initialize Polling ===== */
-  // Responsibility: Start polling when component mounts
-  useEffect(() => {
-    if (paymentIntentId && status === 'pending') {
-      setIsPolling(true);
-      checkStatus(); // Initial check
-    }
-  }, [paymentIntentId]);
-
-  return {
-    status,
-    isLoading,
-    error,
-    checkStatus,
-    stopPolling
-  };
+  return { status, isLoading, error, checkStatus, stopPolling };
 };

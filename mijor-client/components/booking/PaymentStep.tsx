@@ -27,6 +27,8 @@ type AlertConfig = {
 interface PaymentStepProps {
     movieInfo: ShowtimeInfo | null;
     selectedSeatLabels: string[];
+    selectedSeatIds: string[];
+    showtimeId: string;
     totalPrice: number;
     remainingTime: number;
     onPaymentSuccess: (params: PaymentParams) => void;
@@ -36,6 +38,8 @@ interface PaymentStepProps {
 export default function PaymentStep({
     movieInfo,
     selectedSeatLabels,
+    selectedSeatIds,
+    showtimeId,
     totalPrice,
     remainingTime,
     onPaymentSuccess,
@@ -242,6 +246,9 @@ export default function PaymentStep({
                 // คำนวณ expiresAt จาก remainingTime เพื่อส่งให้หน้า QR ใช้ timer เดียวกัน
                 const seatExpiresAt = new Date(Date.now() + remainingTime * 1000).toISOString();
 
+                const selectedCoupon = userCoupons.find((c) => c.id === selectedCouponId);
+                const actualCouponId = selectedCoupon?.coupons?.id || "";
+
                 const params = {
                     title: movieInfo?.title || "",
                     picture: movieInfo?.posterUrl || "",
@@ -252,8 +259,10 @@ export default function PaymentStep({
                     hall: movieInfo?.hall || "",
                     cinema: movieInfo?.cinema || "",
                     selectedSeats: JSON.stringify(selectedSeatLabels),
+                    seatIds: JSON.stringify(selectedSeatIds),
+                    showtimeId: showtimeId,
                     totalPrice: totalPrice.toString(),
-                    selectedCouponId,
+                    selectedCouponId: actualCouponId,
                     finalPrice: finalPrice.toString(),
                     paymentMethod: "QRCode",
                     seatExpiresAt,

@@ -22,6 +22,7 @@ interface MobileProps {
   friendSeatIds: string[];
   friendName: string | null;
   friendAvatar: string | null;
+  showtimeId: string;
 }
 
 function Mobile({
@@ -37,6 +38,7 @@ function Mobile({
   friendSeatIds,
   friendName,
   friendAvatar,
+  showtimeId,
 }: MobileProps) {
   const { user } = useAuth();
 
@@ -238,6 +240,8 @@ function Mobile({
     <PaymentStep
       movieInfo={movieInfo}
       selectedSeatLabels={selectedSeatLabels}
+      selectedSeatIds={selectedSeats}
+      showtimeId={showtimeId}
       totalPrice={selectedSeats.length * (movieInfo?.price || 0)}
       remainingTime={remainingTime}
       onPaymentSuccess={handleConfirm}

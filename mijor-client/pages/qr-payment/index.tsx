@@ -2,7 +2,7 @@
 /* Responsibility: Generate QR code and track payment status in real-time */
 
 import { useRouter } from "next/router";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Button from "@/components/ui/Button";
 import Modal from "@/components/ui/Modal";
 import { CheckCircle, AlertCircle } from "lucide-react";
@@ -32,6 +32,9 @@ export default function QRPayment() {
   const [paymentIntentId, setPaymentIntentId] = useState<string>("");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string>("");
+  const hasGeneratedRef = useRef(false);
+  const seatIds = JSON.parse((query.seatIds as string) || "[]");     // ✅ UUIDs
+  const showtimeId = (query.showtimeId as string) || "";  
 
   // คำนวณ initial timeRemaining จาก seatExpiresAt ที่ส่งมาจากหน้า booking
   // ถ้าไม่มี fallback เป็น 900 วินาที (15 นาที)
@@ -55,8 +58,10 @@ export default function QRPayment() {
   } = usePaymentStatus(paymentIntentId);
 
   // Generate QR Code
-  useEffect(() => {
+useEffect(() => {
     if (!isReady) return;
+    if (hasGeneratedRef.current) return;
+    hasGeneratedRef.current = true;
 
     const generateQR = async () => {
       try {
@@ -70,7 +75,6 @@ export default function QRPayment() {
           selectedCouponId: selectedCouponId,
         });
 
-        // Call server API to create QR payment
         const response = await axios.post(
           `${process.env.NEXT_PUBLIC_API_URL}/api/payments/create-qr-payment`,
           {
@@ -88,33 +92,18 @@ export default function QRPayment() {
 
         console.log("📡 API Response status:", response.status);
 
-        if (response.status !== 200) {
-          const errorText = response.data;
-          console.error("❌ API Error Response:", errorText);
-          throw new Error(
-            `Failed to create QR payment: ${response.status} ${errorText}`,
-          );
-        }
-
         const data = response.data;
         console.log("📊 API Response data:", data);
 
         if (data.success) {
           console.log("🔵 QR Payment Created:", data);
-
-          // Set QR data for new component
           setQrData(data.qrData);
           setPaymentIntentId(data.paymentIntentId);
-
-          // Set expiration time from backend
           if (data.expiresIn) {
             setTimeRemaining(data.expiresIn);
           }
         } else {
-          console.error("❌ Payment creation failed:", data);
-          throw new Error(
-            data.error || data.message || "Failed to create QR payment",
-          );
+          throw new Error(data.error || data.message || "Failed to create QR payment");
         }
 
         setIsLoading(false);
@@ -128,7 +117,7 @@ export default function QRPayment() {
     };
 
     generateQR();
-  }, [isReady, finalPrice, query.selectedCouponId]);
+}, [isReady]);
 
   /* ===== Timer Component ===== */
   // Responsibility: Display countdown timer with proper formatting
@@ -168,22 +157,30 @@ export default function QRPayment() {
 
   /* ===== Payment Status Handler ===== */
   // Responsibility: Handle payment status changes and redirects
-  useEffect(() => {
+useEffect(() => {
     if (paymentStatus === "succeeded") {
-      console.log("✅ Payment successful! Redirecting...");
-      setTimeout(() => {
-        router.push(
-          `/payment-success?${new URLSearchParams(query as any).toString()}`,
-        );
-      }, 2000);
-    } else if (
-      paymentStatus === "canceled" ||
-      paymentStatus === "expired" ||
-      paymentStatus === "failed"
-    ) {
-      console.log("❌ Payment not successful:", paymentStatus);
+        const confirmBooking = async () => {
+            try {
+                const response = await axios.post(
+                    `${process.env.NEXT_PUBLIC_API_URL}/booking/showtimeSeat/confirm-qr`,
+                    { showtimeId, seatIds, selectedCouponId, paymentIntentId },
+                );
+                setTimeout(() => {
+                    router.push(`/payment-success?${new URLSearchParams({
+                        ...(query as any),
+                        bookingId: response.data.bookingId,
+                    }).toString()}`);
+                }, 2000);
+            } catch (error) {
+                console.error("❌ Failed to confirm booking:", error);
+                setTimeout(() => {
+                    router.push(`/payment-success?${new URLSearchParams(query as any).toString()}`);
+                }, 2000);
+            }
+        };
+        confirmBooking();
     }
-  }, [paymentStatus, query, router]);
+}, [paymentStatus]);
 
   /* ===== Utility Functions ===== */
   const formatTime = (seconds: number) => {
@@ -282,13 +279,42 @@ export default function QRPayment() {
                   </div>
                 </div>
               ) : (
-                <QRCodeDisplay
-                  qrData={qrData}
-                  isLoading={statusLoading}
-                  size={256}
-                  timeRemaining={timeRemaining}
-                  formatTime={formatTime}
-                />
+                <>
+                  <QRCodeDisplay
+                    qrData={qrData}
+                    isLoading={false}
+                    size={256}
+                    timeRemaining={timeRemaining}
+                    formatTime={formatTime}
+                  />
+                  {/* ✅ DEV ONLY — ลบออกก่อน deploy จริง */}
+                  {process.env.NODE_ENV !== 'production' && paymentIntentId && (
+                    <button
+                      onClick={async () => {
+                        try {
+                          console.log('🧪 Force simulating success locally...');
+                          // ✅ เรียก confirm-qr โดยตรง ไม่ผ่าน Stripe
+                          const response = await axios.post(
+                            `${process.env.NEXT_PUBLIC_API_URL}/booking/showtimeSeat/confirm-qr`,
+                            { showtimeId, seatIds, selectedCouponId, paymentIntentId, forceSuccess: true },
+                          );
+                          console.log('🧪 confirm-qr response:', response.data);
+                          if (response.data.success) {
+                            router.push(`/payment-success?${new URLSearchParams({
+                              ...(query as any),
+                              bookingId: response.data.bookingId,
+                            }).toString()}`);
+                          }
+                        } catch (err) {
+                          console.error('🧪 Simulation failed:', err);
+                        }
+                      }}
+                      className="mt-4 w-full py-2 bg-green-700 hover:bg-green-600 text-white text-sm rounded-lg"
+                    >
+                      🧪 [DEV] Simulate Payment Success
+                    </button>
+                  )}
+                </>
               )}
             </section>
 

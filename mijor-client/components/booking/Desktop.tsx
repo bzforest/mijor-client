@@ -22,6 +22,7 @@ interface DesktopProps {
   friendSeatIds: string[];
   friendName: string | null;
   friendAvatar: string | null;
+  showtimeId: string;
 }
 
 function Desktop({
@@ -37,6 +38,7 @@ function Desktop({
   friendSeatIds,
   friendName,
   friendAvatar,
+  showtimeId,
 }: DesktopProps) {
   const { user } = useAuth();
 
@@ -228,6 +230,8 @@ function Desktop({
     <PaymentStep
       movieInfo={movieInfo}
       selectedSeatLabels={selectedSeatLabels}
+      selectedSeatIds={selectedSeats}
+      showtimeId={showtimeId}
       totalPrice={selectedSeats.length * (movieInfo?.price || 0)}
       remainingTime={remainingTime}
       onPaymentSuccess={handleConfirm}

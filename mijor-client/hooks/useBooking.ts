@@ -321,6 +321,7 @@ export const useBooking = () => {
     movieInfo,
     selectedSeats,
     selectedSeatLabels,
+    showtimeId: showtimeId as string,
     remainingTime,
     next,
     setNext,
