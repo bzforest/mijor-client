@@ -34,6 +34,7 @@ export const useBooking = () => {
   const [selectedSeats, setSelectedSeats] = useState<string[]>([]);
   const [expireTime, setExpireTime] = useState<Date | null>(null);
   const [remainingTime, setRemainingTime] = useState<number>(0);
+  const [isConfirming, setIsConfirming] = useState<boolean>(false);
 
   // ===== Selectors & Derived State =====
   const selectedSeatLabels = useMemo(() => {
@@ -224,11 +225,33 @@ export const useBooking = () => {
 
   const handleConfirm = async (params: PaymentParams) => {
     if (!selectedSeats.length) return;
+    
+    // ป้องกันการส่ง request ซ้ำ (global check)
+    const globalConfirming = localStorage.getItem('isConfirming') === 'true';
+    if (globalConfirming) {
+      console.log('🔒 Already confirming globally, ignoring duplicate request');
+      return;
+    }
+    
+    // Check if user is authenticated
+    if (!user) {
+      console.error('🔴 User not authenticated');
+      alert('Please login to confirm booking');
+      return;
+    }
+
+    localStorage.setItem('isConfirming', 'true');
 
     try {
+      console.log('🔵 Confirming booking with params:', params);
+      console.log('🔵 Selected seats:', selectedSeats);
+      console.log('🔵 ShowtimeId:', showtimeId);
+      console.log('🔵 User:', user);
+      
       const bookingResult = await api.post("/showtimeSeat/confirm", {
         showtimeId,
         seatIds: selectedSeats,
+        selectedCouponId: params.selectedCouponId,
       });
 
       const bookingId = bookingResult.data.bookingId;
@@ -265,6 +288,9 @@ export const useBooking = () => {
     } catch (error) {
       console.error("Failed to confirm booking:", error);
       alert("Failed to confirm booking. Please try again.");
+    } finally {
+      localStorage.removeItem('isConfirming');
+      setIsConfirming(false);
     }
   };
 

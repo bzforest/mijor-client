@@ -26,6 +26,8 @@ type SummaryBoxProps = {
   paymentMethod?: string;
   is_active?: boolean;
   isNextDisabled?: boolean;
+  isProcessing?: boolean;
+  paymentSuccess?: boolean;
 };
 
 function SummaryBox({
@@ -48,6 +50,8 @@ function SummaryBox({
   paymentMethod,
   is_active,
   isNextDisabled = false,
+  isProcessing = false,
+  paymentSuccess = false,
 }: SummaryBoxProps) {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
