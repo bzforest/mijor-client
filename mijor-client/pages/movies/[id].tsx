@@ -3,11 +3,11 @@
 import { useRouter } from "next/router";
 import { useEffect, useState, useRef } from "react";
 import axios from "axios";
-import Navbar from "@/components/common/navbar";
 import DateSelection from "@/components/common/dateSelection";
 import CinemaShowTime from "@/components/common/showTimeCinema";
 import InputField from "@/components/ui/InputField";
 import { ChevronDown } from "lucide-react";
+
 
 const API_URL =
   process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
@@ -20,6 +20,7 @@ type Movie = {
   release_date?: string;
   genre: string[];
   language: string;
+  trailer_youtube?: string | null;
 };
 
 type Showtime = {
@@ -48,6 +49,7 @@ export default function MovieDetailPage() {
   const [selectedCity, setSelectedCity] = useState("City");
   const [cityList, setCityList] = useState<string[]>([]);
   const [isOpen, setIsOpen] = useState(false);
+  const [isTrailerModalOpen, setIsTrailerModalOpen] = useState(false);
 
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -188,26 +190,26 @@ export default function MovieDetailPage() {
                   </span>
                 )}
 
-              {movie.release_date && (
-                <p className="mt-2 text-sm text-gray-400">
-                  Release date:{" "}
-                  {new Date(movie.release_date).toLocaleDateString("en-GB", {
-                    day: "2-digit",
-                    month: "short",
-                    year: "numeric",
-                  })}
-                </p>
-              )}
+                {movie.release_date && (
+                  <p className="mt-2 text-sm text-gray-400">
+                    Release date:{" "}
+                    {new Date(movie.release_date).toLocaleDateString("en-GB", {
+                      day: "2-digit",
+                      month: "short",
+                      year: "numeric",
+                    })}
+                  </p>
+                )}
               </div>
 
-              <button
-                onClick={() =>
-                  router.push(`/movies/${movie.id}/detail`)
-                }
-                className="w-fit px-6 py-3 bg-blue-500 rounded-md font-semibold"
-              >
-                Movie detail
-              </button>
+              {movie.trailer_youtube && (
+                <button
+                  onClick={() => setIsTrailerModalOpen(true)}
+                  className="px-6 py-3 w-fit font-semibold bg-blue-500 rounded-md"
+                >
+                  View Trailer
+                </button>
+              )}
 
               {/* 🔥 SYNOPSIS ตัดข้อความอัตโนมัติ */}
               <p
@@ -225,6 +227,48 @@ export default function MovieDetailPage() {
           </div>
         </div>
       </section>
+
+      {/* ================= TRAILER MODAL ================= */}
+      {isTrailerModalOpen && movie.trailer_youtube && (
+        <div className="flex fixed inset-0 z-50 items-center justify-center p-4">
+          {/* 1. Backdrop */}
+          <div
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            onClick={() => setIsTrailerModalOpen(false)}
+          />
+
+          {/* 2. Modal Card */}
+          <div className="relative p-6 w-full max-w-7xl bg-brand-gray-100 rounded-[8px] border border-brand-gray-200 shadow-2xl">
+            {/* Close Button Icon */}
+            <button
+              onClick={() => setIsTrailerModalOpen(false)}
+              className="absolute top-4 right-4 text-brand-gray-400 hover:text-white transition-colors"
+            >
+              <svg
+                width="28"
+                height="28"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <path d="M18 6L6 18M6 6l12 12" />
+              </svg>
+            </button>
+
+            {/* Video Container */}
+            <div className="overflow-hidden mt-2 w-full h-[400px] rounded-xl md:h-[700px]">
+              <iframe
+                src={movie.trailer_youtube}
+                className="w-full h-full border-0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                title="Movie Trailer"
+              ></iframe>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ส่วนล่างเหมือนเดิม (Date / Filter / Showtimes) */}
       {/* ================= DATE BAR ================= */}
