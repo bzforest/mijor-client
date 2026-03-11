@@ -113,10 +113,6 @@ export const useBooking = () => {
       if (diff <= 0) {
         clearInterval(interval);
         setRemainingTime(0);
-        setExpireTime(null);
-        updateSeatStatus(selectedSeats, "available");
-        setSelectedSeats([]);
-        setNext(false);
       } else {
         setRemainingTime(diff);
       }
@@ -195,6 +191,14 @@ export const useBooking = () => {
         : [...prev, seatId],
     );
   };
+
+  const handleExpired = () => {
+    updateSeatStatus(selectedSeats, "available");
+    setSelectedSeats([]);
+    setNext(false);
+    setExpireTime(null);
+    setRemainingTime(0);
+};
 
   const handleSelect = async () => {
     if (!user) {
@@ -331,5 +335,6 @@ export const useBooking = () => {
     friendSeatIds,
     friendName,
     friendAvatar,
+    handleExpired,
   };
 };

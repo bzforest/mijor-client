@@ -23,6 +23,7 @@ interface DesktopProps {
   friendName: string | null;
   friendAvatar: string | null;
   showtimeId: string;
+  handleExpired?: () => void;
 }
 
 function Desktop({
@@ -39,6 +40,7 @@ function Desktop({
   friendName,
   friendAvatar,
   showtimeId,
+  handleExpired,
 }: DesktopProps) {
   const { user } = useAuth();
 
@@ -236,6 +238,7 @@ function Desktop({
       remainingTime={remainingTime}
       onPaymentSuccess={handleConfirm}
       className="hidden md:flex"
+      onExpired={handleExpired}
     />
   );
 }

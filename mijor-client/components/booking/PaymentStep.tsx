@@ -1,7 +1,7 @@
 /* ===== Component: PaymentStep ===== */
 /* Responsibility: Render the full payment UI with Credit Card and QR Code options */
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import router, { useRouter } from "next/router";
 import Step from "@/components/ui/Step";
 import Tabs from "@/components/ui/Tab";
@@ -33,6 +33,7 @@ interface PaymentStepProps {
   remainingTime: number;
   onPaymentSuccess: (params: PaymentParams) => void;
   className?: string;
+  onExpired?: () => void;
 }
 
 export default function PaymentStep({
@@ -44,6 +45,7 @@ export default function PaymentStep({
   remainingTime,
   onPaymentSuccess,
   className = "",
+  onExpired,
 }: PaymentStepProps) {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState("CreditCard");
@@ -57,8 +59,7 @@ export default function PaymentStep({
   const [useStripe, setUseStripe] = useState<boolean>(true);
   const [clientSecret, setClientSecret] = useState<string>("");
   const [stripeAction, setStripeAction] = useState<any>(null);
-  const [isProcessingPayment, setIsProcessingPayment] =
-    useState<boolean>(false);
+  const [isProcessingPayment, setIsProcessingPayment] = useState<boolean>(false);
   const [isCreatingIntent, setIsCreatingIntent] = useState<boolean>(false);
   const [paymentSuccess, setPaymentSuccess] = useState<boolean>(false);
 
@@ -359,6 +360,24 @@ export default function PaymentStep({
     }
   };
 
+  // Handle booking expiration
+
+    const hasStartedTimer = useRef(false);
+
+    // ✅ track ว่าเคย start timer แล้ว
+    useEffect(() => {
+        if (remainingTime > 0) {
+            hasStartedTimer.current = true;
+        }
+    }, [remainingTime]);
+
+    // ✅ trigger modal เมื่อหมดเวลา
+    useEffect(() => {
+        if (remainingTime === 0 && hasStartedTimer.current && !paymentSuccess) {
+            setIsExpiredModalOpen(true);
+        }
+    }, [remainingTime, paymentSuccess]);
+
   return (
     <main className={`flex flex-col ${className}`}>
       {/* ===== Progress Header ===== */}
@@ -476,7 +495,10 @@ export default function PaymentStep({
       <ExpiredBookingModal
         isOpen={isExpiredModalOpen}
         onClose={() => setIsExpiredModalOpen(false)}
-        onPrimaryAction={() => router.back()}
+        onPrimaryAction={() => {
+          setIsExpiredModalOpen(false);
+          onExpired?.();
+        }}
       />
     </main>
   );

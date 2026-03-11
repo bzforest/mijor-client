@@ -22,7 +22,7 @@ export default function QRPayment() {
   const hall = (query.hall as string) || "";
   const cinema = (query.cinema as string) || "";
   const seatExpiresAt = (query.seatExpiresAt as string) || "";
-  const totalPrice = (query.totalPrice as string) || "0"; 
+  const totalPrice = (query.totalPrice as string) || "0";
   const finalPrice = (query.finalPrice as string) || "0";
   const selectedSeats = JSON.parse((query.selectedSeats as string) || "[]");
   const bookingId = (query.bookingId as string) || "";
@@ -33,9 +33,10 @@ export default function QRPayment() {
   const [paymentIntentId, setPaymentIntentId] = useState<string>("");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string>("");
+  const [isExpiredModalOpen, setIsExpiredModalOpen] = useState(false);
   const hasGeneratedRef = useRef(false);
-  const seatIds = JSON.parse((query.seatIds as string) || "[]");     // ✅ UUIDs
-  const showtimeId = (query.showtimeId as string) || "";  
+  const seatIds = JSON.parse((query.seatIds as string) || "[]"); // ✅ UUIDs
+  const showtimeId = (query.showtimeId as string) || "";
 
   // คำนวณ initial timeRemaining จาก seatExpiresAt ที่ส่งมาจากหน้า booking
   // ถ้าไม่มี fallback เป็น 900 วินาที (15 นาที)
@@ -59,7 +60,7 @@ export default function QRPayment() {
   } = usePaymentStatus(paymentIntentId);
 
   // Generate QR Code
-useEffect(() => {
+  useEffect(() => {
     if (!isReady) return;
     if (hasGeneratedRef.current) return;
     hasGeneratedRef.current = true;
@@ -74,6 +75,7 @@ useEffect(() => {
           bookingId: bookingId || "QR-" + Date.now(),
           totalPrice: parseFloat(finalPrice),
           selectedCouponId: selectedCouponId,
+          seatExpiresAt: seatExpiresAt,
         });
 
         const response = await axios.post(
@@ -83,6 +85,7 @@ useEffect(() => {
             bookingId: bookingId || "QR-" + Date.now(),
             totalPrice: parseFloat(totalPrice),
             selectedCouponId: selectedCouponId,
+            seatExpiresAt: seatExpiresAt,
           },
           {
             headers: {
@@ -100,11 +103,10 @@ useEffect(() => {
           console.log("🔵 QR Payment Created:", data);
           setQrData(data.qrData);
           setPaymentIntentId(data.paymentIntentId);
-          if (data.expiresIn) {
-            setTimeRemaining(data.expiresIn);
-          }
         } else {
-          throw new Error(data.error || data.message || "Failed to create QR payment");
+          throw new Error(
+            data.error || data.message || "Failed to create QR payment",
+          );
         }
 
         setIsLoading(false);
@@ -118,7 +120,7 @@ useEffect(() => {
     };
 
     generateQR();
-}, [isReady]);
+  }, [isReady]);
 
   /* ===== Timer Component ===== */
   // Responsibility: Display countdown timer with proper formatting
@@ -158,30 +160,34 @@ useEffect(() => {
 
   /* ===== Payment Status Handler ===== */
   // Responsibility: Handle payment status changes and redirects
-useEffect(() => {
+  useEffect(() => {
     if (paymentStatus === "succeeded") {
-        const confirmBooking = async () => {
-            try {
-                const response = await axios.post(
-                    `${process.env.NEXT_PUBLIC_API_URL}/booking/showtimeSeat/confirm-qr`,
-                    { showtimeId, seatIds, selectedCouponId, paymentIntentId },
-                );
-                setTimeout(() => {
-                    router.push(`/payment-success?${new URLSearchParams({
-                        ...(query as any),
-                        bookingId: response.data.bookingId,
-                    }).toString()}`);
-                }, 2000);
-            } catch (error) {
-                console.error("❌ Failed to confirm booking:", error);
-                setTimeout(() => {
-                    router.push(`/payment-success?${new URLSearchParams(query as any).toString()}`);
-                }, 2000);
-            }
-        };
-        confirmBooking();
+      const confirmBooking = async () => {
+        try {
+          const response = await axios.post(
+            `${process.env.NEXT_PUBLIC_API_URL}/booking/showtimeSeat/confirm-qr`,
+            { showtimeId, seatIds, selectedCouponId, paymentIntentId },
+          );
+          setTimeout(() => {
+            router.push(
+              `/payment-success?${new URLSearchParams({
+                ...(query as any),
+                bookingId: response.data.bookingId,
+              }).toString()}`,
+            );
+          }, 2000);
+        } catch (error) {
+          console.error("❌ Failed to confirm booking:", error);
+          setTimeout(() => {
+            router.push(
+              `/payment-success?${new URLSearchParams(query as any).toString()}`,
+            );
+          }, 2000);
+        }
+      };
+      confirmBooking();
     }
-}, [paymentStatus]);
+  }, [paymentStatus]);
 
   /* ===== Utility Functions ===== */
   const formatTime = (seconds: number) => {
@@ -194,32 +200,25 @@ useEffect(() => {
     router.back();
   };
 
-  if (!isReady) return null;
+const hasStartedTimer = useRef(false);
+
+useEffect(() => {
+    if (timeRemaining > 0) {
+        hasStartedTimer.current = true;
+    }
+}, [timeRemaining]);
+
+useEffect(() => {
+    if (timeRemaining === 0 && hasStartedTimer.current && paymentStatus !== "succeeded") {
+        setIsExpiredModalOpen(true);
+    }
+}, [timeRemaining, paymentStatus]);
+
+if (!isReady) return null;
 
   return (
     <main className="min-h-screen bg-[#101525]">
       <div className="container mx-auto px-4 py-8">
-        {/* ===== Header ===== */}
-        {/* <header className="flex items-center justify-between mb-8">
-                    <Button
-                        variant="secondary"
-                        onClick={handleBack}
-                        className="flex items-center gap-2"
-                    >
-                        <ArrowLeft size={20} />
-                        Back
-                    </Button>
-                    <div className="flex items-center gap-2 text-white">
-                        <Clock size={20} className={
-                            paymentStatus === "expired" ? "text-red-500" : 
-                            paymentStatus === "succeeded" ? "text-green-500" : 
-                            "text-yellow-500"
-                        } />
-                        <TimerDisplay />
-                        {statusLoading && <RefreshCw size={16} className="animate-spin text-blue-500" />}
-                    </div>
-                </header> */}
-
         {/* ===== Main Content ===== */}
         <div className="max-w-4xl mx-auto">
           <div className="grid md:grid-cols-2 gap-8">
@@ -289,25 +288,33 @@ useEffect(() => {
                     formatTime={formatTime}
                   />
                   {/* ✅ DEV ONLY — ลบออกก่อน deploy จริง */}
-                  {process.env.NODE_ENV !== 'production' && paymentIntentId && (
+                  {process.env.NODE_ENV !== "production" && paymentIntentId && (
                     <button
                       onClick={async () => {
                         try {
-                          console.log('🧪 Force simulating success locally...');
+                          console.log("🧪 Force simulating success locally...");
                           // ✅ เรียก confirm-qr โดยตรง ไม่ผ่าน Stripe
                           const response = await axios.post(
                             `${process.env.NEXT_PUBLIC_API_URL}/booking/showtimeSeat/confirm-qr`,
-                            { showtimeId, seatIds, selectedCouponId, paymentIntentId, forceSuccess: true },
+                            {
+                              showtimeId,
+                              seatIds,
+                              selectedCouponId,
+                              paymentIntentId,
+                              forceSuccess: true,
+                            },
                           );
-                          console.log('🧪 confirm-qr response:', response.data);
+                          console.log("🧪 confirm-qr response:", response.data);
                           if (response.data.success) {
-                            router.push(`/payment-success?${new URLSearchParams({
-                              ...(query as any),
-                              bookingId: response.data.bookingId,
-                            }).toString()}`);
+                            router.push(
+                              `/payment-success?${new URLSearchParams({
+                                ...(query as any),
+                                bookingId: response.data.bookingId,
+                              }).toString()}`,
+                            );
                           }
                         } catch (err) {
-                          console.error('🧪 Simulation failed:', err);
+                          console.error("🧪 Simulation failed:", err);
                         }
                       }}
                       className="mt-4 w-full py-2 bg-green-700 hover:bg-green-600 text-white text-sm rounded-lg"
@@ -362,7 +369,7 @@ useEffect(() => {
 
               <div className="mt-6 p-4 bg-yellow-500/20 rounded-lg">
                 <p className="text-yellow-500 text-sm text-center">
-                  ⚠️ Please complete payment within 5 minutes
+                  ⚠️ Please complete payment within {formatTime(timeRemaining)}
                 </p>
               </div>
             </section>
@@ -378,6 +385,18 @@ useEffect(() => {
           Back
         </Button>
       </div>
+      <Modal
+        isOpen={isExpiredModalOpen}
+        onClose={() => setIsExpiredModalOpen(false)}
+        title="Booking expired"
+        primaryActionButton="OK"
+        onPrimaryAction={() => router.back()}
+        className="max-w-md"
+      >
+        <p className="text-center text-body-2 text-brand-gray-400">
+          You did not complete the checkout process in time,<br /> please start again
+        </p>
+      </Modal>
     </main>
   );
 }

@@ -23,6 +23,7 @@ interface MobileProps {
   friendName: string | null;
   friendAvatar: string | null;
   showtimeId: string;
+  handleExpired?: () => void;
 }
 
 function Mobile({
@@ -39,6 +40,7 @@ function Mobile({
   friendName,
   friendAvatar,
   showtimeId,
+  handleExpired,
 }: MobileProps) {
   const { user } = useAuth();
 
@@ -246,6 +248,7 @@ function Mobile({
       remainingTime={remainingTime}
       onPaymentSuccess={handleConfirm}
       className="flex md:hidden"
+      onExpired={handleExpired}
     />
   );
 }
