@@ -218,6 +218,7 @@ export default function CouponMinigameModal({ isOpen, onClose }: Props) {
             title={title}
             primaryActionButton={primaryActionButton}
             onPrimaryAction={onPrimaryAction}
+            className="w-full max-w-lg max-h-[90vh] overflow-y-auto custom-scrollbar"
         >
             {/* --- TAB NAVIGATION --- */}
             <div className="flex justify-center gap-2 mb-6 pb-4 border-b border-brand-gray-200/50">

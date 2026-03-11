@@ -36,7 +36,7 @@ export default function Leaderboard({ refreshTrigger }: { refreshTrigger?: numbe
     }, [refreshTrigger]);
 
     return (
-        <div className="bg-brand-gray-900 rounded-lg p-5 border border-white/10 w-full min-h-[300px] shadow-lg">
+        <div className="bg-brand-gray-900 rounded-lg p-5 border border-white/10 w-full min-h-[500px] md:h-[650px] shadow-lg flex flex-col">
             <h3 className="text-2xl font-bold text-white mb-6 text-center drop-shadow-md tracking-wide">🏆 Top Scorer Board 🏆</h3>
 
             {loading ? (
@@ -46,7 +46,7 @@ export default function Leaderboard({ refreshTrigger }: { refreshTrigger?: numbe
             ) : entries.length === 0 ? (
                 <div className="text-center text-gray-400 italic mt-14">No scores yet. Be the first to conquer the board!</div>
             ) : (
-                <div className="flex flex-col gap-3 max-h-[350px] overflow-y-auto pr-2 custom-scrollbar">
+                <div className="flex flex-col gap-3 h-full overflow-y-auto pr-2 custom-scrollbar">
                     {entries.map((entry, index) => (
                         <div key={`${entry.profile_id}-${index}`} className="flex items-center justify-between bg-brand-gray-800 p-3 rounded-lg border border-white/5 shadow-sm hover:bg-brand-gray-700 transition-colors">
                             <div className="flex items-center gap-4">
