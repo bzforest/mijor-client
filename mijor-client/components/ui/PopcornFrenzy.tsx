@@ -107,7 +107,7 @@ export default function PopcornFrenzy({ onGameEnd }: { onGameEnd?: () => void })
     };
 
     return (
-        <div className="flex flex-col items-center w-full h-[400px] bg-brand-gray-900 rounded-lg relative overflow-hidden shadow-inner border border-white/5" ref={containerRef}>
+        <div className="flex flex-col items-center w-full min-h-[500px] md:h-[650px] bg-brand-gray-900 rounded-lg relative overflow-hidden shadow-inner border border-white/5" ref={containerRef}>
             {/* Header / HUD */}
             <div className="absolute top-0 left-0 w-full p-4 flex justify-between items-center z-10 pointer-events-none bg-linear-to-b from-black/80 to-transparent">
                 <div className="text-white font-bold text-xl drop-shadow-md">Time: <span className={timeLeft <= 5 ? "text-red-500 animate-pulse" : "text-brand-primary"}>{timeLeft}s</span></div>

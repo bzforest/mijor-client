@@ -357,7 +357,7 @@ function LandingPage() {
       {/* FLOATING ACTION BUTTON FOR MINIGAMES */}
       <button
         onClick={() => setIsMinigameOpen(true)}
-        className="fixed bottom-6 right-6 z-40 bg-gradient-to-r from-pink-500 to-purple-500 text-white w-14 h-14 rounded-full flex items-center justify-center text-3xl shadow-[0_4px_15px_rgba(236,72,153,0.5)] hover:scale-110 transition-transform animate-bounce"
+        className="fixed bottom-6 left-5 z-40 bg-gradient-to-r from-pink-500 to-purple-500 text-white w-14 h-14 rounded-full flex items-center justify-center text-3xl shadow-[0_4px_15px_rgba(236,72,153,0.5)] hover:scale-110 transition-transform animate-bounce"
         aria-label="Play Minigames"
         title="Play Minigames to earn discount coupons!"
       >
