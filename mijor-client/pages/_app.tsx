@@ -5,6 +5,7 @@ import { Roboto_Condensed } from "next/font/google";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { LocationProvider } from "@/contexts/LocationContext";
 import Chatbot from "@/components/common/Chatbot";
+import Footer from "@/components/common/footer";
 
 const robotoCondensed = Roboto_Condensed({
   subsets: ["latin"],
@@ -28,6 +29,7 @@ export default function App({ Component, pageProps }: AppProps) {
           <Navbar />
           <Component {...pageProps} />
           {shouldShowChatbot && <Chatbot />}
+          <Footer />
         </div>
       </LocationProvider>
     </AuthProvider>

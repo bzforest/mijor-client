@@ -2,41 +2,23 @@
 
 import { useState, useEffect } from "react";
 import axios from "axios";
-import router from "next/router";
 
 import { fetchCoupons, Coupon } from "@/services/couponApi";
 import { fetchUserCoupons } from "@/services/couponService";
 import { useCinemas } from "@/hooks/useCinemas";
 import { useAuth } from "@/contexts/AuthContext";
 
-import MovieCard from "@/components/common/movieCard";
-import CardCouponVertical from "@/components/common/cardCouponVertical";
-import CityCard from "@/components/common/cityCard";
-import Segmented from "@/components/common/segmented";
 import SearchSection from "@/components/landing/SearchSection";
-import Button from "@/components/ui/Button";
+import MovieSection, { Movie } from "@/components/landing/MovieSection";
+import CouponSection from "@/components/landing/CouponSection";
+import CinemaSection from "@/components/landing/CinemaSection";
+import MinigameFAB from "@/components/landing/MinigameFAB";
 import Alert from "@/components/ui/Alert";
-import Footer from "@/components/common/footer";
 import CouponMinigameModal from "@/components/ui/CouponMinigameModal";
-
-import { formatDate } from "@/utils/dateUtils";
 
 /* ================= API ================= */
 const API_URL =
   process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
-
-/* ================= TYPES ================= */
-type Movie = {
-  id: string;
-  title: string;
-  poster_url?: string;
-  release_date?: string;
-  rating?: string;
-  genre: string[];
-  language: string[];
-  status: "now" | "soon";
-  hasShowtimeToday?: boolean;
-};
 
 function LandingPage() {
   /* ================= AUTH ================= */
@@ -51,21 +33,14 @@ function LandingPage() {
   /* ================= COUPON STATE ================= */
   const [coupons, setCoupons] = useState<Coupon[]>([]);
   const [userCouponIds, setUserCouponIds] = useState<string[]>([]);
-  const [showAlert, setShowAlert] = useState(false);
   const [isMinigameOpen, setIsMinigameOpen] = useState(false);
 
   /* ================= CINEMA ================= */
   const { cinemas, isNearestFirst, toggleSort, loading, errorAlert } =
     useCinemas();
 
-  const groupedCinemas = cinemas.reduce((acc, cinema) => {
-    const cityName = cinema.cities?.name || "Other";
-    if (!acc[cityName]) acc[cityName] = [];
-    acc[cityName].push(cinema);
-    return acc;
-  }, {} as Record<string, typeof cinemas>);
-
-  const sortedCities = Object.keys(groupedCinemas).sort();
+  /* ================= MINIGAME ================= */
+  const [showAlert, setShowAlert] = useState(false);
 
   /* ================= FETCH MOVIES ================= */
   useEffect(() => {
@@ -188,23 +163,6 @@ function LandingPage() {
     activeTab === "now" ? nowMovies : soonMovies;
 
   /* ================= COUPON FILTER ================= */
-  const getUniqueBrandCoupons = (
-    allCoupons: Coupon[],
-    limit: number = 4
-  ) => {
-    const result: Coupon[] = [];
-    const seenBrands = new Set<string>();
-
-    for (const coupon of allCoupons) {
-      if (!seenBrands.has(coupon.brand) && result.length < limit) {
-        seenBrands.add(coupon.brand);
-        result.push(coupon);
-      }
-    }
-
-    return result;
-  };
-
   const refreshUserCoupons = async () => {
     if (!user) return;
 
@@ -220,121 +178,35 @@ function LandingPage() {
 
   /* ================= RENDER ================= */
   return (
-    <div>
+    <div className="flex flex-col overflow-x-hidden">
       <SearchSection />
 
-      {/* MOVIES */}
-      <section className="bg-brand-gray-900 text-white px-6 lg:px-20 py-16">
-        <div className="flex gap-8 mb-10">
-          <button onClick={() => setActiveTab("now")}>
-            Now Showing
-          </button>
-          <button onClick={() => setActiveTab("soon")}>
-            Coming Soon
-          </button>
-        </div>
-
-        {loadingMovies && <p>Loading movies...</p>}
-        {movieError && <p className="text-red-500">{movieError}</p>}
-
-        {!loadingMovies && !movieError && (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-8">
-            {filteredMovies.length > 0 ? (
-              filteredMovies.map((movie) => (
-                <MovieCard
-                  key={movie.id}
-                  movie={movie as any}
-                  variant="desktop"
-                />
-              ))
-            ) : (
-              <p>No movies available</p>
-            )}
-          </div>
-        )}
-      </section>
-
-      {/* COUPONS */}
-      <section className="px-6 py-12">
-        <div className="flex justify-between items-center mb-6">
-          <div className="flex items-center gap-4">
-            <h2 className="text-3xl font-bold">
-              Special Coupons
-            </h2>
-          </div>
-          <Button
-            variant="text"
-            onClick={() => router.push("/coupons")}
-          >
-            View all
-          </Button>
-        </div>
-
-        <div className="flex flex-wrap gap-5">
-          {getUniqueBrandCoupons(coupons).map((coupon) => (
-            <CardCouponVertical
-              key={coupon.id}
-              coupon_id={coupon.id.toString()}
-              userCoupons={userCouponIds}
-              onCouponSaved={refreshUserCoupons}
-              imageSrc={coupon.image_url}
-              title={coupon.title}
-              validUntil={formatDate(coupon.valid_until)}
-              onClick={() =>
-                router.push(`/coupons/${coupon.id}`)
-              }
-            />
-          ))}
-        </div>
-      </section>
-
-      {/* CINEMAS */}
-      <div className="bg-brand-gray-0 text-white py-10 px-6">
-        <h2 className="text-3xl font-bold mb-6">
-          All cinemas
-        </h2>
-
-        <Segmented
-          options={[
-            { label: "Browse by City" },
-            { label: "Nearest Locations First" },
-          ]}
-          checked={isNearestFirst}
-          onClick={toggleSort}
+      <div className="flex flex-col items-center w-full max-w-[1440px] mx-auto">
+        {/* MOVIES */}
+        <MovieSection
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          loadingMovies={loadingMovies}
+          movieError={movieError}
+          filteredMovies={filteredMovies}
         />
 
-        <div className="mt-8">
-          {loading ? (
-            <p>Loading cinemas...</p>
-          ) : isNearestFirst ? (
-            cinemas.map((cinema: any) => (
-              <CityCard
-                key={cinema.id}
-                id={cinema.id}
-                cinema={cinema.name}
-                length={cinema.length}
-                address={cinema.location}
-              />
-            ))
-          ) : (
-            sortedCities.map((city) => (
-              <div key={city}>
-                <h3 className="mt-6 mb-4">{city}</h3>
-                {groupedCinemas[city].map((cinema: any) => (
-                  <CityCard
-                    key={cinema.id}
-                    id={cinema.id}
-                    cinema={cinema.name}
-                    length={cinema.length}
-                    address={cinema.location}
-                  />
-                ))}
-              </div>
-            ))
-          )}
-        </div>
-      </div>
+        {/* COUPONS */}
+        <CouponSection
+          coupons={coupons}
+          userCouponIds={userCouponIds}
+          refreshUserCoupons={refreshUserCoupons}
+        />
 
+        {/* CINEMAS */}
+        <CinemaSection
+          cinemas={cinemas}
+          isNearestFirst={isNearestFirst}
+          toggleSort={toggleSort}
+          loading={loading}
+        />
+      </div>
+      
       {showAlert && (
         <Alert
           type="success"
@@ -352,22 +224,14 @@ function LandingPage() {
         />
       )}
 
-      <Footer />
-
       {/* FLOATING ACTION BUTTON FOR MINIGAMES */}
-      <button
-        onClick={() => setIsMinigameOpen(true)}
-        className="fixed bottom-6 left-5 z-40 bg-gradient-to-r from-pink-500 to-purple-500 text-white w-14 h-14 rounded-full flex items-center justify-center text-3xl shadow-[0_4px_15px_rgba(236,72,153,0.5)] hover:scale-110 transition-transform animate-bounce"
-        aria-label="Play Minigames"
-        title="Play Minigames to earn discount coupons!"
-      >
-        🎮
-      </button>
+      <MinigameFAB onClick={() => setIsMinigameOpen(true)} />
 
       <CouponMinigameModal
         isOpen={isMinigameOpen}
         onClose={() => setIsMinigameOpen(false)}
       />
+
     </div>
   );
 }

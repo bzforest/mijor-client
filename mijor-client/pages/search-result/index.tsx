@@ -216,7 +216,7 @@ export default function SearchResultPage() {
                                         isShow={true}
                                         hearingAssistance={movie.hearingAssistance}
                                         wheelchairAccess={movie.wheelchairAccess}
-                                        onClick={() => router.push(`/landing`)}
+                                        onSelectTime={(showtimeId) => router.push(`/booking/${showtimeId}`)}
                                         onClickMovieDetail={() => router.push(`/movies/${movie.id}`)}
                                     />
                                 ))
