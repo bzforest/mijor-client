@@ -56,10 +56,10 @@ export default function Chatbot () {
     };
 
     return (
-        <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end">
+        <div className="fixed bottom-4 right-4 md:bottom-6 md:right-6 z-50 flex flex-col items-end">
             
             {isOpen && (
-                <div className="w-[350px] h-[500px] bg-brand-gray-0 rounded-2xl shadow-2xl mb-4 flex flex-col overflow-hidden border border-brand-gray-300">
+                <div className="w-[300px] h-[400px] md:w-[350px] md:h-[500px] bg-brand-gray-0 rounded-2xl shadow-2xl mb-4 flex flex-col overflow-hidden border border-brand-gray-300">
 
                     {/* Header */}
                     <div className="bg-linear-to-b from-brand-blue-300 to-brand-blue-100 p-4 text-white font-bold flex justify-between items-center">
@@ -116,7 +116,7 @@ export default function Chatbot () {
 {/* Floating Button */}
 <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="w-[150px] h-[150px] flex items-center justify-center hover:scale-110 transition-transform p-1 overflow-hidden cursor-pointer"
+                className="w-[100px] h-[100px] md:w-[150px] md:h-[150px] flex items-center justify-center hover:scale-110 transition-transform p-1 overflow-hidden cursor-pointer"
             >
                 <img 
                     src={
