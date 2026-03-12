@@ -4,7 +4,7 @@ import CardCouponVertical from "@/components/common/cardCouponVertical";
 import Pagination from "@/components/ui/pagination";
 import MenuSidebar from "@/components/common/menuSidebar";
 import { formatDate } from "@/utils/dateUtils";
-import { fetchCoupons, Coupon } from "@/services/couponApi";
+import { Coupon } from "@/services/couponApi";
 import { useAuth } from "@/contexts/AuthContext";
 import router from "next/router";
 import { fetchUserCoupons } from "@/services/couponService";
@@ -31,7 +31,13 @@ export default function CouponPage() {
 
     try {
       const userCoupons = await fetchUserCoupons();
+      const fetchedCoupons = userCoupons
+        .map((uc: any) => uc.coupons)
+        .filter(Boolean) as Coupon[];
+
       const ids = userCoupons.map((uc: any) => uc.coupon_id);
+      
+      setCoupons(fetchedCoupons);
       setUserCouponIds(ids);
       setShowAlert(true);
     } catch (error) {
@@ -45,37 +51,32 @@ export default function CouponPage() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  /* ===== Load All Coupons (ไม่ต้องใช้ token) ===== */
-  useEffect(() => {
-    const loadCoupons = async () => {
-      try {
-        setLoading(true);
-        const data = await fetchCoupons();
-        setCoupons(data);
-      } catch (error) {
-        console.error("Error fetching coupons:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadCoupons();
-  }, []);
-
-  /* ===== Load User Coupons (รอ user พร้อมก่อน) ===== */
+  /* ===== Load User Coupons ===== */
   useEffect(() => {
     if (!user) {
+      setCoupons([]);
       setUserCouponIds([]);
       return;
     }
 
     const loadUserCoupons = async () => {
       try {
+        setLoading(true);
         const userCoupons = await fetchUserCoupons();
+        
+        // Extract coupon details from user coupons
+        const fetchedCoupons = userCoupons
+          .map((uc: any) => uc.coupons)
+          .filter(Boolean) as Coupon[];
+          
         const ids = userCoupons.map((uc: any) => uc.coupon_id);
+        
+        setCoupons(fetchedCoupons);
         setUserCouponIds(ids);
       } catch (error) {
         console.error("Error fetching user coupons:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
