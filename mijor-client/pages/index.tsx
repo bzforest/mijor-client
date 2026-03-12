@@ -32,7 +32,7 @@ function LandingPage() {
 
   /* ================= COUPON STATE ================= */
   const [coupons, setCoupons] = useState<Coupon[]>([]);
-  const [userCouponIds, setUserCouponIds] = useState<string[]>([]);
+  const [userCoupons, setUserCoupons] = useState<{ coupon_id: string; is_used: boolean }[]>([]);
   const [isMinigameOpen, setIsMinigameOpen] = useState(false);
 
   /* ================= CINEMA ================= */
@@ -141,9 +141,9 @@ function LandingPage() {
       if (user) {
         const userCoupons = await fetchUserCoupons();
         const ids = userCoupons.map((uc: any) => uc.coupon_id);
-        setUserCouponIds(ids);
+        setUserCoupons(ids);
       } else {
-        setUserCouponIds([]);
+        setUserCoupons([]);
       }
     };
 
@@ -169,7 +169,7 @@ function LandingPage() {
     try {
       const userCoupons = await fetchUserCoupons();
       const ids = userCoupons.map((uc: any) => uc.coupon_id);
-      setUserCouponIds(ids);
+      setUserCoupons(ids);
       setShowAlert(true);
     } catch (error) {
       console.error("Failed to refresh user coupons:", error);
@@ -194,7 +194,7 @@ function LandingPage() {
         {/* COUPONS */}
         <CouponSection
           coupons={coupons}
-          userCouponIds={userCouponIds}
+          userCoupons={userCoupons}
           refreshUserCoupons={refreshUserCoupons}
         />
 

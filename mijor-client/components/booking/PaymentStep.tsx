@@ -79,10 +79,6 @@ export default function PaymentStep({
 
     try {
       if (activeTab === "CreditCard") {
-        if (useStripe && stripeAction) {
-          await stripeAction();
-        }
-        
         if (isFree) {
           setPaymentSuccess(true);
           const selectedCoupon = userCoupons.find((c) => c.id === selectedCouponId);
@@ -101,6 +97,12 @@ export default function PaymentStep({
             title: "Booking Successful!",
             message: "Your free booking has been confirmed.",
           });
+          setIsProcessingPayment(false);
+          return;
+        }
+        if (useStripe && stripeAction) {
+          await stripeAction();
+          return;
         }
       } else if (activeTab === "QRCode") {
         const seatExpiresAt = new Date(Date.now() + remainingTime * 1000).toISOString();

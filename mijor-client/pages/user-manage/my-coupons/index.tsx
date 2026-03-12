@@ -15,7 +15,7 @@ export default function CouponPage() {
   const [coupons, setCoupons] = useState<Coupon[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(false);
-  const [userCouponIds, setUserCouponIds] = useState<string[]>([]);
+  const [userCoupons, setUserCoupons] = useState<{ coupon_id: string; is_used: boolean }[]>([]);
   const [showAlert, setShowAlert] = useState(false);
 
   const { user } = useAuth();
@@ -38,7 +38,7 @@ export default function CouponPage() {
       const ids = userCoupons.map((uc: any) => uc.coupon_id);
       
       setCoupons(fetchedCoupons);
-      setUserCouponIds(ids);
+      setUserCoupons(ids);
       setShowAlert(true);
     } catch (error) {
       console.error("Failed to refresh user coupons:", error);
@@ -55,7 +55,7 @@ export default function CouponPage() {
   useEffect(() => {
     if (!user) {
       setCoupons([]);
-      setUserCouponIds([]);
+      setUserCoupons([]);
       return;
     }
 
@@ -72,7 +72,7 @@ export default function CouponPage() {
         const ids = userCoupons.map((uc: any) => uc.coupon_id);
         
         setCoupons(fetchedCoupons);
-        setUserCouponIds(ids);
+        setUserCoupons(ids);
       } catch (error) {
         console.error("Error fetching user coupons:", error);
       } finally {
@@ -125,7 +125,7 @@ export default function CouponPage() {
                   <CardCouponVertical
                     key={coupon.id}
                     coupon_id={coupon.id.toString()}
-                    userCoupons={userCouponIds}
+                    userCoupons={userCoupons}
                     onCouponSaved={refreshUserCoupons}
                     imageSrc={coupon.image_url}
                     title={coupon.title}

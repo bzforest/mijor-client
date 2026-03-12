@@ -7,13 +7,13 @@ import { formatDate } from "@/utils/dateUtils";
 
 type CouponSectionProps = {
   coupons: Coupon[];
-  userCouponIds: string[];
+  userCoupons: { coupon_id: string; is_used: boolean }[];
   refreshUserCoupons: () => Promise<void>;
 };
 
 export default function CouponSection({
   coupons,
-  userCouponIds,
+  userCoupons,
   refreshUserCoupons,
 }: CouponSectionProps) {
   const router = useRouter();
@@ -69,7 +69,7 @@ export default function CouponSection({
           <CardCouponVertical
             key={coupon.id}
             coupon_id={coupon.id.toString()}
-            userCoupons={userCouponIds}
+            userCoupons={userCoupons}
             onCouponSaved={refreshUserCoupons}
             imageSrc={coupon.image_url}
             title={coupon.title}
