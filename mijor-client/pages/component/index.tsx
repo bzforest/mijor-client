@@ -22,8 +22,8 @@ const moviesDataMock = [
     {
         id: "1",
         title: "Django Unchained",
-        picture: "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcT0Y3K-9VNW2z5rUMxiimw6HCzWM7XbBrfihFTm47uFLdHJa75_",
-        date: "24/06/2024",
+        poster_url: "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcT0Y3K-9VNW2z5rUMxiimw6HCzWM7XbBrfihFTm47uFLdHJa75_",
+        release_date: "24/06/2024",
         rating: "4.6",
         genre: ["Action", "Crime"],
         language: ["TH", "EN"],
@@ -35,8 +35,8 @@ const moviesDataMock = [
     {
         id: "2",
         title: "Inception",
-        picture: "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQovCe0H45fWwAtV31ajOdXRPTxSsMQgPIQ3lcZX_mAW0jXV3kH",
-        date: "25/06/2024",
+        poster_url: "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQovCe0H45fWwAtV31ajOdXRPTxSsMQgPIQ3lcZX_mAW0jXV3kH",
+        release_date: "25/06/2024",
         rating: "4.8",
         genre: ["Sci-Fi", "Thriller"],
         language: ["EN", "TH"],
@@ -48,8 +48,8 @@ const moviesDataMock = [
     {
         id: "3",
         title: "Interstellar",
-        picture: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT9oW0XQlu1lo1G_49M-YwGzKR6rUg-CtflZj07HfbT8d2GwKWg",
-        date: "26/06/2024",
+        poster_url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT9oW0XQlu1lo1G_49M-YwGzKR6rUg-CtflZj07HfbT8d2GwKWg",
+        release_date: "26/06/2024",
         rating: "4.9",
         genre: ["Sci-Fi", "Drama"],
         language: ["EN"],
@@ -206,11 +206,11 @@ export default function Component() {
                     <h1 className="text-headline-3 text-brand-gray-300 text-center">
                         Moivie Card
                     </h1>
-{/* 
+
                     <div className="flex flex-row gap-[16px]">
                         <MovieCard movie={moviesDataMock[0]} variant="desktop" />
                         <MovieCard movie={moviesDataMock[0]} variant="mobile" />
-                    </div> */}
+                    </div>
                 </div>
 
                 {/* ================= Right Column ================= */}
@@ -343,8 +343,8 @@ export default function Component() {
                         <SummaryBox
                             key={index}
                             title={movie.title}
-                            picture={movie.picture}
-                            date={movie.date}
+                            picture={movie.poster_url}
+                            date={movie.release_date}
                             genre={movie.genre}
                             language={movie.language[0]}
                             remainingTime={movie.remainingTime}
@@ -502,7 +502,6 @@ export default function Component() {
                 genres={["Action", "Crime"]}
                 language={["TH"]}
                 halls={cinemas[0].halls}
-                onClick={() => console.log("Clicked")}
             />
         </div>
     );
