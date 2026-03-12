@@ -138,7 +138,7 @@ export default function CardCouponVertical({
           ) : (
             <Button
               onClick={handleClick}
-              className="w-full text-xs md:text-size-body-1"
+              className="w-full text-xs md:text-size-body-1 cursor-pointer"
             >
               Get coupon
             </Button>

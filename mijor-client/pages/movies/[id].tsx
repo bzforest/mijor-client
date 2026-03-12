@@ -359,6 +359,7 @@ export default function MovieDetailPage() {
                 name: hall.hall_name,
                 schedules: hall.schedules,
               }))}
+              onSelectTime={(showtimeId) => router.push(`/booking/${showtimeId}`)}
             />
           ))
         ) : (

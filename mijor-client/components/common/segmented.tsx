@@ -16,7 +16,16 @@ export default function Segmented({
     onClick,
 }: SegmentedProps) {
     return (
-        <div className="flex flex-row p-[4px] bg-brand-gray-100 rounded-[4px] w-fit">
+        <div
+            className="
+        flex flex-col
+        min-[375px]:flex-row
+        p-1
+        w-auto
+        bg-brand-gray-100
+        rounded-[4px]
+    "
+        >
             {options.map((option, index) => (
                 <MenuSegmented
                     key={index}

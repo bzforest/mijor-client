@@ -18,9 +18,10 @@ type CinemaShowTimeProps = {
   nameCinema: string;
   halls: HallData[];
   date?: string;
+  onSelectTime?: (showtimeId: string) => void;
 };
 
-export default function CinemaShowTime({ nameCinema, halls, date }: CinemaShowTimeProps) {
+export default function CinemaShowTime({ nameCinema, halls, date, onSelectTime }: CinemaShowTimeProps) {
   const [isOpen, setIsOpen] = useState(true);
 
   return (
@@ -84,7 +85,7 @@ export default function CinemaShowTime({ nameCinema, halls, date }: CinemaShowTi
                 {/* TimeSelection Component ที่ทำไว้ */}
                 <TimeSelection
                   schedules={hall.schedules}
-                  onSelect={(id) => console.log(`Selected session: ${id}`)}
+                  onSelect={(schedule) => onSelectTime ? onSelectTime(schedule.id) : console.log(`Selected session: ${schedule.id}`)}
                 />
               </div>
             ))}

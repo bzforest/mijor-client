@@ -28,7 +28,7 @@ export function CustomDatePicker({ value, onChange, className }: CustomDatePicke
                     type="button"
                     className={`${className} flex justify-between items-center text-left font-normal text-white`}
                 >
-                    <span className="truncate">
+                    <span className={`truncate ${!value ? "text-brand-gray-300" : ""}`}>
                         {value ? formatDisplayDate(selectedDate) : "All date"}
                     </span>
                     <CalendarIcon className="w-4 h-4 opacity-50 shrink-0 ml-2" />
@@ -37,7 +37,9 @@ export function CustomDatePicker({ value, onChange, className }: CustomDatePicke
             <PopoverContent
                 className="p-0 border border-brand-gray-200 bg-brand-gray-0 text-white shadow-2xl rounded-lg overflow-hidden animate-in fade-in zoom-in-95 duration-200 w-fit"
                 align="start"
+                side="bottom"
                 sideOffset={4}
+                avoidCollisions={false}
             >
                 <div className="p-1">
                     <Calendar

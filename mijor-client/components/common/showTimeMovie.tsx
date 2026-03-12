@@ -30,7 +30,7 @@ interface MovieShowtimeProps {
   hearingAssistance?: boolean;
   wheelchairAccess?: boolean;
   isShow?: boolean;
-  onClick: () => void;
+  onSelectTime?: (scheduleId: string) => void;
   onClickMovieDetail?: () => void;
 }
 
@@ -46,7 +46,7 @@ export default function MovieShowtimeCard({
   hearingAssistance = false,
   wheelchairAccess = false,
   tags,
-  onClick,
+  onSelectTime,
   onClickMovieDetail,
 }: MovieShowtimeProps) {
   const [isOpen, setIsOpen] = useState(true);
@@ -83,7 +83,7 @@ export default function MovieShowtimeCard({
             </h3>
             <TimeSelection
               schedules={hall.schedules}
-              onSelect={onClick}
+              onSelect={(schedule) => onSelectTime ? onSelectTime(schedule.id) : console.log(`Selected session: ${schedule.id}`)}
             />
           </div>
         ))}
