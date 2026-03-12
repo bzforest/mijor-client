@@ -13,13 +13,6 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import * as React from "react"
-import { Calendar } from "@/components/ui/calendar"
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from "@/components/ui/popover"
-import { CalendarIcon } from "lucide-react"
 
 import { SearchFilters, SearchFilterBarProps, INITIAL_FILTERS, selectClass, contentClass } from "./shared";
 import { CustomDatePicker } from "./CustomDatePicker";
@@ -109,7 +102,7 @@ function SearchResultMobile({
     const allCities = ["All city", ...cityOptions];
 
     return (
-        <search className="md:hidden flex flex-col gap-[16px] p-[16px] w-full shadow-[4px_4px_30px_0_#00000080] bg-brand-gray-0">
+        <search className="lg:hidden flex flex-col gap-[16px] p-[16px] w-full shadow-[4px_4px_30px_0_#00000080] bg-brand-gray-0">
             <div className="flex flex-col gap-[12px] w-full">
                 {/* Movie Title */}
                 <div ref={titleWrapperRef} className="relative w-full">
@@ -144,10 +137,10 @@ function SearchResultMobile({
                         value={filters.language === "" ? "all_languages" : filters.language}
                         onValueChange={(val) => updateFilter("language", val === "all_languages" ? "" : val)}
                     >
-                        <SelectTrigger className={selectClass}>
+                        <SelectTrigger className={`${selectClass} ${filters.language === "" ? "text-brand-gray-300" : "text-white"}`}>
                             <SelectValue placeholder="Any language" />
                         </SelectTrigger>
-                        <SelectContent position="popper" sideOffset={4} className={contentClass}>
+                        <SelectContent position="popper" side="bottom" sideOffset={4} avoidCollisions={false} className={contentClass}>
                             <SelectGroup>
                                 {allLanguages.map((language, id) => (
                                     <SelectItem key={id} value={language === "Any language" ? "all_languages" : language}>
@@ -162,10 +155,10 @@ function SearchResultMobile({
                         value={filters.genre === "" ? "all_genres" : filters.genre}
                         onValueChange={(val) => updateFilter("genre", val === "all_genres" ? "" : val)}
                     >
-                        <SelectTrigger className={selectClass}>
+                        <SelectTrigger className={`${selectClass} ${filters.genre === "" ? "text-brand-gray-300" : "text-white"}`}>
                             <SelectValue placeholder="All genre" />
                         </SelectTrigger>
-                        <SelectContent position="popper" sideOffset={4} className={contentClass}>
+                        <SelectContent position="popper" side="bottom" sideOffset={4} avoidCollisions={false} className={contentClass}>
                             <SelectGroup>
                                 {allGenres.map((genre, id) => (
                                     <SelectItem key={id} value={genre === "All genre" ? "all_genres" : genre}>
@@ -182,10 +175,10 @@ function SearchResultMobile({
                         value={filters.city === "" ? "all_cities" : filters.city}
                         onValueChange={(val) => updateFilter("city", val === "all_cities" ? "" : val)}
                     >
-                        <SelectTrigger className={selectClass}>
+                        <SelectTrigger className={`${selectClass} ${filters.city === "" ? "text-brand-gray-300" : "text-white"}`}>
                             <SelectValue placeholder="All city" />
                         </SelectTrigger>
-                        <SelectContent position="popper" sideOffset={4} className={contentClass}>
+                        <SelectContent position="popper" side="bottom" sideOffset={4} avoidCollisions={false} className={contentClass}>
                             <SelectGroup>
                                 {allCities.map((city, id) => (
                                     <SelectItem key={id} value={city === "All city" ? "all_cities" : city}>

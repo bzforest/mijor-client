@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/router";
 import axios from "axios";
 
-import SearchFilterBar from "@/components/common/searchFilterBar/searchFilterBarDestop";
+import SearchFilterBar from "@/components/common/searchFilterBar/searchFilterBar";
 import Banner from "@/assets/landing/banner.jpg";
 
 // ===== Constants =====
@@ -75,13 +75,13 @@ function SearchSection() {
     };
 
     return (
-        <div className="relative w-screen h-[400px] md:h-[500px]">
+        <div className="relative w-full h-[400px] lg:h-[500px]">
             {/* Background Image */}
-            <div className="absolute inset-0 w-full h-[265px] md:h-[400px]" >
+            <div className="absolute inset-0 w-full h-[265px] lg:h-[400px]" >
                 <img
                     src={Banner.src}
                     alt="banner"
-                    className="absolute inset-0 w-full h-[265px] md:h-[400px] opacity-60"
+                    className="absolute inset-0 w-full h-[265px] lg:h-[400px] opacity-60"
                 />
 
                 {/* Dark Gradient Overlay */}
@@ -91,8 +91,8 @@ function SearchSection() {
                 <div className="absolute inset-0 backdrop-blur-[2px]" />
 
                 {/* Search Filters */}
-                <div className="absolute w-[344px] left-1/2 -translate-x-1/2 bottom-0 translate-y-1/2
-                    md:w-[1200px] md:left-1/2 md:-translate-x-1/2 md:bottom-0 md:translate-y-1/2 ">
+                <div className="absolute z-50 w-[344px] left-1/2 -translate-x-1/2 bottom-0 translate-y-1/2
+                    lg:w-[calc(100%-48px)] xl:w-[1200px] lg:left-1/2 lg:-translate-x-1/2 lg:bottom-0 lg:translate-y-1/2 ">
                     <SearchFilterBar
                         onSearch={handleSearch}
                         onTitleChange={fetchSuggestions}

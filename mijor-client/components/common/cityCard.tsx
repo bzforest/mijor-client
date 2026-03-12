@@ -12,9 +12,9 @@ type CityCardProps = {
 function CityCard({ id, cinema, length, address }: CityCardProps) {
     return (
         <Link href={`/Cinema-detail/${id}`} className="block">
-            <article className="flex flex-row items-center w-[590px] p-[16px] gap-[16px] rounded-[4px] border border-brand-gray-100 hover:bg-brand-gray-100/30 transition-colors cursor-pointer">
+            <article className="flex flex-row items-center w-full p-[16px] gap-[16px] rounded-[4px] border border-brand-gray-100 hover:bg-brand-gray-100/30 transition-colors cursor-pointer">
                 {/* --- Icon Section --- */}
-                <div className="flex justify-center items-center bg-brand-gray-100 rounded-full w-[52px] h-[52px]">
+                <div className="flex justify-center items-center bg-brand-gray-100 rounded-full w-[52px] h-[52px] shrink-0">
                     <svg width="32" height="32" viewBox="0 0 24 24" aria-hidden="true">
                         <path
                             fillRule="evenodd"
@@ -35,16 +35,16 @@ function CityCard({ id, cinema, length, address }: CityCardProps) {
                         {/* Display distance separator only when length data exists */}
                         {length && (
                             <>
-                                <p className="text-body-2 text-white">
+                                <p className="hidden md:flex text-body-2 text-white whitespace-nowrap">
                                     {length} km
                                 </p>
-                                <span className="text-body-2 text-brand-gray-200">
+                                <span className="hidden md:flex text-body-2 text-brand-gray-200">
                                     |
                                 </span>
                             </>
                         )}
 
-                        <p className="text-body-2 text-brand-gray-300">
+                        <p className="text-body-2 text-brand-gray-300 ">
                             {address}
                         </p>
                     </div>

@@ -1,4 +1,5 @@
 import MovieShowtimeCard from "@/components/common/showTimeMovie";
+import { useRouter } from "next/router";
 
 interface CinemaShowtimesListProps {
     loading: boolean;
@@ -12,6 +13,7 @@ interface CinemaShowtimesListProps {
 }
 
 export default function CinemaShowtimesList({ loading, movies }: CinemaShowtimesListProps) {
+    const router = useRouter();
     if (loading) {
         return (
             <p className="py-20 text-center text-headline-3 text-brand-gray-300 border-t border-brand-gray-100/10">
@@ -37,7 +39,7 @@ export default function CinemaShowtimesList({ loading, movies }: CinemaShowtimes
                     posterUrl={movie.posterUrl}
                     tags={movie.tags}
                     halls={movie.halls}
-                    onClick={() => { }}
+                    onSelectTime={(showtimeId) => router.push(`/booking/${showtimeId}`)}
                 />
             ))}
         </>
