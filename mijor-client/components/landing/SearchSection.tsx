@@ -66,7 +66,9 @@ function SearchSection() {
         if (filters.language) query.language = filters.language;
         if (filters.genre) query.genre = filters.genre;
         if (filters.city) query.city = filters.city;
-        if (filters.date) query["showtime.start_time"] = filters.date;
+        if (filters.date) {
+            query["showtime.start_time"] = filters.date;
+        }
 
         router.push({
             pathname: "/search-result",
