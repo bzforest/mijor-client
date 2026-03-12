@@ -1,18 +1,24 @@
 /* ===== Page: QR Payment ===== */
-/* Responsibility: Generate QR code and track payment status in real-time */
+// Responsibility: Orchestrate QR payment flow with extracted components and hooks
 
 import { useRouter } from "next/router";
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useState } from "react";
+
 import Button from "@/components/ui/Button";
 import Modal from "@/components/ui/Modal";
-import { CheckCircle, AlertCircle } from "lucide-react";
-import QRCodeDisplay from "@/components/payment/QRCodeDisplay";
-import { usePaymentStatus } from "@/hooks/usePaymentStatus";
-import axios from "axios";
+import { BookingDetailsSection } from "@/components/payment/BookingDetailsSection";
+import { QRCodeSection } from "@/components/payment/QRCodeSection";
+import { usePaymentStatus } from "@/hooks/payments/usePaymentStatus";
+import { useCountdownTimer } from "@/hooks/payments/useCountdownTimer";
+import { useQRPayment } from "@/hooks/payments/useQRPayment";
+import { confirmQRPayment } from "@/services/paymentApi";
+import { formatRemainingTime } from "@/utils/formatRemainingTime";
+import { ExpiredBookingModal } from "@/components/payment/ExpiredBookingModal";
 
 export default function QRPayment() {
   const router = useRouter();
   const { query, isReady } = router;
+  const [isExpiredModalOpen, setIsExpiredModalOpen] = useState(false);
 
   // Extract booking data from query parameters
   const title = (query.title as string) || "";
@@ -27,136 +33,34 @@ export default function QRPayment() {
   const selectedSeats = JSON.parse((query.selectedSeats as string) || "[]");
   const bookingId = (query.bookingId as string) || "";
   const selectedCouponId = (query.selectedCouponId as string) || "";
-
-  // QR Code state management
-  const [qrData, setQrData] = useState<any>(null);
-  const [paymentIntentId, setPaymentIntentId] = useState<string>("");
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string>("");
-  const [isExpiredModalOpen, setIsExpiredModalOpen] = useState(false);
-  const hasGeneratedRef = useRef(false);
-  const seatIds = JSON.parse((query.seatIds as string) || "[]"); // ✅ UUIDs
+  const seatIds = JSON.parse((query.seatIds as string) || "[]");
   const showtimeId = (query.showtimeId as string) || "";
 
-  // คำนวณ initial timeRemaining จาก seatExpiresAt ที่ส่งมาจากหน้า booking
-  // ถ้าไม่มี fallback เป็น 900 วินาที (15 นาที)
-  const getSecondsRemaining = () => {
-    if (!seatExpiresAt) return 900;
-    const diff = Math.floor(
-      (new Date(seatExpiresAt).getTime() - Date.now()) / 1000,
-    );
-    return Math.max(0, diff);
+  // QR Payment data for hook
+  const paymentData = {
+    amount: isReady ? parseFloat(finalPrice) : 0,
+    bookingId: isReady ? (bookingId || "QR-" + Date.now()) : "",
+    totalPrice: isReady ? parseFloat(totalPrice) : 0,
+    selectedCouponId: isReady ? selectedCouponId : "",
+    seatExpiresAt: isReady ? seatExpiresAt : "",
   };
 
-  const [timeRemaining, setTimeRemaining] = useState(() =>
-    getSecondsRemaining(),
+  // Use extracted hooks
+  const { qrData, paymentIntentId, isLoading, error, isFree } = useQRPayment(
+    paymentData,
+    isReady
+  );
+  
+  const { timeRemaining, hasStartedTimer } = useCountdownTimer(
+    seatExpiresAt,
+    "" // Will be updated after paymentIntentId is set
   );
 
-  // Payment status tracking
   const {
     status: paymentStatus,
     isLoading: statusLoading,
     error: statusError,
-  } = usePaymentStatus(paymentIntentId);
-
-  // Generate QR Code
-  useEffect(() => {
-    if (!isReady) return;
-    if (hasGeneratedRef.current) return;
-    hasGeneratedRef.current = true;
-
-    const generateQR = async () => {
-      try {
-        setIsLoading(true);
-        setError("");
-
-        console.log("🔵 Creating QR payment with data:", {
-          amount: parseFloat(finalPrice),
-          bookingId: bookingId || "QR-" + Date.now(),
-          totalPrice: parseFloat(finalPrice),
-          selectedCouponId: selectedCouponId,
-          seatExpiresAt: seatExpiresAt,
-        });
-
-        const response = await axios.post(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/payments/create-qr-payment`,
-          {
-            amount: parseFloat(finalPrice),
-            bookingId: bookingId || "QR-" + Date.now(),
-            totalPrice: parseFloat(totalPrice),
-            selectedCouponId: selectedCouponId,
-            seatExpiresAt: seatExpiresAt,
-          },
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          },
-        );
-
-        console.log("📡 API Response status:", response.status);
-
-        const data = response.data;
-        console.log("📊 API Response data:", data);
-
-        if (data.success) {
-          console.log("🔵 QR Payment Created:", data);
-          setQrData(data.qrData);
-          setPaymentIntentId(data.paymentIntentId);
-        } else {
-          throw new Error(
-            data.error || data.message || "Failed to create QR payment",
-          );
-        }
-
-        setIsLoading(false);
-      } catch (error) {
-        console.error("❌ Failed to generate QR code:", error);
-        const errorMessage =
-          error instanceof Error ? error.message : "Failed to generate QR code";
-        setError(errorMessage);
-        setIsLoading(false);
-      }
-    };
-
-    generateQR();
-  }, [isReady]);
-
-  /* ===== Timer Component ===== */
-  // Responsibility: Display countdown timer with proper formatting
-  const TimerDisplay = () => {
-    return (
-      <span
-        className={`font-mono ${
-          paymentStatus === "expired"
-            ? "text-red-500"
-            : paymentStatus === "succeeded"
-              ? "text-green-500"
-              : "text-yellow-500"
-        }`}
-      >
-        {paymentStatus === "succeeded" ? "Paid!" : formatTime(timeRemaining)} (
-        {timeRemaining}s)
-      </span>
-    );
-  };
-
-  /* ===== Timer Countdown ===== */
-  // Responsibility: นับถอยหลังจาก seatExpiresAt (timestamp จริง) เพื่อ sync กับ seat lock
-  useEffect(() => {
-    if (paymentStatus === "expired" || paymentStatus === "succeeded") return;
-
-    const tick = () => {
-      const remaining = getSecondsRemaining();
-      setTimeRemaining(remaining);
-    };
-
-    // อัปเดตทันทีเพื่อให้ตรงกับเวลาจริง
-    tick();
-
-    const timer = setInterval(tick, 1000);
-    return () => clearInterval(timer);
-  }, [seatExpiresAt, paymentStatus]); // re-run ถ้า seatExpiresAt เปลี่ยน (router ready)
+  } = usePaymentStatus(isFree ? "" : paymentIntentId);
 
   /* ===== Payment Status Handler ===== */
   // Responsibility: Handle payment status changes and redirects
@@ -164,15 +68,17 @@ export default function QRPayment() {
     if (paymentStatus === "succeeded") {
       const confirmBooking = async () => {
         try {
-          const response = await axios.post(
-            `${process.env.NEXT_PUBLIC_API_URL}/booking/showtimeSeat/confirm-qr`,
-            { showtimeId, seatIds, selectedCouponId, paymentIntentId },
-          );
+          const response = await confirmQRPayment({
+            showtimeId,
+            seatIds,
+            selectedCouponId,
+            paymentIntentId,
+          });
           setTimeout(() => {
             router.push(
               `/payment-success?${new URLSearchParams({
                 ...(query as any),
-                bookingId: response.data.bookingId,
+                bookingId: response.bookingId,
               }).toString()}`,
             );
           }, 2000);
@@ -187,34 +93,35 @@ export default function QRPayment() {
       };
       confirmBooking();
     }
-  }, [paymentStatus]);
+  }, [paymentStatus, showtimeId, seatIds, selectedCouponId, paymentIntentId, query, router]);
 
-  /* ===== Utility Functions ===== */
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins}:${secs.toString().padStart(2, "0")}`;
-  };
+  useEffect(() => {
+    if (!isFree || !paymentIntentId) return;
+    
+    confirmQRPayment({
+      showtimeId,
+      seatIds,
+      selectedCouponId,
+      paymentIntentId,
+      forceSuccess: true,
+    }).then((response) => {
+      router.push(`/payment-success?${new URLSearchParams({
+        ...(query as any),
+        bookingId: response.bookingId,
+      }).toString()}`);
+    }).catch((error) => {
+      console.error("❌ Failed to confirm free booking:", error);
+    });
+  }, [isFree, paymentIntentId]);
 
-  const handleBack = () => {
-    router.back();
-  };
-
-const hasStartedTimer = useRef(false);
-
-useEffect(() => {
-    if (timeRemaining > 0) {
-        hasStartedTimer.current = true;
+  // Business rule: Show expiration modal when timer reaches zero
+  useEffect(() => {
+    if (timeRemaining === 0 && hasStartedTimer && paymentStatus !== "succeeded") {
+      setIsExpiredModalOpen(true);
     }
-}, [timeRemaining]);
+  }, [timeRemaining, hasStartedTimer, paymentStatus]);
 
-useEffect(() => {
-    if (timeRemaining === 0 && hasStartedTimer.current && paymentStatus !== "succeeded") {
-        setIsExpiredModalOpen(true);
-    }
-}, [timeRemaining, paymentStatus]);
-
-if (!isReady) return null;
+  if (!isReady) return null;
 
   return (
     <main className="min-h-screen bg-[#101525]">
@@ -223,180 +130,48 @@ if (!isReady) return null;
         <div className="max-w-4xl mx-auto">
           <div className="grid md:grid-cols-2 gap-8">
             {/* ===== QR Code Section ===== */}
-            <section className="bg-brand-gray-100 rounded-xl p-8">
-              <h2 className="text-xl font-bold text-white mb-6 text-center">
-                Scan QR Code to Pay
-              </h2>
-
-              {isLoading ? (
-                <div className="flex items-center justify-center h-64">
-                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-                </div>
-              ) : paymentStatus === "expired" ? (
-                <div className="flex flex-col items-center justify-center h-64">
-                  <AlertCircle size={48} className="text-red-500 mb-4" />
-                  <p className="text-red-500 text-center">QR Code expired</p>
-                  <Button
-                    variant="primary"
-                    onClick={() => window.location.reload()}
-                    className="mt-4"
-                  >
-                    Generate New QR Code
-                  </Button>
-                </div>
-              ) : paymentStatus === "succeeded" ? (
-                <div className="flex flex-col items-center justify-center h-64">
-                  <CheckCircle size={48} className="text-green-500 mb-4" />
-                  <p className="text-green-500 text-center">
-                    Payment Successful!
-                  </p>
-                  <p className="text-gray-400 text-sm mt-2">Redirecting...</p>
-                </div>
-              ) : error ? (
-                <div className="flex flex-col items-center justify-center h-64">
-                  <AlertCircle size={48} className="text-red-500 mb-4" />
-                  <p className="text-red-500 text-center mb-2">
-                    QR Code Generation Failed
-                  </p>
-                  <p className="text-gray-400 text-sm text-center mb-4 max-w-xs">
-                    {error}
-                  </p>
-                  <div className="flex gap-2">
-                    <Button
-                      variant="primary"
-                      onClick={() => window.location.reload()}
-                      className="mt-2"
-                    >
-                      Try Again
-                    </Button>
-                    <Button
-                      variant="secondary"
-                      onClick={handleBack}
-                      className="mt-2"
-                    >
-                      Go Back
-                    </Button>
-                  </div>
-                </div>
-              ) : (
-                <>
-                  <QRCodeDisplay
-                    qrData={qrData}
-                    isLoading={false}
-                    size={256}
-                    timeRemaining={timeRemaining}
-                    formatTime={formatTime}
-                  />
-                  {/* ✅ DEV ONLY — ลบออกก่อน deploy จริง */}
-                  {process.env.NODE_ENV !== "production" && paymentIntentId && (
-                    <button
-                      onClick={async () => {
-                        try {
-                          console.log("🧪 Force simulating success locally...");
-                          // ✅ เรียก confirm-qr โดยตรง ไม่ผ่าน Stripe
-                          const response = await axios.post(
-                            `${process.env.NEXT_PUBLIC_API_URL}/booking/showtimeSeat/confirm-qr`,
-                            {
-                              showtimeId,
-                              seatIds,
-                              selectedCouponId,
-                              paymentIntentId,
-                              forceSuccess: true,
-                            },
-                          );
-                          console.log("🧪 confirm-qr response:", response.data);
-                          if (response.data.success) {
-                            router.push(
-                              `/payment-success?${new URLSearchParams({
-                                ...(query as any),
-                                bookingId: response.data.bookingId,
-                              }).toString()}`,
-                            );
-                          }
-                        } catch (err) {
-                          console.error("🧪 Simulation failed:", err);
-                        }
-                      }}
-                      className="mt-4 w-full py-2 bg-green-700 hover:bg-green-600 text-white text-sm rounded-lg"
-                    >
-                      🧪 [DEV] Simulate Payment Success
-                    </button>
-                  )}
-                </>
-              )}
-            </section>
+            <QRCodeSection
+              qrData={qrData}
+              paymentIntentId={paymentIntentId}
+              isLoading={isLoading}
+              error={error}
+              paymentStatus={paymentStatus}
+              timeRemaining={timeRemaining}
+              formatTime={formatRemainingTime}
+              showtimeId={showtimeId}
+              seatIds={seatIds}
+              selectedCouponId={selectedCouponId}
+              query={query}
+            />
 
             {/* ===== Booking Details Section ===== */}
-            <section className="bg-brand-gray-100 rounded-xl p-8">
-              <h2 className="text-xl font-bold text-white mb-6">
-                Booking Details
-              </h2>
-
-              <div className="space-y-4">
-                <div className="text-white">
-                  <p className="text-gray-400 text-sm">Movie</p>
-                  <p className="font-semibold">{title}</p>
-                </div>
-
-                <div className="text-white">
-                  <p className="text-gray-400 text-sm">Date & Time</p>
-                  <p className="font-semibold">
-                    {date} at {time}
-                  </p>
-                </div>
-
-                <div className="text-white">
-                  <p className="text-gray-400 text-sm">Cinema & Hall</p>
-                  <p className="font-semibold">
-                    {cinema} - {hall}
-                  </p>
-                </div>
-
-                <div className="text-white">
-                  <p className="text-gray-400 text-sm">Seats</p>
-                  <p className="font-semibold">{selectedSeats.join(", ")}</p>
-                </div>
-
-                <div className="border-t border-brand-gray-0 pt-4">
-                  <div className="flex justify-between items-center">
-                    <span className="text-white">Total Amount</span>
-                    <span className="text-white font-bold text-lg">
-                      THB {finalPrice}
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-6 p-4 bg-yellow-500/20 rounded-lg">
-                <p className="text-yellow-500 text-sm text-center">
-                  ⚠️ Please complete payment within {formatTime(timeRemaining)}
-                </p>
-              </div>
-            </section>
+            <BookingDetailsSection
+              title={title}
+              date={date}
+              time={time}
+              cinema={cinema}
+              hall={hall}
+              selectedSeats={selectedSeats}
+              finalPrice={finalPrice}
+              timeRemaining={timeRemaining}
+              formatTime={formatRemainingTime}
+            />
           </div>
         </div>
       </div>
       <div className="flex justify-center items-center pt-8">
         <Button
           variant="secondary"
-          onClick={handleBack}
+          onClick={() => router.back()}
           className="flex items-center gap-2"
         >
           Back
         </Button>
       </div>
-      <Modal
+      <ExpiredBookingModal
         isOpen={isExpiredModalOpen}
-        onClose={() => setIsExpiredModalOpen(false)}
-        title="Booking expired"
-        primaryActionButton="OK"
         onPrimaryAction={() => router.back()}
-        className="max-w-md"
-      >
-        <p className="text-center text-body-2 text-brand-gray-400">
-          You did not complete the checkout process in time,<br /> please start again
-        </p>
-      </Modal>
+      />
     </main>
   );
 }

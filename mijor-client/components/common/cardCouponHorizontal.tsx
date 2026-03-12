@@ -65,8 +65,12 @@ export default function CardCouponHorizontal({
       {/* Right Content */}
       <div className="flex flex-col justify-between p-3 md:p-4 flex-1">
         <div>
-          <h3 className="text-white font-semibold text-left
-            md:text-base text-xs leading-snug"
+          <h3 
+            className="text-white font-semibold text-left
+            md:text-base text-xs leading-snug
+            overflow-hidden text-ellipsis whitespace-nowrap
+            md:overflow-visible md:whitespace-normal"
+            style={{ maxWidth: '195px' }}
           >
             {title}
           </h3>
