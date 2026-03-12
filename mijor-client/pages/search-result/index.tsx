@@ -6,11 +6,13 @@ import SearchFilterBar from "@/components/common/searchFilterBar/searchFilterBar
 import MovieShowtimeCard from "@/components/common/showTimeMovie";
 import Pagination from "@/components/ui/pagination";
 import { useRouter } from "next/router";
+import formatMyDate from "@/utils/formatDate";
 
 // ===== Types =====
 type Schedule = {
     id: string;
     time: string;
+    isAvailable?: boolean;
 };
 
 type HallData = {
@@ -30,6 +32,7 @@ type MovieCardData = {
     status: string;
     hearingAssistance: boolean;
     wheelchairAccess: boolean;
+    date?: string;
 };
 
 // ===== Constants =====
@@ -73,6 +76,19 @@ export default function SearchResultPage() {
             if (json.pagination) {
                 setTotalPages(json.pagination.totalPages || 1);
                 setCurrentPage(json.pagination.currentPage || page);
+            }
+
+            // Sync the effective date from server back into filters
+            if (json.date) {
+                const synced = { ...(filters || {}), date: json.date };
+                setCurrentFilters(synced);
+            } else if (filters && filters.date) {
+                // If the backend didn't return a date but frontend had one
+                // this is a fallback, but normally happens if json.date is removed.
+            } else if (json.date === undefined && (filters?.date === undefined || filters?.date === "")) {
+                // Remove date from current filters if backend returns no date
+                const { date, ...restFilters } = currentFilters || {};
+                setCurrentFilters(restFilters);
             }
 
             if (json.data && json.data.length > 0) {
@@ -153,7 +169,9 @@ export default function SearchResultPage() {
             setCurrentFilters(filtersFromQuery);
             fetchMovies(filtersFromQuery, 1);
         } else {
-            fetchMovies();
+            // No default filters, just fetch all movies
+            setCurrentFilters({});
+            fetchMovies({}, 1);
         }
     }, [router.isReady]);
 
@@ -171,6 +189,35 @@ export default function SearchResultPage() {
     const handlePageChange = (page: number) => {
         fetchMovies(currentFilters, page);
         window.scrollTo({ top: 0, behavior: "smooth" });
+    };
+
+    /* ================= Schedule Availability ================= */
+    // คำนวณ isAvailable ของแต่ละ schedule โดยอิงจากวันที่ + เวลา (ใช้เวลาเครื่อง client)
+    const getProcessedHalls = (halls: HallData[], movieDate?: string): HallData[] => {
+        const effectiveDate = movieDate || currentFilters?.date;
+        if (!effectiveDate) return halls; // ไม่มีวันที่ ใช้ logic เดิม
+
+        const now = new Date();
+        const todayStr = now.toLocaleDateString("en-CA", { timeZone: "Asia/Bangkok" }); // YYYY-MM-DD ตาม local timezone
+
+        if (effectiveDate < todayStr) {
+            // วันที่ผ่านไปแล้ว → ทุก schedule disabled
+            return halls.map((hall) => ({
+                ...hall,
+                schedules: hall.schedules.map((s) => ({ ...s, isAvailable: false })),
+            }));
+        }
+
+        if (effectiveDate > todayStr) {
+            // วันที่ยังมาไม่ถึง → ทุก schedule available
+            return halls.map((hall) => ({
+                ...hall,
+                schedules: hall.schedules.map((s) => ({ ...s, isAvailable: true })),
+            }));
+        }
+
+        // วันนี้ → ไม่ set isAvailable ให้ TimeSelection ใช้ logic เวลาเดิม
+        return halls;
     };
 
     /* ================= View Logic ================= */
@@ -205,17 +252,26 @@ export default function SearchResultPage() {
                             {movies.length > 0 ? (
                                 movies.map((movie) => (
                                     <MovieShowtimeCard
-                                        key={`${movie.id}-${movie.location}`}
+                                        key={`${movie.id}-${movie.location}-${movie.date ?? 'nodate'}`}
                                         title={movie.title}
                                         posterUrl={movie.posterUrl}
                                         genres={movie.genres}
                                         language={movie.language}
-                                        halls={movie.halls}
+                                        halls={getProcessedHalls(movie.halls, movie.date)}
                                         location={movie.location}
                                         status={movie.status}
                                         isShow={true}
                                         hearingAssistance={movie.hearingAssistance}
                                         wheelchairAccess={movie.wheelchairAccess}
+                                        date={
+                                            movie.status === "Now Showing"
+                                                ? movie.date
+                                                    ? new Date(movie.date).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })
+                                                    : currentFilters?.date
+                                                        ? new Date(currentFilters.date).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })
+                                                        : undefined
+                                                : undefined
+                                        }
                                         onSelectTime={(showtimeId) => router.push(`/booking/${showtimeId}`)}
                                         onClickMovieDetail={() => router.push(`/movies/${movie.id}`)}
                                     />
