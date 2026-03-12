@@ -26,6 +26,7 @@ interface MovieShowtimeProps {
   halls: HallData[];
   location?: string;
   tags?: string[];
+  date?: string;
   status?: MovieStatus;
   hearingAssistance?: boolean;
   wheelchairAccess?: boolean;
@@ -45,6 +46,7 @@ export default function MovieShowtimeCard({
   isShow = false,
   hearingAssistance = false,
   wheelchairAccess = false,
+  date,
   tags,
   onSelectTime,
   onClickMovieDetail,
@@ -149,6 +151,8 @@ export default function MovieShowtimeCard({
               className="object-cover w-[96px] h-fit md:w-auto md:h-auto rounded-sm bg-brand-gray-200/30"
             />
             <div className="flex flex-col gap-2 w-full">
+              {date && <p className="text-body-2 text-brand-gray-300">{date}</p>}
+              
               <h2 className="mb-2 text-headline-4 font-bold text-white">{title}</h2>
 
               {/* Tags */}

@@ -222,7 +222,7 @@ export default function SearchResultDestop({
                         onClick={handleClear}
                         type="button"
                         variant="text"
-                        className="transition-all active:scale-[0.95]"
+                        className="transition-all active:scale-[0.95] cursor-pointer"
                     >
                         Clear
                     </Button>
