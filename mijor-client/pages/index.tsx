@@ -139,9 +139,14 @@ function LandingPage() {
       setCoupons(data);
 
       if (user) {
-        const userCoupons = await fetchUserCoupons();
-        const ids = userCoupons.map((uc: any) => uc.coupon_id);
-        setUserCoupons(ids);
+        const data = await fetchUserCoupons();
+
+        setUserCoupons(
+          data.map((uc: any) => ({
+            coupon_id: uc.coupon_id,
+            is_used: uc.is_used,
+          }))
+        );
       } else {
         setUserCoupons([]);
       }
@@ -167,9 +172,13 @@ function LandingPage() {
     if (!user) return;
 
     try {
-      const userCoupons = await fetchUserCoupons();
-      const ids = userCoupons.map((uc: any) => uc.coupon_id);
-      setUserCoupons(ids);
+      const data = await fetchUserCoupons();
+      setUserCoupons(
+        data.map((uc: any) => ({
+          coupon_id: uc.coupon_id,
+          is_used: uc.is_used,
+        }))
+      );
       setShowAlert(true);
     } catch (error) {
       console.error("Failed to refresh user coupons:", error);
