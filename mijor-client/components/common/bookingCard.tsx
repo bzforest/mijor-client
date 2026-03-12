@@ -2,7 +2,7 @@ import formatMyDate from "@/utils/formatDate";
 import BookingStatus from "./bookingStatus";
 import { MapPin, CalendarDays, Clock3, Store } from "lucide-react";
 
-interface BookingCardProps {
+export interface BookingCardProps {
     title: string;
     picture: string;
     cinema: string;
