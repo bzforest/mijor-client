@@ -16,7 +16,10 @@ type CardCouponVerticalProps = {
   className?: string;
   onClick?: () => void;
   coupon_id?: string;
-  userCoupons?: string[];
+  userCoupons?: {
+    coupon_id: string
+    is_used: boolean
+  }[]
   onCouponSaved?: () => Promise<void>;
 };
 
@@ -34,39 +37,67 @@ export default function CardCouponVertical({
   /* ===== State ===== */
   const [isCollected, setIsCollected] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [infoModalOpen, setInfoModalOpen] = useState(false);
+  const [infoTitle, setInfoTitle] = useState("");
+  const [infoMessage, setInfoMessage] = useState("");
   const { user , navigateToLogin } = useAuth();
 
   /* ===== Derived State ===== */
-  const hasCoupon = userCoupons?.includes(coupon_id || "");
+  const collectedCoupon = userCoupons?.find(
+  (c) => c.coupon_id === coupon_id
+);
+
+const isUsed = collectedCoupon?.is_used;
+const hasCoupon = !!collectedCoupon;
 
   /* ===== Event Handlers ===== */
-  const handleClick = async () => {
+const handleClick = async () => {
     if (!user) {
       setIsOpen(true);
       return;
     }
 
+    if (isUsed) {
+      setInfoTitle("Coupon used");
+      setInfoMessage("This coupon has already been used");
+      setInfoModalOpen(true);
+      return;
+    }
+
     try {
-      const result = await saveCoupon(coupon_id || '');
-      
+      const result = await saveCoupon(coupon_id || "");
+
       if (result.success) {
         setIsCollected(true);
-        // Refresh parent component's user coupons list
+
         if (onCouponSaved) {
           await onCouponSaved();
         }
-      } else {
-        console.error('Save coupon failed:', result.message);
-        // TODO: Implement proper error handling UI
-        setIsCollected(true);
+        setInfoTitle("Success");
+        setInfoMessage("Coupon collected successfully");
+        setInfoModalOpen(true);
+        return;
       }
-    } catch (error) {
-      console.error('Error saving coupon:', error);
-      // TODO: Implement proper error handling UI
-      setIsCollected(true);
-    }
-  };
 
+      if (result.message === "Coupon already saved") {
+      setIsCollected(true);
+
+      setInfoTitle("Already collected");
+      setInfoMessage("You already have this coupon");
+      setInfoModalOpen(true);
+      return;
+    }
+
+      setInfoTitle("Error");
+      setInfoMessage(result.message);
+      setInfoModalOpen(true);
+
+    } catch (error) {
+      setInfoTitle("Error");
+      setInfoMessage("Something went wrong");
+      setInfoModalOpen(true);
+  }
+};
   const handleClose = () => {
     setIsCollected(false);
     setIsOpen(false);
@@ -127,19 +158,20 @@ export default function CardCouponVertical({
 
         {/* ===== Action Section ===== */}
         <div className="mt-[12px] md:mt-[14px]">
-          {isCollected || hasCoupon ? (
+          {isUsed ? (
+            <Button variant="secondary" disabled className="w-full">
+              Used
+            </Button>
+          ) : hasCoupon || isCollected ? (
             <Button
               variant="secondary"
               onClick={onClick}
-              className="w-full text-xs md:text-size-body-1"
+              className="w-full"
             >
               View details
             </Button>
           ) : (
-            <Button
-              onClick={handleClick}
-              className="w-full text-xs md:text-size-body-1"
-            >
+            <Button onClick={handleClick} className="w-full">
               Get coupon
             </Button>
           )}
@@ -157,6 +189,18 @@ export default function CardCouponVertical({
         onSecondaryAction={navigateToLogin}
       >
         Please log in to get this coupon.
+      </Modal>
+
+      {/* Already Coupons */}
+      <Modal
+        isOpen={infoModalOpen}
+        onClose={() => setInfoModalOpen(false)}
+        title={infoTitle}
+        primaryActionButton="OK"
+        onPrimaryAction={() => setInfoModalOpen(false)}
+        className="max-w-md"
+      >
+        {infoMessage}
       </Modal>
     </article>
   );

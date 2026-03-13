@@ -12,6 +12,8 @@ interface AuthContextType {
     user: User | null;
     login: (userData: User , token: string , remember: boolean) => void;
     logout: () => void;
+    updateUser: (userData: User) => void;
+    updateSession: (userData: User, token: string) => void;
     isAuthLoading: boolean;
     navigateToLogin: () => void;
 }
@@ -112,8 +114,32 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         router.push("/login");  // logout แล้วเด้งไปหน้า login
     }
 
+    // function สำหรับอัพเดทแค่ข้อมูล User (ไม่มีการ redirect)
+    const updateUser = (userData: User) => {
+        const isRemember = !!localStorage.getItem("access_token");
+        if (isRemember) {
+            localStorage.setItem("user", JSON.stringify(userData));
+        } else {
+            sessionStorage.setItem("user", JSON.stringify(userData));
+        }
+        setUser(userData);
+    };
+
+    // function สำหรับอัพเดททั้ง Token และ User (ไม่มีการ redirect)
+    const updateSession = (userData: User, token: string) => {
+        const isRemember = !!localStorage.getItem("access_token");
+        if (isRemember) {
+            localStorage.setItem("access_token", token);
+            localStorage.setItem("user", JSON.stringify(userData));
+        } else {
+            sessionStorage.setItem("access_token", token);
+            sessionStorage.setItem("user", JSON.stringify(userData));
+        }
+        setUser(userData);
+    };
+
     return (
-        <AuthContext.Provider value={{ user , login , logout , isAuthLoading, navigateToLogin }}>
+        <AuthContext.Provider value={{ user, login, logout, updateUser, updateSession, isAuthLoading, navigateToLogin }}>
             {children}
         </AuthContext.Provider>
     );

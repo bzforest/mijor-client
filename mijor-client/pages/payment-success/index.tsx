@@ -122,7 +122,7 @@ export default function PaymentSuccess() {
     if (!isReady) return null;
 
     return (
-        <div className="flex flex-col items-center justify-center p-20">
+        <div className="flex flex-col items-center justify-center p-20 bg-[#101525]">
             <div className="flex flex-col gap-12">
 
                 {/* --- Section: Booking Status Header --- */}
@@ -134,39 +134,39 @@ export default function PaymentSuccess() {
                 </div>
 
                 {/* --- Section: Compact Booking Summary --- */}
-                <div className="w-full max-w-md bg-brand-gray-100 rounded-xl p-6 gap-6">
+                <div className="w-full max-w-md bg-brand-gray-0 rounded-xl p-6 gap-6">
                     <div className="space-y-4">
                         <div className="flex items-center gap-3 text-brand-gray-300">
-                            <MapPin size={18} className="text-brand-blue-100" />
-                            <span className="text-body-2">{cinema}</span>
+                            <MapPin size={18} className="text-brand-gray-200" />
+                            <span className="text-body-2 text-brand-gray-400">{cinema}</span>
                         </div>
                         <div className="flex items-center gap-3 text-brand-gray-300">
-                            <Calendar size={18} className="text-brand-blue-100" />
-                            <span className="text-body-2">{date}</span>
+                            <Calendar size={18} className="text-brand-gray-200" />
+                            <span className="text-body-2 text-brand-gray-400">{date}</span>
                         </div>
                         <div className="flex items-center gap-3 text-brand-gray-300">
-                            <Clock size={18} className="text-brand-blue-100" />
-                            <span className="text-body-2">{time}</span>
+                            <Clock size={18} className="text-brand-gray-200" />
+                            <span className="text-body-2 text-brand-gray-400">{time}</span>
                         </div>
                         <div className="flex items-center gap-3 text-brand-gray-300">
-                            <MapPin size={18} className="text-brand-blue-100" />
-                            <span className="text-body-2">{hall}</span>
+                            <MapPin size={18} className="text-brand-gray-200" />
+                            <span className="text-body-2 text-brand-gray-400">{hall}</span>
                         </div>
                     </div>
 
                     <div className="border-t border-brand-gray-0 mt-6 pt-6 space-y-3">
                         <div className="flex justify-between items-center text-sm">
-                            <span className="text-brand-gray-400">Selected Seat</span>
+                            <span className="text-brand-gray-300">Selected Seat</span>
                             <span className="text-white font-semibold">{seats.join(", ")}</span>
                         </div>
                         <div className="flex justify-between items-center text-sm">
-                            <span className="text-brand-gray-400">Payment method</span>
+                            <span className="text-brand-gray-300">Payment method</span>
                             <span className="text-white font-semibold uppercase">
                                 {paymentMethod === "CreditCard" ? "Credit card" : "QR Code"}
                             </span>
                         </div>
                         <div className="flex justify-between items-center text-sm">
-                            <span className="text-brand-gray-400">Total</span>
+                            <span className="text-brand-gray-300">Total</span>
                             <span className="text-white font-bold text-lg">THB {finalPrice}</span>
                         </div>
                     </div>
@@ -180,7 +180,7 @@ export default function PaymentSuccess() {
                             className="border-brand-gray-100/20"
                             onClick={() => router.push("/")}
                         >
-                            Back to home
+                            Back
                         </Button>
                         <Button
                             variant="primary"

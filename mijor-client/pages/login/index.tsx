@@ -40,7 +40,17 @@ export default function Login() {
       console.log("✅ ล็อกอินผ่าน Backend สำเร็จ:", response.data);
       
       if (response.data.session) {
-        login(response.data.user, response.data.session.access_token, remember)
+
+        // ⭐ เพิ่ม : เก็บ email ไว้ใช้กับ Reset Password
+        localStorage.setItem("email", response.data.user.email);
+
+        // ⭐ ใช้ AuthContext login
+        login(
+          response.data.user,
+          response.data.session.access_token,
+          remember
+        );
+
       }
       
     } catch (error) {

@@ -1,7 +1,7 @@
 import SearchFilterBarDestop from "./searchFilterBarDestop";
 import SearchFilterBarMobile from "./searchFilterBarMobile";
 
-import { SearchFilters, SearchFilterBarProps, INITIAL_FILTERS } from "./shared";
+import { SearchFilterBarProps } from "./shared";
 
 export default function SearchFilterBar({
     onSearch,

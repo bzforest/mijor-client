@@ -29,20 +29,30 @@ function MovieCard({ movie, variant }: MovieCardProps) {
         <div
             onClick={handleClick}
             className={`
-        flex flex-col gap-[16px] cursor-pointer
+        flex-col
+        gap-[16px]
+        cursor-pointer
         transition-transform duration-200 hover:scale-[1.02]
-        ${variant === "desktop" ? "w-[285px]" : "w-[161px]"}
+        ${variant === "desktop" ? "hidden md:flex w-[285px]" : "flex md:hidden w-[161px]"}
     `}
         >
+            {/* ===== Movie Poster ===== */}
             <img
                 src={movie.poster_url}
                 alt={movie.title}
-                className={`w-full object-cover rounded-sm ${variant === "desktop" ? "h-[380px]" : "h-[220px]"}`}
+                className={`
+            w-full
+            h-[235px]
+            rounded-sm
+            object-fill
+            ${variant === "desktop" ? "h-[380px]" : ""}
+        `}
             />
 
             {/* ===== Movie Info ===== */}
             <div className="flex flex-col gap-1">
 
+                {/* Release Date + Rating */}
                 <div className="flex flex-row items-center justify-between">
 
                     <span className="text-body-2 text-brand-gray-300">
@@ -51,31 +61,35 @@ function MovieCard({ movie, variant }: MovieCardProps) {
 
                     <div
                         className="
-                        flex flex-row items-center
-                        gap-[4px]
-                        text-body-2-bold text-brand-gray-300
-                    "
+                    flex flex-row items-center
+                    gap-[4px]
+                    text-body-2-bold
+                    text-brand-gray-300
+                "
                     >
                         <Star
                             size={16}
                             fill="#4E7BEE"
                             stroke="#4E7BEE"
                         />
+
                         {movie.rating}
                     </div>
                 </div>
 
+                {/* Movie Title */}
                 <h1 className="text-headline-4 line-clamp-2">
                     {movie.title}
                 </h1>
+
             </div>
 
             {/* ===== Tags ===== */}
             <div
                 className="
-                    flex flex-row flex-wrap
-                    gap-[8px]
-                "
+            flex flex-row flex-wrap
+            gap-[8px]
+        "
             >
                 {movie.genre.map((genre, index) => (
                     <Tag
@@ -91,7 +105,7 @@ function MovieCard({ movie, variant }: MovieCardProps) {
                 />
             </div>
         </div>
-    )
+    );
 }
 
 export default MovieCard;

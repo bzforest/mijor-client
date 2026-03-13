@@ -36,43 +36,45 @@ export interface UserCoupon {
  * @param couponId - The ID of the coupon to save
  * @returns Promise with success status and message
  */
-export async function saveCoupon(couponId: string): Promise<{ success: boolean; message: string }> {
+export async function saveCoupon(
+  couponId: string
+): Promise<{ success: boolean; message: string }> {
   try {
     const token = getAuthToken();
-    
+
     if (!token) {
-      return { 
-        success: false, 
-        message: "Authentication required" 
+      return {
+        success: false,
+        message: "Authentication required",
       };
     }
 
-    const response = await axios.post(`${API_URL}/api/user/coupons`, 
+    const response = await axios.post(
+      `${API_URL}/api/user/coupons`,
       { couponId },
       {
         headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
         },
       }
     );
-    
-    if (!response.data.success) {
-      return { 
-        success: false, 
-        message: response.data.message || "Failed to save coupon" 
-      };
+
+    return {
+      success: true,
+      message: response.data.message || "Coupon saved",
+    };
+  } catch (error: any) {
+    console.log("🔥 SAVE COUPON ERROR FULL:", error);
+
+    if (error.response) {
+      console.log("🔥 STATUS:", error.response.status);
+      console.log("🔥 DATA:", error.response.data);
     }
 
-    return { 
-      success: true, 
-      message: response.data.message || "Coupon saved successfully" 
-    };
-  } catch (error) {
-    console.error('Error saving coupon:', error);
-    return { 
-      success: false, 
-      message: "Network error occurred" 
+    return {
+      success: false,
+      message: error.response?.data?.message || "Server error",
     };
   }
 }
@@ -88,7 +90,7 @@ export async function fetchUserCoupons(): Promise<UserCoupon[]> {
     if (!token) {
       return [];
     }
-
+    console.log('Token being sent:', token);
     const response = await axios.get(`${API_URL}/api/user/coupons`, {
       headers: {
         'Authorization': `Bearer ${token}`,
