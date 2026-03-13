@@ -35,6 +35,7 @@ export default function StripeCreditCardForm({
   onFormValidChange,
   selectedCouponId,
   finalPrice,
+  isFree = false,
 }: any) {
 
     if (typeof window === 'undefined') {
@@ -135,6 +136,15 @@ export default function StripeCreditCardForm({
   }, [selectedCouponId, finalPrice]); // ลบ onPaymentSuccess ออกเพื่อป้องกัน infinite loop
 
   useEffect(() => {
+    if (isFree) {
+      // Free booking - skip payment and call success directly
+      setHandleStripePayment?.(async () => {
+        memoizedOnPaymentSuccess();
+      });
+      onFormValidChange?.(true);
+      return;
+    }
+
     if (stripe && elements && clientSecret) {
       const confirmPayment = async () => {
         setIsProcessing(true);

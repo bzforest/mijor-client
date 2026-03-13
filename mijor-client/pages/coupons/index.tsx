@@ -11,13 +11,25 @@ import router from "next/router";
 import { fetchUserCoupons } from "@/services/couponService";
 import Alert from "@/components/ui/Alert";
 
+type UserCouponState = {
+  coupon_id: string;
+  is_used: boolean;
+};
+
+const mapUserCoupons = (list: any[]): UserCouponState[] => {
+  return list.map((uc) => ({
+    coupon_id: uc.coupon_id,
+    is_used: uc.is_used,
+  }));
+};
+
 /* ===== Component State ===== */
 export default function CouponPage() {
   const [currentTab, setCurrentTab] = useState("All coupons");
   const [coupons, setCoupons] = useState<Coupon[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(false);
-  const [userCouponIds, setUserCouponIds] = useState<string[]>([]);
+  const [userCoupons, setUserCoupons] = useState<{ coupon_id: string; is_used: boolean }[]>([]);
   const [showAlert, setShowAlert] = useState(false);
   
   const { user } = useAuth();
@@ -51,8 +63,8 @@ export default function CouponPage() {
     
     try {
       const userCoupons = await fetchUserCoupons();
-      const userCouponIds = userCoupons.map((uc: any) => uc.coupon_id);
-      setUserCouponIds(userCouponIds);
+      const userCouponList = mapUserCoupons(userCoupons);
+      setUserCoupons(userCouponList);
       setShowAlert(true);
     } catch (error) {
       console.error("Failed to refresh user coupons:", error);
@@ -79,10 +91,10 @@ export default function CouponPage() {
 
         if (user) {
           const userCoupons = await fetchUserCoupons();
-          const userCouponIds = userCoupons.map((uc: any) => uc.coupon_id);
-          setUserCouponIds(userCouponIds);
+          const userCouponList = mapUserCoupons(userCoupons);
+          setUserCoupons(userCouponList);
         } else {
-          setUserCouponIds([]);
+          setUserCoupons([]);
         }
       } catch (error) {
         console.error("Error fetching coupons:", error);
@@ -130,7 +142,7 @@ export default function CouponPage() {
               <CardCouponVertical
                 key={coupon.id}
                 coupon_id={coupon.id.toString()}
-                userCoupons={userCouponIds}
+                userCoupons={userCoupons}
                 onCouponSaved={refreshUserCoupons}
                 imageSrc={coupon.image_url}
                 title={coupon.title}
