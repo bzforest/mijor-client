@@ -171,7 +171,10 @@ const handleClick = async () => {
               View details
             </Button>
           ) : (
-            <Button onClick={handleClick} className="w-full">
+            <Button
+              onClick={handleClick}
+              className="w-full text-xs md:text-size-body-1 cursor-pointer"
+            >
               Get coupon
             </Button>
           )}
