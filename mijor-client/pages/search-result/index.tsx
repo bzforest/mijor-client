@@ -36,7 +36,7 @@ type MovieCardData = {
 };
 
 // ===== Constants =====
-const API_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || "http://localhost:4000";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 
 export default function SearchResultPage() {
     const router = useRouter();
@@ -202,22 +202,22 @@ export default function SearchResultPage() {
 
         if (effectiveDate < todayStr) {
             // วันที่ผ่านไปแล้ว → ทุก schedule disabled
-            return halls.map((hall) => ({
+            return (halls || []).map((hall) => ({
                 ...hall,
-                schedules: hall.schedules.map((s) => ({ ...s, isAvailable: false })),
+                schedules: (hall.schedules || []).map((s) => ({ ...s, isAvailable: false })),
             }));
         }
 
         if (effectiveDate > todayStr) {
             // วันที่ยังมาไม่ถึง → ทุก schedule available
-            return halls.map((hall) => ({
+            return (halls || []).map((hall) => ({
                 ...hall,
-                schedules: hall.schedules.map((s) => ({ ...s, isAvailable: true })),
+                schedules: (hall.schedules || []).map((s) => ({ ...s, isAvailable: true })),
             }));
         }
 
         // วันนี้ → ไม่ set isAvailable ให้ TimeSelection ใช้ logic เวลาเดิม
-        return halls;
+        return halls || [];
     };
 
     /* ================= View Logic ================= */
