@@ -71,7 +71,7 @@ export default function SearchResultPage() {
             params.append("page", String(page));
 
             const res = await axios.get(`${API_URL}/search/movies?${params.toString()}`);
-            const json = res.data;
+            const json = res?.data || {};
 
             if (json.pagination) {
                 setTotalPages(json.pagination.totalPages || 1);
@@ -83,15 +83,13 @@ export default function SearchResultPage() {
                 const synced = { ...(filters || {}), date: json.date };
                 setCurrentFilters(synced);
             } else if (filters && filters.date) {
-                // If the backend didn't return a date but frontend had one
-                // this is a fallback, but normally happens if json.date is removed.
+                // Fallback kept
             } else if (json.date === undefined && (filters?.date === undefined || filters?.date === "")) {
-                // Remove date from current filters if backend returns no date
                 const { date, ...restFilters } = currentFilters || {};
                 setCurrentFilters(restFilters);
             }
 
-            if (json.data && json.data.length > 0) {
+            if (json.data && Array.isArray(json.data) && json.data.length > 0) {
                 setMovies(json.data);
             } else {
                 setMovies([]);
@@ -108,13 +106,16 @@ export default function SearchResultPage() {
     const fetchFilterSearch = async () => {
         try {
             const res = await axios.get(`${API_URL}/search/filter`);
-            const json = res.data;
+            const json = res?.data || {};
 
             if (json.languages) setLanguageOptions(json.languages);
             if (json.genres) setGenreOptions(json.genres);
             if (json.cities) setCityOptions(json.cities);
         } catch (error) {
             console.error("Failed to fetch filter options:", error);
+            setLanguageOptions([]);
+            setGenreOptions([]);
+            setCityOptions([]);
         }
     };
 
@@ -131,7 +132,7 @@ export default function SearchResultPage() {
         suggestDebounceRef.current = setTimeout(async () => {
             try {
                 const res = await axios.get(`${API_URL}/search/suggest`, { params: { title: value } });
-                setTitleSuggestions(res.data.suggestions || []);
+                setTitleSuggestions(res?.data?.suggestions || []);
             } catch {
                 setTitleSuggestions([]);
             }

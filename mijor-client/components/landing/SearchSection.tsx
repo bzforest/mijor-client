@@ -26,13 +26,16 @@ function SearchSection() {
         const fetchFilterOptions = async () => {
             try {
                 const res = await axios.get(`${API_URL}/search/filter`);
-                const json = res.data;
+                const json = res?.data || {};
 
                 if (json.languages) setLanguageOptions(json.languages);
                 if (json.genres) setGenreOptions(json.genres);
                 if (json.cities) setCityOptions(json.cities);
             } catch (error) {
                 console.error("Failed to fetch filter options:", error);
+                setLanguageOptions([]);
+                setGenreOptions([]);
+                setCityOptions([]);
             }
         };
         fetchFilterOptions();
@@ -50,7 +53,7 @@ function SearchSection() {
         suggestDebounceRef.current = setTimeout(async () => {
             try {
                 const res = await axios.get(`${API_URL}/search/suggest`, { params: { title: value } });
-                setTitleSuggestions(res.data.suggestions || []);
+                setTitleSuggestions(res?.data?.suggestions || []);
             } catch {
                 setTitleSuggestions([]);
             }
