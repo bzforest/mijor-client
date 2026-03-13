@@ -19,7 +19,8 @@ export function useCinemas() {
 
     useEffect(() => {
         setLoading(true);
-        fetch("http://localhost:4000/api/cinemas")
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+        fetch(`${apiUrl}/api/cinemas`)
             .then(async (res) => {
                 if (!res.ok) throw new Error(`Failed to fetch API: ${res.status} ${res.statusText}`);
                 return res.json();

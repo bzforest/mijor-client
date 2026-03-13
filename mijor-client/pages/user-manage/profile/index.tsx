@@ -44,7 +44,8 @@ export default function ProfilePage() {
         }
 
         // ดึงข้อมูลผ่าน Backend Server (avatars.ts) ครั้งเดียว
-        const res = await axios.get("http://localhost:4000/api/avatars", {
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+        const res = await axios.get(`${apiUrl}/api/avatars`, {
           headers: {
             Authorization: `Bearer ${token}`
           }
@@ -62,7 +63,7 @@ export default function ProfilePage() {
         // ⭐ ถ้ากุญแจหมดอายุ (401) ให้สั่ง Logout หรือเด้งไปหน้า Login
         if (err.response?.status === 401) {
           alert("Session expired, please login again.");
-          router.push("/login"); 
+          router.push("/login");
         }
       } finally {
         setLoading(false);
@@ -190,11 +191,11 @@ export default function ProfilePage() {
             </h1>
 
             <p className="text-gray-400 text-sm mb-10 max-w-xl">
-              Keep your personal details private. 
+              Keep your personal details private.
               <br />
               Information you add here is visible to anyone who can view your profile
             </p>
-            
+
 
 
 

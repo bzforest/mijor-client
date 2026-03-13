@@ -27,14 +27,14 @@ export interface Coupon {
 export async function fetchCoupons(): Promise<Coupon[]> {
   try {
     const response = await axios.get(`${API_URL}/coupons`);
-    
-    if (!response.data) {
-      throw new Error('No data received from API');
+
+    if (!response.data || !response.data.data) {
+      return [];
     }
-    
+
     return response.data.data;
   } catch (error) {
     console.error("Failed to fetch coupons:", error);
-    throw new Error("Unable to fetch coupons. Please try again later.");
+    return []; // Return empty array instead of throwing to prevent application crash
   }
 }
