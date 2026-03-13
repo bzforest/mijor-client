@@ -3,7 +3,20 @@ import { BookingHistoryItem } from "@/types/bookingHistory"
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000"
 
-export async function fetchBookingHistory(): Promise<BookingHistoryItem[]> {
+type BookingHistoryResponse = {
+  data: BookingHistoryItem[]
+  pagination: {
+    page: number
+    limit: number
+    total: number
+    totalPages: number
+  }
+}
+
+export async function fetchBookingHistory(
+  page: number = 1,
+  limit: number = 5
+): Promise<BookingHistoryResponse> {
   const token =
     localStorage.getItem("access_token") ||
     sessionStorage.getItem("access_token")
@@ -12,7 +25,11 @@ export async function fetchBookingHistory(): Promise<BookingHistoryItem[]> {
     headers: {
       Authorization: `Bearer ${token}`,
     },
+    params: {
+      page,
+      limit,
+    },
   })
 
-  return res.data.data || []
+  return res.data
 }

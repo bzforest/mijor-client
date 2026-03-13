@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { fetchBookingHistory } from "@/services/historyService";
 import { BookingHistoryItem } from "@/types/bookingHistory";
-import { bookingStatusConfig } from "@/utils/booking/bookingStatusConfig";
+import { useMediaQuery } from "react-responsive"
+import { Activity } from "lucide-react"
 import Pagination from "@/components/ui/pagination";
 import { mapBookingStatus } from "@/utils/booking/mapBookingStatus";
 import BookingCard from "@/components/common/bookingCard";
@@ -11,7 +12,7 @@ import LoadingPage from "@/components/loading/LoadingPage";
 import router from "next/router";
 import Button from "@/components/ui/Button";
 
-function mapHistoryToCard(item: BookingHistoryItem): BookingCardProps {
+function mapHistoryToCard(item: BookingHistoryItem, isMobile: boolean): BookingCardProps {
   const dateObj = new Date(item.start_time);
 
   return {
@@ -37,30 +38,46 @@ function mapHistoryToCard(item: BookingHistoryItem): BookingCardProps {
 
     status: mapBookingStatus(item.status),
 
-    variant: "desktop",
+    variant: isMobile ? "mobile" : "desktop",
   };
 }
 
 export default function BookingHistoryPage() {
   const [data, setData] = useState<BookingHistoryItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [pageLoading, setPageLoading] = useState(false);
+  const isMobile = useMediaQuery({ maxWidth: 768 })
+  const [firstLoad, setFirstLoad] = useState(true)
 
   // Pagination state
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
-  const totalPages = Math.ceil(data.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const currentData = data.slice(startIndex, startIndex + itemsPerPage);
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
+  const [pagination, setPagination] = useState({
+    page: 1,
+    limit: 5,
+    total: 0,
+    totalPages: 0,
+  });
 
   useEffect(() => {
-    fetchBookingHistory()
-      .then(setData)
-      .finally(() => setLoading(false));
-  }, []);
+    const load = async () => {
+
+      if (firstLoad) setLoading(true)
+      else setPageLoading(true)
+
+      const res = await fetchBookingHistory(
+        pagination.page,
+        pagination.limit
+      )
+
+      setData(res.data)
+      setPagination(res.pagination)
+
+      setLoading(false)
+      setPageLoading(false)
+      setFirstLoad(false)
+    }
+
+    load()
+  }, [pagination.page])
 
   if (loading) {
     return (
@@ -72,16 +89,16 @@ export default function BookingHistoryPage() {
 
   return (
     <div className="min-h-screen bg-[#0B1220] text-white">
-      <div className="px-4 md:px-16 py-8 md:py-12">
+      <div className="md:px-16 py-8 md:py-12">
         <div className="w-full lg:max-w-[1300px] lg:mx-auto lg:flex lg:gap-12 lg:items-start">
           <MenuSidebar />
 
-          <div className="flex flex-col w-full">
-            <h1 className="text-headline-2 md:text-headline-3 font-semibold mb-8 md:mb-10">
+          {/* ===== Content ===== */}
+          <div className="flex-1">
+            <div className="flex flex-col gap-12">
+            <h1 className="px-4 text-headline-2 md:text-headline-3 font-semibold">
               Booking history
             </h1>
-
-            <div className="flex flex-col gap-12">
               {data.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-32 text-center">
                   <h2 className="text-headline-3 text-white pb-2">
@@ -96,25 +113,58 @@ export default function BookingHistoryPage() {
                     Back to home
                   </Button>
                 </div>
-              ) : (
-                currentData.map((item) => {
-                  const card = mapHistoryToCard(item);
-
-                  return <BookingCard key={item.booking_id} {...card} />;
-                })
-              )}
-              {totalPages > 1 && (
-                <div className="flex justify-center mt-6">
-                  <Pagination
-                    currentPage={currentPage}
-                    totalPages={totalPages}
-                    onPageChange={handlePageChange}
-                  />
+              ) : pageLoading ? (
+                <div className="flex flex-col gap-6">
+                  <div className="relative h-[180px] w-fit bg-brand-gray-100/30 rounded-xl overflow-hidden">
+                    <div className="absolute inset-0 flex items-center">
+                      <Activity 
+                        className="text-brand-gray-400 animate-slide-left-to-right" 
+                        size={32}
+                      />
+                    </div>
+                  </div>
+                  <div className="relative h-[180px] w-fit bg-brand-gray-100/30 rounded-xl overflow-hidden">
+                    <div className="absolute inset-0 flex items-center">
+                      <Activity 
+                        className="text-brand-gray-400 animate-slide-left-to-right animation-delay-200" 
+                        size={32}
+                      />
+                    </div>
+                  </div>
+                  <div className="relative h-[180px] w-fit bg-brand-gray-100/30 rounded-xl overflow-hidden">
+                    <div className="absolute inset-0 flex items-center">
+                      <Activity 
+                        className="text-brand-gray-400 animate-slide-left-to-right animation-delay-400" 
+                        size={32}
+                      />
+                    </div>
+                  </div>
                 </div>
+              ) : (
+                data.map((item) => {
+                  const card = mapHistoryToCard(item, isMobile)
+                  return <BookingCard key={item.booking_id} {...card} variant={isMobile ? "mobile" : "desktop"} />
+                })
               )}
             </div>
           </div>
         </div>
+        {pagination.totalPages > 1 && (
+          <div className="flex justify-center mt-6">
+            <Pagination
+              currentPage={pagination.page}
+              totalPages={pagination.totalPages}
+              onPageChange={(page) => {
+                setPagination((prev) => ({ ...prev, page }))
+
+                window.scrollTo({
+                  top: 0,
+                  behavior: "smooth",
+                })
+              }}
+            />
+          </div>
+        )}
       </div>
     </div>
   );

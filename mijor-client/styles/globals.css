@@ -345,3 +345,69 @@
 
   --color-body-text: var(--color-text-primary);
 }
+
+/* ================================
+   Custom Animations
+================================ */
+
+@keyframes slide-left-to-right {
+  0% {
+    transform: translateX(-100px);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(calc(100% + 100px));
+    opacity: 0;
+  }
+}
+
+.animate-slide-left-to-right {
+  animation: slide-left-to-right 2s ease-in-out infinite;
+}
+
+.animation-delay-200 {
+  animation-delay: 0.2s;
+}
+
+.animation-delay-400 {
+  animation-delay: 0.4s;
+}
+
+/* ================================
+   Custom Animations
+================================ */
+
+@keyframes slide-left-to-right {
+  0% {
+    transform: translateX(-100px);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(calc(100% + 100px));
+    opacity: 0;
+  }
+}
+
+.animate-slide-left-to-right {
+  animation: slide-left-to-right 2s ease-in-out infinite;
+}
+
+.animation-delay-200 {
+  animation-delay: 0.2s;
+}
+
+.animation-delay-400 {
+  animation-delay: 0.4s;
+}
