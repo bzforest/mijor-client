@@ -10,7 +10,7 @@ export function useCinemas() {
     const [errorAlert, setErrorAlert] = useState<{ title: string; message: string } | null>(null);
 
     const { userLocation, requestLocation, locationError } = useLocation();
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 
     useEffect(() => {
         requestLocation().catch(() => {

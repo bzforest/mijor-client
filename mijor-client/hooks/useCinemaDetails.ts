@@ -9,7 +9,7 @@ export function useCinemaDetails(id: string | string[] | undefined, selectedDate
     useEffect(() => {
         if (!id) return; // Wait until router is ready
 
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
         setLoading(true);
         fetch(`${apiUrl}/api/cinemas/${id}/showtimes?date=${selectedDate}`)
             .then(async (res) => {

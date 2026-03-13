@@ -22,6 +22,8 @@ export default function CouponSection({
     const result: Coupon[] = [];
     const seenBrands = new Set<string>();
 
+    if (!Array.isArray(allCoupons)) return [];
+
     for (const coupon of allCoupons) {
       if (!seenBrands.has(coupon.brand) && result.length < limit) {
         seenBrands.add(coupon.brand);
