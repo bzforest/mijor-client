@@ -127,21 +127,12 @@ export const useBooking = () => {
 
     socket.emit("joinShowtime", showtimeId);
 
-    return () => {
-      socket.off();
-    };
-  }, [showtimeId]);
-
-  /* ================= Realtime Seat Updates ================= */
-  useEffect(() => {
     const handleSeatSelected = ({ seatIds }: { seatIds: string[] }) => {
       updateSeatStatus(seatIds, "selected");
     };
-
     const handleSeatBooked = ({ seatIds }: { seatIds: string[] }) => {
       updateSeatStatus(seatIds, "booked");
     };
-
     const handleSeatExpired = ({ seatIds }: { seatIds: string[] }) => {
       updateSeatStatus(seatIds, "available");
     };
@@ -155,7 +146,7 @@ export const useBooking = () => {
       socket.off("seatBooked", handleSeatBooked);
       socket.off("seatExpired", handleSeatExpired);
     };
-  }, []);
+  }, [showtimeId]);
 
   /* ================= Persistence Restoration ================= */
   useEffect(() => {
@@ -198,7 +189,7 @@ export const useBooking = () => {
     setNext(false);
     setExpireTime(null);
     setRemainingTime(0);
-};
+  };
 
   const handleSelect = async () => {
     if (!user) {
@@ -229,14 +220,14 @@ export const useBooking = () => {
 
   const handleConfirm = async (params: PaymentParams) => {
     if (!selectedSeats.length) return;
-    
+
     // ป้องกันการส่ง request ซ้ำ (global check)
     const globalConfirming = localStorage.getItem('isConfirming') === 'true';
     if (globalConfirming) {
       console.log('🔒 Already confirming globally, ignoring duplicate request');
       return;
     }
-    
+
     // Check if user is authenticated
     if (!user) {
       console.error('🔴 User not authenticated');
@@ -251,7 +242,7 @@ export const useBooking = () => {
       console.log('🔵 Selected seats:', selectedSeats);
       console.log('🔵 ShowtimeId:', showtimeId);
       console.log('🔵 User:', user);
-      
+
       const bookingResult = await api.post("/showtimeSeat/confirm", {
         showtimeId,
         seatIds: selectedSeats,

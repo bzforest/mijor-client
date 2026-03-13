@@ -12,10 +12,10 @@ function Tag({ label, variant, textType = "body-2-bold" }: TagProps) {
                 items-center
                 justify-center
                 w-auto
+                h-full
                 px-[12px] py-[6px]
                 bg-brand-gray-100
                 rounded-[4px]
-                
             "
         >
             <span

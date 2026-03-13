@@ -34,17 +34,12 @@ function SeatIcon({
 }: SeatIconProps) {
   const icon = iconMap[variant];
 
-  /* ================= Clickable State ================= */
   const clickable =
     variant === "available" || variant === "selected"
       ? "cursor-pointer"
       : "cursor-not-allowed";
 
-  /**
-   * Current User's Booked Seat
-   * If this seat belongs to the current user (e.g. from a shared link they booked),
-   * display their avatar or CircleUserRound if they don't have one, instead of the friend seat icon.
-   */
+  // Current User's Booked Seat
   if (isCurrentUser) {
     return (
       <button
@@ -67,50 +62,47 @@ function SeatIcon({
   }
 
   /**
-   * Friend Seat with Profile Image Overlay
-   * If the variant is "friend" and a profileImageUrl is provided,
-   * show the profile image as a circular overlay on top of the seat icon.
+   * FIX: Friend Seat
+   * - ถ้ามี profileImageUrl → แสดงแค่ profile image (ไม่มี base icon ซ้อน)
+   * - ถ้าไม่มี profileImageUrl → แสดงแค่ FriendSeat.png icon
    */
-  if (variant === "friend" && profileImageUrl) {
+  if (variant === "friend") {
     return (
       <button
         type="button"
         onClick={onClick}
         onChange={onChange}
-        className="flex w-fit items-center justify-center cursor-not-allowed flex-shrink-0"
+        className="flex items-center justify-center cursor-not-allowed flex-shrink-0 rounded-full bg-[#1A1D2D]"
+        style={{ width: width, height: width }}
         title={friendName || "Friend's seat"}
       >
-        <div style={{ width: width }}>
-          {/* Base seat icon */}
-          <img
-            src={icon.src}
-            alt="friend seat icon"
-            style={{ width: width }}
-            className="block"
-          />
-          {/* Profile image overlay — circular, centered on the seat */}
+        {profileImageUrl ? (
+          // มี profile → แสดงแค่รูป profile
           <img
             src={profileImageUrl}
             alt={friendName || "Friend profile"}
-            className="w-full h-full object-cover rounded-full -mt-[32px] mx-auto z-10 relative" // Adjusting overlay to actually overlay it properly
-            style={{ width: "24px", height: "24px" }}
+            className="w-full h-full object-cover rounded-full"
           />
-        </div>
+        ) : (
+          // ไม่มี profile → แสดงแค่ FriendSeat icon
+          <img
+            src={icon.src}
+            alt="friend seat icon"
+            className="w-full h-full"
+          />
+        )}
       </button>
     );
   }
 
-  /**
-   * Friend Seat without Profile Image — uses FriendSeat.png as-is
-   * Also shows a tooltip with the friend's name on hover
-   */
+  // Default: booked / available / selected / reserved
   return (
     <button
       type="button"
       onClick={onClick}
       onChange={onChange}
       className={`flex w-fit items-center justify-center flex-shrink-0 ${clickable}`}
-      title={variant === "friend" && friendName ? friendName : undefined}
+      title={friendName ? friendName : undefined}
     >
       <img
         src={icon.src}

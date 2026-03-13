@@ -44,6 +44,10 @@ function Desktop({
 }: DesktopProps) {
   const { user } = useAuth();
 
+  const userSeatAvatar = user
+    ? seats.flatMap(row => row.seats).find(seat => seat.selected_by === user.id)?.booked_by_avatar ?? null
+    : null;
+
   const hasUserBookedSeats = user ? seats.some(row => row.seats.some(seat => seat.selected_by === user.id)) : false;
   const isFriendSeatOwnedByUser = user && friendSeatIds.length > 0
     ? seats.some(row => row.seats.some(seat => friendSeatIds.includes(seat.id) && seat.selected_by === user.id))
@@ -191,7 +195,7 @@ function Desktop({
                 <SeatIcon
                   variant="friend"
                   isCurrentUser={true}
-                  profileImageUrl={(user as any)?.avatar || (user as any)?.avatarUrl || (user as any)?.picture || null}
+                  profileImageUrl={userSeatAvatar}
                 />
                 <span>Your Seat</span>
               </div>
