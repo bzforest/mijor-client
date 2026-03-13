@@ -19,11 +19,17 @@ export function useCinemas() {
 
     useEffect(() => {
         setLoading(true);
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+        const apiUrl = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000").trim();
         fetch(`${apiUrl}/api/cinemas`)
             .then(async (res) => {
-                if (!res.ok) throw new Error(`Failed to fetch API: ${res.status} ${res.statusText}`);
-                return res.json();
+                const text = await res.text();
+                try {
+                    const data = JSON.parse(text);
+                    return data;
+                } catch (e) {
+                    console.error("Failed to parse JSON for cinemas. Raw text:", text);
+                    throw new Error("Invalid JSON response");
+                }
             })
             .then((data) => {
                 setCinemas(data);

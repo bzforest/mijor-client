@@ -10,7 +10,7 @@ export function useCinemaDetails(id: string | string[] | undefined, selectedDate
         if (!id) return; // Wait until router is ready
 
         setLoading(true);
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+        const apiUrl = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000").trim();
         fetch(`${apiUrl}/api/cinemas/${id}/showtimes?date=${selectedDate}`)
             .then(async (res) => {
                 if (!res.ok) throw new Error(`Failed to fetch API: ${res.statusText}`);

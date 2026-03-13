@@ -44,7 +44,7 @@ export default function ProfilePage() {
         }
 
         // ดึงข้อมูลผ่าน Backend Server (avatars.ts) ครั้งเดียว
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+        const apiUrl = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000").trim();
         const res = await axios.get(`${apiUrl}/api/avatars`, {
           headers: {
             Authorization: `Bearer ${token}`

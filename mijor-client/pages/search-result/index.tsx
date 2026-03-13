@@ -36,7 +36,7 @@ type MovieCardData = {
 };
 
 // ===== Constants =====
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+const API_URL = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000").trim();
 
 export default function SearchResultPage() {
     const router = useRouter();
