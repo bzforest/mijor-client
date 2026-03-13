@@ -264,6 +264,7 @@ export default function CouponDetail() {
         secondaryActionButton="Log in"
         onPrimaryAction={() => router.push("/register")}
         onSecondaryAction={navigateToLogin}
+        className="max-w-md"
       >
         Please log in to get this coupon.
       </Modal>

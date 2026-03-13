@@ -11,6 +11,8 @@ export function useCinemas() {
 
     const { userLocation, requestLocation, locationError } = useLocation();
 
+    const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+
     useEffect(() => {
         requestLocation().catch(() => {
             // Error is handled via locationError context state
@@ -19,7 +21,7 @@ export function useCinemas() {
 
     useEffect(() => {
         setLoading(true);
-        fetch("http://localhost:4000/api/cinemas")
+        fetch(`${API_BASE_URL}/api/cinemas`)
             .then(async (res) => {
                 if (!res.ok) throw new Error(`Failed to fetch API: ${res.status} ${res.statusText}`);
                 return res.json();

@@ -159,14 +159,14 @@ const handleClick = async () => {
         {/* ===== Action Section ===== */}
         <div className="mt-[12px] md:mt-[14px]">
           {isUsed ? (
-            <Button variant="secondary" disabled className="w-full">
+            <Button variant="secondary" state="disabled" className="w-full">
               Used
             </Button>
           ) : hasCoupon || isCollected ? (
             <Button
               variant="secondary"
               onClick={onClick}
-              className="w-full"
+              className="w-full cursor-pointer"
             >
               View details
             </Button>
@@ -190,6 +190,7 @@ const handleClick = async () => {
         secondaryActionButton="Log in"
         onPrimaryAction={() => router.push("/register")}
         onSecondaryAction={navigateToLogin}
+        className="max-w-md"
       >
         Please log in to get this coupon.
       </Modal>

@@ -76,7 +76,7 @@ export default function BookingHistoryPage() {
         <div className="w-full lg:max-w-[1300px] lg:mx-auto lg:flex lg:gap-12 lg:items-start">
           <MenuSidebar />
 
-          <div className="flex flex-col">
+          <div className="flex flex-col w-full">
             <h1 className="text-headline-2 md:text-headline-3 font-semibold mb-8 md:mb-10">
               Booking history
             </h1>

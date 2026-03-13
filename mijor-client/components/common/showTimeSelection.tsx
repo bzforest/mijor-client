@@ -62,7 +62,7 @@ export default function TimeSelection({
             variant={variant}
             state={state}
             onClick={() => state !== "disabled" && onSelect(item)}
-            className="min-w-30"
+            className="min-w-30 cursor-pointer"
           >
             {item.time}
           </Button>

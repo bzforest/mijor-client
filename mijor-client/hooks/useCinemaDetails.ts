@@ -6,11 +6,13 @@ export function useCinemaDetails(id: string | string[] | undefined, selectedDate
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
+    const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+
     useEffect(() => {
         if (!id) return; // Wait until router is ready
 
         setLoading(true);
-        fetch(`http://localhost:4000/api/cinemas/${id}/showtimes?date=${selectedDate}`)
+        fetch(`${API_BASE_URL}/api/cinemas/${id}/showtimes?date=${selectedDate}`)
             .then(async (res) => {
                 if (!res.ok) throw new Error(`Failed to fetch API: ${res.statusText}`);
                 return res.json();
