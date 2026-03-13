@@ -8,7 +8,7 @@ import SearchFilterBar from "@/components/common/searchFilterBar/searchFilterBar
 import Banner from "@/assets/landing/banner.jpg";
 
 // ===== Constants =====
-const API_URL = process.env.CONNECTION_STRING || "http://localhost:4000";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 
 function SearchSection() {
     const router = useRouter();
