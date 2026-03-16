@@ -44,13 +44,16 @@ function Desktop({
 }: DesktopProps) {
   const { user } = useAuth();
 
+  const userSeatAvatar = user
+    ? seats.flatMap(row => row.seats).find(seat => seat.selected_by === user.id)?.booked_by_avatar ?? null
+    : null;
+
   const hasUserBookedSeats = user ? seats.some(row => row.seats.some(seat => seat.selected_by === user.id)) : false;
   const isFriendSeatOwnedByUser = user && friendSeatIds.length > 0
     ? seats.some(row => row.seats.some(seat => friendSeatIds.includes(seat.id) && seat.selected_by === user.id))
     : false;
 
   const getSeatVariant = (seat: Seat) => {
-    // If it's the current user's booked seat, we consider it "friend" variant so SeatIcon can handle the avatar display logic
     if (user && seat.selected_by === user.id) return "friend";
     if (friendSeatIds.includes(seat.id)) return "friend";
     if (selectedSeats.includes(seat.id)) return "selected";
@@ -59,6 +62,9 @@ function Desktop({
     if (seat.status === "selected") return "reserved";
     return "available";
   };
+
+  // Fluid seat size: 40px @ 1440px viewport → ~21px @ 768px viewport
+  const seatSize = "clamp(18px, 2.78vw, 40px)";
 
   return !next ? (
     <main className="hidden md:flex flex-col">
@@ -71,9 +77,15 @@ function Desktop({
       </header>
 
       {/* ===== Booking Body ===== */}
-      <section className="flex flex-row justify-center h-full gap-[102px] bg-[#101525] px-[120px] py-[80px]">
+      <section
+        className="flex flex-row justify-center h-full bg-[#101525] py-[80px] gap-[clamp(12px,3vw,102px)]"
+        style={{
+          paddingLeft:  "clamp(16px, calc(15.5vw - 103px), 120px)",
+          paddingRight: "clamp(16px, calc(15.5vw - 103px), 120px)",
+        }}
+      >
         {/* ================= Screen & Seating Area ================= */}
-        <article className="hidden w-[793px] flex-col gap-[60px] md:flex">
+        <article className="hidden w-full max-w-[793px] min-w-0 flex-col gap-[60px] md:flex">
           {/* ----- Screen Representation ----- */}
           <div className="flex w-full flex-col rounded-tl-[80px] rounded-tr-[80px] bg-gradient-to-r from-[#2C344E] to-[#516199] text-center">
             <span className="text-body-1-bold text-brand-gray-400">screen</span>
@@ -85,8 +97,8 @@ function Desktop({
               <div key={row.id || index} className="flex flex-col">
                 <div className="flex justify-between">
                   {/* Left Block (Seats 1-5) */}
-                  <div className="flex items-center gap-[24px]">
-                    <span className="w-[24px] text-body-1-bold text-brand-gray-300">
+                  <div className="flex items-center gap-[clamp(4px,1.8vw,24px)]">
+                    <span className="shrink-0 w-[24px] text-body-1-bold text-brand-gray-300">
                       {row.row_letter}
                     </span>
                     {row.seats.slice(0, 5).map((seat) => {
@@ -95,6 +107,7 @@ function Desktop({
                         <SeatIcon
                           key={seat.id}
                           variant={getSeatVariant(seat)}
+                          width={seatSize}
                           profileImageUrl={
                             isCurrentUserSeat
                               ? ((user as any)?.avatar || (user as any)?.avatarUrl || (user as any)?.picture || seat?.booked_by_avatar || null)
@@ -116,18 +129,19 @@ function Desktop({
                               : undefined
                           }
                         />
-                      )
+                      );
                     })}
                   </div>
 
                   {/* Right Block (Seats 6-10) */}
-                  <div className="flex items-center gap-[24px]">
+                  <div className="flex items-center gap-[clamp(4px,1.8vw,24px)]">
                     {row.seats.slice(5).map((seat) => {
                       const isCurrentUserSeat = user && seat.selected_by === user.id;
                       return (
                         <SeatIcon
                           key={seat.id}
                           variant={getSeatVariant(seat)}
+                          width={seatSize}
                           profileImageUrl={
                             isCurrentUserSeat
                               ? ((user as any)?.avatar || (user as any)?.avatarUrl || (user as any)?.picture || seat?.booked_by_avatar || null)
@@ -149,9 +163,9 @@ function Desktop({
                               : undefined
                           }
                         />
-                      )
+                      );
                     })}
-                    <span className="w-[24px] text-right text-body-1-bold text-brand-gray-300">
+                    <span className="shrink-0 w-[24px] text-right text-body-1-bold text-brand-gray-300">
                       {row.row_letter}
                     </span>
                   </div>
@@ -161,54 +175,59 @@ function Desktop({
           </div>
 
           {/* ----- Selection Legend ----- */}
-          <footer className="flex flex-row gap-[40px] border-t border-brand-gray-100 py-[16px]">
-            <Tag label={movieInfo?.hall || ""} variant="language" />
+          <footer
+            className="flex flex-row items-center overflow-x-auto border-t border-brand-gray-100 py-[16px]"
+            style={{ gap: "clamp(8px, 2.5vw, 40px)" }}
+          >
+            <div className="shrink-0">
+              <Tag label={movieInfo?.hall || ""} variant="language" />
+            </div>
 
             {/* Available */}
-            <div className="flex flex-row gap-[16px]">
+            <div className="shrink-0 flex flex-row items-center gap-[16px]">
               <SeatIcon variant="available" />
               <div className="flex flex-col justify-between text-body-2">
                 <span className="whitespace-nowrap">Available Seat</span>
-                <span>THB {movieInfo?.price}</span>
+                <span className="whitespace-nowrap">THB {movieInfo?.price}</span>
               </div>
             </div>
 
             {/* Booked */}
-            <div className="flex flex-row items-center gap-[16px] text-body-2">
+            <div className="shrink-0 flex flex-row items-center gap-[16px] text-body-2">
               <SeatIcon variant="booked" />
-              <span>Booked Seat</span>
+              <span className="whitespace-nowrap">Booked Seat</span>
             </div>
 
             {/* Reserved / Selected by others */}
-            <div className="flex flex-row items-center gap-[16px] text-body-2">
+            <div className="shrink-0 flex flex-row items-center gap-[16px] text-body-2">
               <SeatIcon variant="reserved" />
-              <span>Reserved Seat</span>
+              <span className="whitespace-nowrap">Reserved Seat</span>
             </div>
 
             {/* Current User's Seat */}
             {hasUserBookedSeats && (
-              <div className="flex flex-row items-center gap-[16px] text-body-2">
+              <div className="shrink-0 flex flex-row items-center gap-[16px] text-body-2">
                 <SeatIcon
                   variant="friend"
                   isCurrentUser={true}
-                  profileImageUrl={(user as any)?.avatar || (user as any)?.avatarUrl || (user as any)?.picture || null}
+                  profileImageUrl={userSeatAvatar}
                 />
-                <span>Your Seat</span>
+                <span className="whitespace-nowrap">Your Seat</span>
               </div>
             )}
 
             {/* Friend Seat — only show when viewing via share link and it's not the user's own seat */}
             {friendSeatIds.length > 0 && !isFriendSeatOwnedByUser && (
-              <div className="flex flex-row items-center gap-[16px] text-body-2">
+              <div className="shrink-0 flex flex-row items-center gap-[16px] text-body-2">
                 <SeatIcon variant="friend" profileImageUrl={friendAvatar} />
-                <span>Friend&apos;s Seat{friendName ? ` (${friendName})` : ""}</span>
+                <span className="whitespace-nowrap">Friend&apos;s Seat{friendName ? ` (${friendName})` : ""}</span>
               </div>
             )}
           </footer>
         </article>
 
         {/* ================= Summary Sidebar ================= */}
-        <aside>
+        <aside className="shrink-0">
           <SummaryBox
             title={movieInfo?.title || ""}
             picture={movieInfo?.posterUrl || ""}

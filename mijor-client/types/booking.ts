@@ -2,7 +2,8 @@ export type Seat = {
   id: string;
   seat_number: number;
   status: "available" | "selected" | "booked";
-  selected_by: string;
+  selected_by: string | null;
+  expires_at: string | null;
   booked_by_name: string | null;
   booked_by_avatar: string | null;
 };

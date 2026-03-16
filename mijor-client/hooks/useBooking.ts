@@ -64,23 +64,6 @@ export const useBooking = () => {
       .map((item) => item.label);
   }, [selectedSeats, seats]);
 
-  // ===== Helper Functions =====
-  const updateSeatStatus = (
-    seatIds: string[],
-    status: "available" | "selected" | "booked",
-  ) => {
-    setSeats((prev) =>
-      prev.map((row) => ({
-        ...row,
-        seats: row.seats.map((seat) =>
-          seatIds.includes(seat.id) ? { ...seat, status } : seat,
-        ),
-      })),
-    );
-  };
-
-  // ===== Side Effects =====
-
   /* ================= Initial Data Fetching ================= */
   useEffect(() => {
     if (!showtimeId) return;
@@ -121,41 +104,79 @@ export const useBooking = () => {
     return () => clearInterval(interval);
   }, [expireTime]);
 
-  /* ================= Socket Lifecycle ================= */
+  /* ================= Polling Fallback ================= */
   useEffect(() => {
     if (!showtimeId) return;
 
-    socket.emit("joinShowtime", showtimeId);
+    const interval = setInterval(async () => {
+      try {
+        const seatRes = await api.get(`/showtime/${showtimeId}/seats`);
+        setSeats(seatRes.data); 
+      } catch (error) {
+        
+      }
+    }, 5000);
 
-    return () => {
-      socket.off();
-    };
+    return () => clearInterval(interval);
   }, [showtimeId]);
 
-  /* ================= Realtime Seat Updates ================= */
+  /* ================= Socket Lifecycle ================= */
   useEffect(() => {
+    if (!showtimeId) return;
+  
+    socket.emit("joinShowtime", showtimeId);
+  
+    const handleReconnect = () => {
+      socket.emit("joinShowtime", showtimeId);
+    };
+
     const handleSeatSelected = ({ seatIds }: { seatIds: string[] }) => {
-      updateSeatStatus(seatIds, "selected");
+      setSeats((prev) =>
+        prev.map((row) => ({
+          ...row,
+          seats: row.seats.map((seat) =>
+            seatIds.includes(seat.id) ? { ...seat, status: "selected" as const } : seat,
+          ),
+        })),
+      );
     };
-
+  
     const handleSeatBooked = ({ seatIds }: { seatIds: string[] }) => {
-      updateSeatStatus(seatIds, "booked");
+      setSeats((prev) =>
+        prev.map((row) => ({
+          ...row,
+          seats: row.seats.map((seat) =>
+            seatIds.includes(seat.id) ? { ...seat, status: "booked" as const } : seat,
+          ),
+        })),
+      );
     };
-
+  
     const handleSeatExpired = ({ seatIds }: { seatIds: string[] }) => {
-      updateSeatStatus(seatIds, "available");
+      setSeats((prev) =>
+        prev.map((row) => ({
+          ...row,
+          seats: row.seats.map((seat) =>
+            seatIds.includes(seat.id)
+              ? { ...seat, status: "available" as const, selected_by: null, expires_at: null }
+              : seat,
+          ),
+        })),
+      );
     };
-
+  
+    socket.on("connect", handleReconnect);
     socket.on("seatSelected", handleSeatSelected);
     socket.on("seatBooked", handleSeatBooked);
     socket.on("seatExpired", handleSeatExpired);
-
+  
     return () => {
+      socket.off("connect", handleReconnect);
       socket.off("seatSelected", handleSeatSelected);
       socket.off("seatBooked", handleSeatBooked);
       socket.off("seatExpired", handleSeatExpired);
     };
-  }, []);
+  }, [showtimeId]);
 
   /* ================= Persistence Restoration ================= */
   useEffect(() => {
@@ -193,12 +214,11 @@ export const useBooking = () => {
   };
 
   const handleExpired = () => {
-    updateSeatStatus(selectedSeats, "available");
     setSelectedSeats([]);
     setNext(false);
     setExpireTime(null);
     setRemainingTime(0);
-};
+  };
 
   const handleSelect = async () => {
     if (!user) {
@@ -229,14 +249,14 @@ export const useBooking = () => {
 
   const handleConfirm = async (params: PaymentParams) => {
     if (!selectedSeats.length) return;
-    
+
     // ป้องกันการส่ง request ซ้ำ (global check)
     const globalConfirming = localStorage.getItem('isConfirming') === 'true';
     if (globalConfirming) {
       console.log('🔒 Already confirming globally, ignoring duplicate request');
       return;
     }
-    
+
     // Check if user is authenticated
     if (!user) {
       console.error('🔴 User not authenticated');
@@ -251,7 +271,7 @@ export const useBooking = () => {
       console.log('🔵 Selected seats:', selectedSeats);
       console.log('🔵 ShowtimeId:', showtimeId);
       console.log('🔵 User:', user);
-      
+
       const bookingResult = await api.post("/showtimeSeat/confirm", {
         showtimeId,
         seatIds: selectedSeats,

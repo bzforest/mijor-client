@@ -44,6 +44,10 @@ function Mobile({
 }: MobileProps) {
   const { user } = useAuth();
 
+  const userSeatAvatar = user
+    ? seats.flatMap(row => row.seats).find(seat => seat.selected_by === user.id)?.booked_by_avatar ?? null
+    : null;
+
   const hasUserBookedSeats = user ? seats.some(row => row.seats.some(seat => seat.selected_by === user.id)) : false;
   const isFriendSeatOwnedByUser = user && friendSeatIds.length > 0
     ? seats.some(row => row.seats.some(seat => friendSeatIds.includes(seat.id) && seat.selected_by === user.id))
@@ -164,7 +168,7 @@ function Mobile({
         </article>
 
         {/* ================= Selection Info & Legend ================= */}
-        <div className="flex flex-col gap-[16px] border-t border-brand-gray-100 pt-[8px]">
+        <div className="flex flex-col gap-[16px] border-t border-brand-gray-100 pt-[8px] w-full">
           <div className="w-fit">
             <Tag
               label={movieInfo?.hall || ""}
@@ -201,7 +205,7 @@ function Mobile({
                 <SeatIcon
                   variant="friend"
                   isCurrentUser={true}
-                  profileImageUrl={(user as any)?.avatar || (user as any)?.avatarUrl || (user as any)?.picture || null}
+                  profileImageUrl={userSeatAvatar}
                 />
                 <span>Your Seat</span>
               </div>
