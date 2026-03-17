@@ -14,8 +14,9 @@ export interface BookingCardProps {
     tickets: number;
     selectedSeat: string;
     paymentMethod: string;
-    status: "paid" | "completed" | "pay" | "cancelled";
+    status: "paid" | "completed" | "pay" | "cancelled" | "refunded";
     variant: "desktop" | "mobile";
+    onClick?: () => void,
 }
 
 function BookingCard({
@@ -32,12 +33,14 @@ function BookingCard({
     paymentMethod,
     status,
     variant,
+    onClick,
 }: BookingCardProps) {
 
     /* ================= Desktop Variant ================= */
     if (variant === "desktop") {
         return (
             <div
+                onClick={onClick}
                 className="
                     flex flex-col
                     p-[24px] gap-[24px]
@@ -195,6 +198,7 @@ function BookingCard({
     /* ================= Mobile Variant ================= */
     return (
         <div
+            onClick={onClick}
             className="
                 flex flex-col
                 p-[24px] gap-[24px]

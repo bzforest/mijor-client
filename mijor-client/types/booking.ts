@@ -33,4 +33,5 @@ export type PaymentParams = {
   paymentMethod: string;
   cardOwner?: string;
   cardnumber?: string;
+  paymentIntentId?: string;
 };

@@ -47,7 +47,7 @@ export const QRCodeSection = ({
           showtimeId,
           seatIds,
           selectedCouponId,
-          paymentIntentId,
+          paymentIntentId: "dev_force_success",
           forceSuccess: true,
         },
       );

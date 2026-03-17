@@ -4,7 +4,10 @@ import { BookingHistoryItem } from "@/types/bookingHistory";
 import { useMediaQuery } from "react-responsive"
 import { Activity } from "lucide-react"
 import Pagination from "@/components/ui/pagination";
+import { formatTime } from "@/utils/formatTime"
+import formatDate from "@/utils/formatDate"
 import { mapBookingStatus } from "@/utils/booking/mapBookingStatus";
+import BookingDetailModal from "@/components/common/bookingDetailModal";
 import BookingCard from "@/components/common/bookingCard";
 import type { BookingCardProps } from "@/components/common/bookingCard";
 import MenuSidebar from "@/components/common/menuSidebar";
@@ -13,7 +16,10 @@ import router from "next/router";
 import Button from "@/components/ui/Button";
 
 function mapHistoryToCard(item: BookingHistoryItem, isMobile: boolean): BookingCardProps {
-  const dateObj = new Date(item.start_time);
+
+  const validSeats = (item.seats || []).filter(Boolean)
+  const time = formatTime(item.start_time)
+  const date = formatDate(item.start_time)
 
   return {
     title: item.title || "",
@@ -22,17 +28,14 @@ function mapHistoryToCard(item: BookingHistoryItem, isMobile: boolean): BookingC
     cinema: "Major Cineplex",
     hall: "Hall 1",
 
-    date: item.start_time,
-    time: dateObj.toLocaleTimeString("th-TH", {
-      hour: "2-digit",
-      minute: "2-digit",
-    }),
+    date: date,
+    time: time,
 
     bookingNo: item.booking_id.slice(0, 8).toUpperCase(),
     bookedDate: item.created_at,
 
-    tickets: item.seats?.length || 0,
-    selectedSeat: item.seats?.join(", ") || "-",
+    tickets: validSeats.length,
+    selectedSeat: validSeats.length ? validSeats.join(", ") : "-",
 
     paymentMethod: "Credit card",
 
@@ -48,6 +51,7 @@ export default function BookingHistoryPage() {
   const [pageLoading, setPageLoading] = useState(false);
   const isMobile = useMediaQuery({ maxWidth: 768 })
   const [firstLoad, setFirstLoad] = useState(true)
+  const [selectedBooking, setSelectedBooking] = useState<BookingHistoryItem | null>(null)
 
   // Pagination state
   const [pagination, setPagination] = useState({
@@ -57,10 +61,8 @@ export default function BookingHistoryPage() {
     totalPages: 0,
   });
 
-  useEffect(() => {
-    const load = async () => {
-
-      if (firstLoad) setLoading(true)
+const loadHistory = async () => {
+    if (firstLoad) setLoading(true)
       else setPageLoading(true)
 
       const res = await fetchBookingHistory(
@@ -68,15 +70,16 @@ export default function BookingHistoryPage() {
         pagination.limit
       )
 
-      setData(res.data)
-      setPagination(res.pagination)
+    setData(res.data)
+    setPagination(res.pagination)
 
-      setLoading(false)
-      setPageLoading(false)
-      setFirstLoad(false)
-    }
+    setLoading(false)
+    setPageLoading(false)
+    setFirstLoad(false)
+  }
 
-    load()
+  useEffect(() => {
+    loadHistory()
   }, [pagination.page])
 
   if (loading) {
@@ -143,7 +146,9 @@ export default function BookingHistoryPage() {
               ) : (
                 data.map((item) => {
                   const card = mapHistoryToCard(item, isMobile)
-                  return <BookingCard key={item.booking_id} {...card} variant={isMobile ? "mobile" : "desktop"} />
+                  return <BookingCard key={item.booking_id} {...card} 
+                  variant={isMobile ? "mobile" : "desktop"} 
+                  onClick={() => setSelectedBooking(item)} />
                 })
               )}
             </div>
@@ -166,6 +171,16 @@ export default function BookingHistoryPage() {
           </div>
         )}
       </div>
+      {selectedBooking && (
+        <BookingDetailModal
+          booking={selectedBooking}
+          onClose={() => setSelectedBooking(null)}
+          onCancelled={() => {
+            setSelectedBooking(null)
+            loadHistory()
+          }}
+        />
+      )}
     </div>
   );
 }

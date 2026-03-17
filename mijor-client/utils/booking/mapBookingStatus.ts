@@ -10,6 +10,8 @@ export function mapBookingStatus(dbStatus: string): BookingUIStatus {
       return "completed"
     case "cancelled":
       return "cancelled"
+    case "refunded":
+      return "refunded"
     default:
       return "pay"
   }
