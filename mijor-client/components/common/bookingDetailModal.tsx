@@ -6,6 +6,8 @@ import { mapBookingStatus } from "@/utils/booking/mapBookingStatus";
 import SummaryPriceBlock from "@/components/common/summaryPriceBloack";
 import { cancelBooking } from "@/services/bookingService";
 import Radio from "@/components/ui/Radio";
+import formatMyDate from "@/utils/formatDate";
+import { formatTime } from "@/utils/formatTime";
 
 interface Props {
   booking: any;
@@ -32,8 +34,8 @@ export default function BookingDetailModal({
 
   if (!booking) return null;
 
-  const dateObj = new Date(booking.start_time);
-
+  const date = formatMyDate(booking.start_time);
+  const time = formatTime(booking.start_time);
   const showtimeDate = new Date(booking.start_time);
   const diffMs = showtimeDate.getTime() - Date.now();
   const diffMinutes = diffMs / 1000 / 60;
@@ -97,11 +99,8 @@ export default function BookingDetailModal({
               picture={booking.poster_url || ""}
               cinema="Major Cineplex"
               hall="Hall 1"
-              date={booking.start_time}
-              time={dateObj.toLocaleTimeString("th-TH", {
-                hour: "2-digit",
-                minute: "2-digit",
-              })}
+              date={date}
+              time={time}
               bookingNo={(booking.booking_id || "").slice(0, 8).toUpperCase()}
               bookedDate={booking.created_at}
               tickets={booking.seats?.length || 0}
