@@ -34,7 +34,8 @@ export default function Chatbot () {
             try {
                 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
                 const response = await axios.post(`${API_URL}/chatbot` , {
-                    message: userText
+                    message: userText,
+                    history: message.slice(-6)
                 })
 
                 setMessage((prev) => [
