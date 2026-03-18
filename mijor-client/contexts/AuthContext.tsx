@@ -110,6 +110,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         localStorage.removeItem("user");
         sessionStorage.removeItem("access_token");
         sessionStorage.removeItem("user");
+        sessionStorage.removeItem("minor_chat_history");
         setUser(null);
         router.push("/login");  // logout แล้วเด้งไปหน้า login
     }
