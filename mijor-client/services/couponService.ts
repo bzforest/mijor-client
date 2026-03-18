@@ -90,7 +90,6 @@ export async function fetchUserCoupons(): Promise<UserCoupon[]> {
     if (!token) {
       return [];
     }
-    console.log('Token being sent:', token);
     const response = await axios.get(`${API_URL}/api/user/coupons`, {
       headers: {
         'Authorization': `Bearer ${token}`,

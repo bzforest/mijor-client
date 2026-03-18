@@ -37,11 +37,13 @@ export default function BookingDetailModal({
   const date = formatMyDate(booking.start_time);
   const time = formatTime(booking.start_time);
   const showtimeDate = new Date(booking.start_time);
-  const diffMs = showtimeDate.getTime() - Date.now();
-  const diffMinutes = diffMs / 1000 / 60;
-  const canCancelByPolicy = diffMinutes > 30;
-
-  const canCancel = booking.status === "confirmed" && canCancelByPolicy;
+  const now = new Date();
+  const isPastShowtime = now.getTime() > showtimeDate.getTime();
+  const canCancel =
+    booking.status === "confirmed" &&
+    !isPastShowtime &&
+    showtimeDate.getTime() - now.getTime() > 30 * 60 * 1000;
+  const canCancelByPolicy = showtimeDate.getTime() - now.getTime() > 30 * 60 * 1000;
 
   const handleConfirmCancel = async () => {
     try {
