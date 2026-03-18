@@ -2,27 +2,29 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
-@custom-variant dark (&:is(.dark *));
+@variant dark (&:where(.dark, .dark *));
 
 /* ================================
    Tailwind Theme Tokens
+   Uses @theme inline so brand colors reference CSS
+   variables that switch with .dark class.
 ================================ */
 
-@theme {
-  --color-brand-gray-0: #070c1b;
-  --color-brand-gray-100: #21263f;
-  --color-brand-gray-200: #565f7e;
-  --color-brand-gray-300: #8b93b0;
-  --color-brand-gray-400: #c8cedd;
+@theme inline {
+  --color-brand-gray-0: var(--brand-gray-0);
+  --color-brand-gray-100: var(--brand-gray-100);
+  --color-brand-gray-200: var(--brand-gray-200);
+  --color-brand-gray-300: var(--brand-gray-300);
+  --color-brand-gray-400: var(--brand-gray-400);
 
-  --color-brand-blue-100: #4e7bee;
-  --color-brand-blue-200: #1e29a8;
-  --color-brand-blue-300: #0c1580;
+  --color-brand-blue-100: var(--brand-blue-100);
+  --color-brand-blue-200: var(--brand-blue-200);
+  --color-brand-blue-300: var(--brand-blue-300);
 
-  --color-brand-green: #00a372;
-  --color-brand-red: #e5364b;
+  --color-brand-green: var(--brand-green);
+  --color-brand-red: var(--brand-red);
 
-  --color-white: #ffffff;
+  --color-white: var(--brand-white);
 
   --font-family-sans: var(--font-roboto-condensed);
 }
@@ -49,8 +51,11 @@
   body {
     font-family:
       var(--font-roboto-condensed), ui-sans-serif, system-ui, sans-serif;
-    background-color: var(--color-brand-gray-0);
-    color: var(--color-white);
+    background-color: var(--color-bg);
+    color: var(--color-body-text);
+    transition:
+      background-color 500ms ease,
+      color 500ms ease;
   }
 
   * {
@@ -115,12 +120,12 @@
 }
 
 .no-scrollbar {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 }
 
 .no-scrollbar::-webkit-scrollbar {
-  display: none;  /* Chrome, Safari and Opera */
+  display: none; /* Chrome, Safari and Opera */
 }
 
 @theme inline {
@@ -166,38 +171,97 @@
 
 :root {
   --radius: 0.625rem;
+
+  /* ========== ShadCN Tokens — Light Mode ========== */
   --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
+  --foreground: oklch(0 0 0);
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
+  --card-foreground: oklch(0 0 0);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
+  --popover-foreground: oklch(0 0 0);
+  --primary: oklch(0 0 0);
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.96 0 0);
+  --secondary-foreground: oklch(0 0 0);
+  --muted: oklch(0.96 0 0);
+  --muted-foreground: oklch(0.45 0 0);
+  --accent: oklch(0.96 0 0);
+  --accent-foreground: oklch(0 0 0);
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
+  --border: oklch(0.9 0 0);
+  --input: oklch(0.9 0 0);
+  --ring: oklch(0 0 0);
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --sidebar: oklch(0.98 0 0);
+  --sidebar-foreground: oklch(0 0 0);
+  --sidebar-primary: oklch(0 0 0);
+  --sidebar-primary-foreground: oklch(1 0 0);
+  --sidebar-accent: oklch(0.96 0 0);
+  --sidebar-accent-foreground: oklch(0 0 0);
+  --sidebar-border: oklch(0.9 0 0);
+  --sidebar-ring: oklch(0 0 0);
+
+  /* ================================
+     Semantic Color Tokens — Light Mode
+  ================================ */
+  /* Grays — Light Mode */
+  --color-gray-0: #e7e9fd;
+  --color-gray-100: #f4f7ff;
+  --color-gray-200: #e0e6f0;
+  --color-gray-300: #8b93b0;
+  --color-gray-400: #1e29a8;
+
+  /* Blues — Light Mode */
+  --color-blue-100: #3b66d1;
+  --color-blue-200: #2548a5;
+  --color-blue-300: #0c1580;
+
+  --color-green: #008f63;
+  --color-red: #d32f2f;
+
+  /* UI Tokens */
+  --color-bg: #e8eaf6;
+  --color-surface: #f8faff;
+  --color-app-border: #dbe2f0;
+
+  --color-text-primary: #070c1b;
+  --color-text-secondary: #21263f;
+  --color-text-muted: #6b779a;
+
+  --color-interactive: #3b66d1;
+
+  --color-success: #008f63;
+  --color-danger: #d32f2f;
+
+  /* ================================
+     Brand Colors — Light Mode
+  ================================ */
+
+  --brand-gray-0: #ffffff;
+  --brand-gray-100: #f4f7ff;
+  --brand-gray-200: #e0e6f0;
+  --brand-gray-300: #8b93b0;
+  --brand-gray-400: #1e29a8;
+
+  --brand-blue-100: #d0d9ff;
+  --brand-blue-200: #afbfff;
+  --brand-blue-300: #91a7ff;
+
+  --brand-green: #008f63;
+  --brand-red: #d32f2f;
+  --brand-white: #1a237e;
+
+  --color-body-text: var(--color-text-primary);
 }
+
+/* ================================
+   Dark Mode (.dark)
+   Original colors — DO NOT CHANGE
+================================ */
 
 .dark {
   --background: oklch(0.145 0 0);
@@ -231,4 +295,53 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+
+  /* ================================
+     Semantic Color Tokens — Dark Mode
+  ================================ */
+
+  --color-gray-0: #070c1b;         /* [DARK] */
+  --color-gray-100: #21263f;       /* [DARK] */
+  --color-gray-200: #565f7e;       /* [DARK] */
+  --color-gray-300: #8b93b0;       /* [DARK] */
+  --color-gray-400: #C8CEDD;       /* [DARK] */
+
+  --color-blue-100: #4e7bee;       /* [DARK] */
+  --color-blue-200: #1e29a8;       /* [DARK] */
+  --color-blue-300: #0C1580;       /* [DARK] */
+
+  --color-green: #00a372;          /* [DARK] */
+  --color-red: #e5364b;            /* [DARK] */
+
+  --color-bg: #101525;             /* [DARK] */
+  --color-surface: #21263f;        /* [DARK] */
+  --color-app-border: #565f7e;     /* [DARK] */
+
+  --color-text-primary: #C8CEDD;   /* [DARK] */
+  --color-text-secondary: #c8cedd; /* [DARK] */
+  --color-text-muted: #8b93b0;     /* [DARK] */
+
+  --color-interactive: #4e7bee;    /* [DARK] */
+
+  --color-success: #00a372;        /* [DARK] */
+  --color-danger: #e5364b;         /* [DARK] */
+
+  /* ================================
+     Brand Colors — Dark Mode
+  ================================ */
+  --brand-gray-0: #070c1b;         /* [DARK] */
+  --brand-gray-100: #21263f;       /* [DARK] */
+  --brand-gray-200: #565f7e;       /* [DARK] */
+  --brand-gray-300: #8b93b0;       /* [DARK] */
+  --brand-gray-400: #C8CEDD;       /* [DARK] */
+
+  --brand-blue-100: #4e7bee;       /* [DARK] */
+  --brand-blue-200: #1e29a8;       /* [DARK] */
+  --brand-blue-300: #0C1580;       /* [DARK] */
+
+  --brand-green: #00a372;          /* [DARK] */
+  --brand-red: #e5364b;            /* [DARK] */
+  --brand-white: #ffffff;          /* [DARK] */
+
+  --color-body-text: var(--color-text-primary);
 }

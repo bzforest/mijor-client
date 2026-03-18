@@ -101,7 +101,7 @@ function SeatIcon({
       type="button"
       onClick={onClick}
       onChange={onChange}
-      className={`flex w-fit items-center justify-center flex-shrink-0 ${clickable}`}
+      className={`flex w-fit items-center justify-center flex-shrink-0 overflow-hidden ${variant === "reserved" ? "bg-[#101525] rounded" : ""} ${clickable}`}
       title={friendName ? friendName : undefined}
     >
       <img

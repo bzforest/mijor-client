@@ -122,13 +122,13 @@ export default function PaymentSuccess() {
     if (!isReady) return null;
 
     return (
-        <div className="flex flex-col items-center justify-center p-20 bg-[#101525]">
+        <div className="flex flex-col items-center justify-center p-20 bg-transparent">
             <div className="flex flex-col gap-12">
 
                 {/* --- Section: Booking Status Header --- */}
                 <div className="flex flex-col items-center gap-6">
                     <CheckCircle size={80} strokeWidth={2} className="text-brand-green" />
-                    <h1 className="text-headline-2 font-bold text-white">
+                    <h1 className="text-headline-2 font-bold text-foreground">
                         Booking success
                     </h1>
                 </div>
@@ -157,17 +157,17 @@ export default function PaymentSuccess() {
                     <div className="border-t border-brand-gray-0 mt-6 pt-6 space-y-3">
                         <div className="flex justify-between items-center text-sm">
                             <span className="text-brand-gray-300">Selected Seat</span>
-                            <span className="text-white font-semibold">{seats.join(", ")}</span>
+                            <span className="text-foreground font-semibold">{seats.join(", ")}</span>
                         </div>
                         <div className="flex justify-between items-center text-sm">
                             <span className="text-brand-gray-300">Payment method</span>
-                            <span className="text-white font-semibold uppercase">
+                            <span className="text-foreground font-semibold uppercase">
                                 {paymentMethod === "CreditCard" ? "Credit card" : "QR Code"}
                             </span>
                         </div>
                         <div className="flex justify-between items-center text-sm">
                             <span className="text-brand-gray-300">Total</span>
-                            <span className="text-white font-bold text-lg">THB {finalPrice}</span>
+                            <span className="text-foreground font-bold text-lg">THB {finalPrice}</span>
                         </div>
                     </div>
                 </div>
@@ -193,7 +193,7 @@ export default function PaymentSuccess() {
                     {/* Social Share Popover Configuration */}
                     <Popover>
                         <PopoverTrigger asChild>
-                            <button className="flex items-center gap-2 text-white/80 hover:text-white transition-colors text-sm underline underline-offset-4 decoration-white/30">
+                            <button className="flex items-center gap-2 text-foreground/80 hover:text-foreground transition-colors text-sm underline underline-offset-4 decoration-foreground/30">
                                 {isGeneratingLink ? (
                                     <Loader2 size={16} className="animate-spin" />
                                 ) : (
@@ -202,7 +202,7 @@ export default function PaymentSuccess() {
                                 Share this booking
                             </button>
                         </PopoverTrigger>
-                        <PopoverContent className="bg-[#1E293B] border-brand-gray-100/20 w-fit p-4 rounded-xl shadow-3xl">
+                        <PopoverContent className="bg-brand-gray-0 border-brand-gray-100/20 w-fit p-4 rounded-xl shadow-3xl">
                             <div className="flex flex-col items-center gap-3">
                                 <p className="text-xs text-brand-gray-400 uppercase font-semibold tracking-wider">Share Booking</p>
                                 <div className="flex gap-4 p-2">

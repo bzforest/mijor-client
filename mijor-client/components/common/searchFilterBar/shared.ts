@@ -63,7 +63,7 @@ export function parseDateString(dateStr: string | undefined) {
 
 // ===== Common Styles =====
 export const selectClass =
-  "flex-1 w-full xl:w-[177px] max-w-[177px] py-[12px] pl-[16px] pr-[12px] bg-brand-gray-100 placeholder:text-brand-gray-300 data-[placeholder]:text-brand-gray-300 text-body-2 cursor-pointer border border-brand-gray-200 rounded-[4px] focus:border-brand-gray-300 focus:outline-none transition-all active:scale-[0.98]";
+  "flex-1 w-full xl:w-[177px] max-w-[177px] py-[12px] pl-[16px] pr-[12px] bg-brand-gray-100 dark:bg-brand-gray-100 placeholder:text-brand-gray-300 data-[placeholder]:text-brand-gray-300 text-body-2 cursor-pointer border border-brand-gray-200 rounded-[4px] focus:border-brand-gray-300 focus:outline-none transition-all active:scale-[0.98]";
 
 export const contentClass =
   "bg-brand-gray-0 border-brand-gray-100 text-white shadow-2xl overflow-hidden";

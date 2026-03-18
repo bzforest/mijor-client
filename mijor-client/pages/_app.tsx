@@ -6,6 +6,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { LocationProvider } from "@/contexts/LocationContext";
 import Chatbot from "@/components/common/Chatbot";
 import Footer from "@/components/common/footer";
+import { ThemeProvider } from "@/components/DarkLightMode/ThemeProvider";
 
 const robotoCondensed = Roboto_Condensed({
   subsets: ["latin"],
@@ -19,19 +20,21 @@ import Navbar from "@/components/common/navbar";
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
 
-    const hiddenChatbotRoutes = ["/login", "/register", "/forgot-password", "/update-password"];
-    const shouldShowChatbot = !hiddenChatbotRoutes.includes(router.pathname);
-    
+  const hiddenChatbotRoutes = ["/login", "/register", "/forgot-password", "/update-password"];
+  const shouldShowChatbot = !hiddenChatbotRoutes.includes(router.pathname);
+
   return (
-    <AuthProvider>
-      <LocationProvider>
-        <div className={`${robotoCondensed.variable} font-sans`}>
-          <Navbar />
-          <Component {...pageProps} />
-          {shouldShowChatbot && <Chatbot />}
-          <Footer />
-        </div>
-      </LocationProvider>
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <LocationProvider>
+          <div className={`${robotoCondensed.variable} font-sans`}>
+            <Navbar />
+            <Component {...pageProps} />
+            {shouldShowChatbot && <Chatbot />}
+            <Footer />
+          </div>
+        </LocationProvider>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }

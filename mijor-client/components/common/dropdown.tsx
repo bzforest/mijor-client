@@ -35,7 +35,7 @@ export default function Dropdown({
         {items.map((item, index) => (
           <React.Fragment key={index}>
             <button
-              className={`flex items-center gap-3 w-full text-left px-3 py-2 rounded-lg transition
+              className={`flex items-center gap-3 w-full text-left px-3 py-2 rounded-lg transition cursor-pointer
                 ${
                   item.danger
                     ? mobile

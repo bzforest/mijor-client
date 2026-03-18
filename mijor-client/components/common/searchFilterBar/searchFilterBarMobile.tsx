@@ -115,7 +115,7 @@ function SearchResultMobile({
                             if (filters.title.length >= 1 && titleSuggestions.length > 0) setShowSuggestions(true);
                         }}
                         placeholder="Search movie..."
-                        className="w-full py-[12px] pl-[16px] pr-[12px] bg-brand-gray-100 text-white text-body-2 border border-brand-gray-200 rounded-[4px] focus:border-brand-gray-300 focus:outline-none"
+                        className="w-full py-[12px] pl-[16px] pr-[12px] bg-brand-gray-100 dark:bg-brand-gray-100 text-white text-body-2 border border-brand-gray-200 rounded-[4px] focus:border-brand-gray-300 focus:outline-none"
                     />
                     {showSuggestions && titleSuggestions.length > 0 && (
                         <ul className="absolute top-[calc(100%+4px)] mt-1 left-0 z-50 w-full origin-top overflow-y-auto rounded-md border border-brand-gray-100 bg-brand-gray-0 text-white shadow-md py-1 px-1">
