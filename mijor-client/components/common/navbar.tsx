@@ -8,10 +8,11 @@ import { History, Ticket, User, Key, LogOut, Menu, X, ChevronDown } from "lucide
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/router";
 import { supabase } from "@/utils/supabase";
+import ToggleSwitch from "@/components/DarkLightMode/ToggleSwitch";
 
 export default function Navbar() {
   const router = useRouter();
-  const { user, logout , navigateToLogin} = useAuth();
+  const { user, logout, navigateToLogin } = useAuth();
 
   /* ===== state avatar ===== */
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
@@ -29,60 +30,82 @@ export default function Navbar() {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
+  const [isDark, setIsDark] = useState(false);
+
+  useEffect(() => {
+    setIsDark(document.documentElement.classList.contains("dark"));
+    const syncTheme = () => setIsDark(document.documentElement.classList.contains("dark"));
+    window.addEventListener("theme-sync", syncTheme);
+    return () => window.removeEventListener("theme-sync", syncTheme);
+  }, []);
+
   useEffect(() => {
 
     const loadAvatar = async () => {
-  
+
       if (!user) return;
-  
+
       const { data } = await supabase
         .from("profiles")
         .select("name, avatar_url")
         .eq("id", user.id)
         .single();
-  
+
       if (data) {
-  
+
         if (data.avatar_url) {
           setAvatarUrl(data.avatar_url + "?t=" + Date.now());
         }
-  
+
         if (data.name) {
           setName(data.name);
         }
-  
+
       }
-  
+
     };
-  
+
     loadAvatar();
-  
+
     /* ===== listen auth change ===== */
     const { data: listener } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-  
+
         if (event === "USER_UPDATED" && session?.user) {
-  
+
           const updatedUser = session.user;
-  
+
           if (updatedUser.user_metadata?.avatar_url) {
             setAvatarUrl(updatedUser.user_metadata.avatar_url + "?t=" + Date.now());
           }
-  
+
           if (updatedUser.user_metadata?.name) {
             setName(updatedUser.user_metadata.name);
           }
-  
+
         }
-  
+
       }
     );
-  
+
     return () => {
       listener.subscription.unsubscribe();
     };
-  
+
   }, [user]);
+  
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const dropdownItems = [
     {
@@ -105,6 +128,18 @@ export default function Navbar() {
       icon: <Key size={18} />,
       divider: true,
       onclick: () => router.push("/user-manage/reset-password"), // 🔥 เพิ่ม
+    },
+    {
+      label: isDark ? "Light mode" : "Dark mode",
+      icon: <ToggleSwitch />,
+      divider: true,
+      onclick: () => {
+        const root = document.documentElement;
+        const isDarkNow = root.classList.contains("dark");
+        root.classList.toggle("dark", !isDarkNow);
+        localStorage.setItem("theme", !isDarkNow ? "dark" : "light");
+        window.dispatchEvent(new CustomEvent("theme-sync"));
+      },
     },
     {
       label: "Log out",
@@ -130,7 +165,7 @@ export default function Navbar() {
           width={36}
           height={36}
           style={{ width: 36, height: 36 }}
-          className="object-contain"
+          className="object-contain cursor-pointer"
           onClick={() => router.push("/")}
         />
 
@@ -151,10 +186,10 @@ export default function Navbar() {
               </button>
             </div>
           ) : (
-            <div className="relative" ref={dropdownRef}>
+            <div className="relative flex flex-row gap-4" ref={dropdownRef}>
               <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="flex items-center gap-3 outline-none"
+                className="flex items-center gap-3 outline-none cursor-pointer"
               >
                 <img
                   src={avatarUrl || "/logo.png"}
@@ -169,7 +204,11 @@ export default function Navbar() {
                     }`}
                 />
               </button>
-              {isOpen && <Dropdown items={dropdownItems} />}
+              {isOpen &&
+                <div className="absolute top-full right-0">
+                  <Dropdown items={dropdownItems} />
+                </div>
+              }
             </div>
           )}
         </div>
@@ -181,7 +220,6 @@ export default function Navbar() {
           {isMobileOpen ? <X size={28} /> : <Menu size={28} />}
         </button>
       </nav>
-
 
       <div
         className={`
@@ -220,6 +258,7 @@ export default function Navbar() {
                 <span className="text-xl font-medium text-white">
                   {userName}
                 </span>
+
               </div>
               <Dropdown items={dropdownItems} mobile />
             </div>

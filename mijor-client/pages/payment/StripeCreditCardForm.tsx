@@ -16,10 +16,10 @@ const STRIPE_STYLE = {
   style: {
     base: {
       fontSize: "16px",
-      color: "#ffffff", // สีขาวตามธีม
+      color: "text-white", // สีขาวตามธีม
       fontFamily: "inherit",
       "::placeholder": {
-        color: "#6b7280", // สีเทาเหมือน placeholder ปกติ
+        color: "text-gray-300", // สีเทาเหมือน placeholder ปกติ
       },
     },
     invalid: {

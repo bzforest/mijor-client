@@ -87,7 +87,7 @@ function InputField({
                         placeholder:text-brand-gray-300
                         ${
                             correct
-                                ? "border-brand-gray-300"
+                                ? "border-brand-gray-200"
                                 : "border-brand-red"
                         }
                         focus:border-brand-gray-200

@@ -69,7 +69,7 @@ function Desktop({
   return !next ? (
     <main className="hidden md:flex flex-col">
       {/* ===== Header Section ===== */}
-      <header className="flex justify-center bg-brand-gray-0 px-[120px] py-[16px]">
+      <header className="flex justify-center  px-[120px] py-[16px] bg-brand-gray-0">
         <Step
           steps={[{ label: "Select showtime" }, { label: "Select seat" }, { label: "Payment" }]}
           currentStep={2}
@@ -78,7 +78,7 @@ function Desktop({
 
       {/* ===== Booking Body ===== */}
       <section
-        className="flex flex-row justify-center h-full bg-[#101525] py-[80px] gap-[clamp(12px,3vw,102px)]"
+        className="flex flex-row justify-center h-full  py-[80px] gap-[clamp(12px,3vw,102px)]"
         style={{
           paddingLeft:  "clamp(16px, calc(15.5vw - 103px), 120px)",
           paddingRight: "clamp(16px, calc(15.5vw - 103px), 120px)",
@@ -88,7 +88,7 @@ function Desktop({
         <article className="hidden w-full max-w-[793px] min-w-0 flex-col gap-[60px] md:flex">
           {/* ----- Screen Representation ----- */}
           <div className="flex w-full flex-col rounded-tl-[80px] rounded-tr-[80px] bg-gradient-to-r from-[#2C344E] to-[#516199] text-center">
-            <span className="text-body-1-bold text-brand-gray-400">screen</span>
+            <span className="text-body-1-bold text-[#ffffff]">screen</span>
           </div>
 
           {/* ----- Seat Grid ----- */}

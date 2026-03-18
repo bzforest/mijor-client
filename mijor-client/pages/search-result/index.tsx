@@ -6,7 +6,7 @@ import SearchFilterBar from "@/components/common/searchFilterBar/searchFilterBar
 import MovieShowtimeCard from "@/components/common/showTimeMovie";
 import Pagination from "@/components/ui/pagination";
 import { useRouter } from "next/router";
-import formatMyDate from "@/utils/formatDate";
+import LoadingPage from "@/components/loading/LoadingPage";
 
 // ===== Types =====
 type Schedule = {
@@ -221,8 +221,12 @@ export default function SearchResultPage() {
     };
 
     /* ================= View Logic ================= */
+    if (isLoading) {
+        return <LoadingPage />;
+    }
+
     return (
-        <div className="flex flex-col bg-brand-gray-100">
+        <div className="flex flex-col">
 
             {/* Search Filters */}
             <SearchFilterBar
@@ -239,11 +243,6 @@ export default function SearchResultPage() {
             {/* Main Content */}
             <main className="flex flex-col gap-[24px] pt-[24px] pb-[40px] md:gap-[40px] md:px-[120px] md:pt-[40px] md:pb-[120px]">
                 {/* Loading State */}
-                {isLoading && (
-                    <div className="flex justify-center items-center py-20">
-                        <div className="w-8 h-8 border-2 rounded-full border-brand-blue-100 border-t-transparent animate-spin" />
-                    </div>
-                )}
 
                 {/* Movie Results */}
                 <div className="w-full">

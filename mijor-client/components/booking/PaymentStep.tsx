@@ -168,14 +168,14 @@ export default function PaymentStep({
 
   return (
     <main className={`flex flex-col ${className}`}>
-      <header className="flex justify-center bg-brand-gray-0 px-4 py-4 md:px-30">
+      <header className="flex justify-center px-4 py-4 bg-brand-gray-0 md:px-30">
         <Step
           steps={[{ label: "Select showtime" }, { label: "Select seat" }, { label: "Payment" }]}
           currentStep={3}
         />
       </header>
 
-      <div className="flex flex-col justify-center gap-6 w-full h-full bg-[#101525] px-4 py-10 md:flex-row md:gap-28 md:bg-brand-gray-100/30 md:px-30 md:py-20">
+      <div className="flex flex-col justify-center gap-6 w-full h-full px-4 py-10 md:flex-row md:gap-28 md:px-30 md:py-20">
         <section className="flex flex-col gap-10 w-full h-full max-w-7xl">
           <Tabs
             viewType="default"

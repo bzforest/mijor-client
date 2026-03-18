@@ -117,7 +117,7 @@ export default function MovieDetailPage() {
 
   if (loading || !router.isReady) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#0E1628] text-white">
+      <div className="min-h-screen flex items-center justify-center  text-white">
         Loading...
       </div>
     );
@@ -137,7 +137,7 @@ export default function MovieDetailPage() {
   });
 
   return (
-    <div className="min-h-screen bg-[#0E1628] text-white ">
+    <div className="min-h-screen text-white ">
       {/* ================= HERO ================= */}
       <section className="px-4 md:px-[100px] py-10 flex justify-center">
         <div className="w-full max-w-[1600px]">
@@ -145,7 +145,7 @@ export default function MovieDetailPage() {
             className="
               flex flex-col md:flex-row
               gap-8 md:gap-12
-              bg-[#070C1B]/70
+              bg-transparent
               backdrop-blur-[24px]
               rounded-2xl
               border border-white/5
@@ -178,14 +178,14 @@ export default function MovieDetailPage() {
                 {movie.genre.map((g, i) => (
                   <span
                     key={i}
-                    className="px-4 py-2 bg-[#1C2333] rounded-md text-sm"
+                    className="px-4 py-2 bg-brand-gray-100 rounded-md text-sm"
                   >
                     {g}
                   </span>
                 ))}
 
                 {movie.language && (
-                  <span className="px-4 py-2 bg-[#1C2333] rounded-md text-sm">
+                  <span className="px-4 py-2 bg-brand-gray-100 rounded-md text-sm">
                     {movie.language}
                   </span>
                 )}
@@ -205,7 +205,7 @@ export default function MovieDetailPage() {
               {movie.trailer_youtube && (
                 <button
                   onClick={() => setIsTrailerModalOpen(true)}
-                  className="px-6 py-3 w-fit font-semibold bg-blue-500 rounded-md"
+                  className="px-6 py-3 w-fit font-semibold bg-brand-blue-100 rounded-md"
                 >
                   View Trailer
                 </button>
@@ -233,7 +233,7 @@ export default function MovieDetailPage() {
         <div className="flex fixed inset-0 z-50 items-center justify-center p-4">
           {/* 1. Backdrop */}
           <div
-            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            className="absolute inset-0 bg-brand-gray-0 backdrop-blur-sm"
             onClick={() => setIsTrailerModalOpen(false)}
           />
 
@@ -272,7 +272,7 @@ export default function MovieDetailPage() {
 
       {/* ส่วนล่างเหมือนเดิม (Date / Filter / Showtimes) */}
       {/* ================= DATE BAR ================= */}
-      <div className="w-full bg-[#0B1220] pt-6 pb-4">
+      <div className="w-full bg-brand-gray-0 pt-6 pb-4">
         <div className="px-6 md:px-[80px]">
           <DateSelection
             value={selectedDate}
@@ -302,8 +302,8 @@ export default function MovieDetailPage() {
             onClick={() => setIsOpen(!isOpen)}
             className="
               h-[55px]
-              bg-[#21263F]
-              border-2 border-[#565F7E]
+              bg-brand-gray-100
+              border-2 border-brand-gray-200
               rounded-[6px]
               px-4
               flex items-center justify-between
@@ -319,7 +319,7 @@ export default function MovieDetailPage() {
           </div>
 
           {isOpen && (
-            <div className="absolute mt-2 w-full bg-[#21263F] border border-[#565F7E] rounded-[6px] overflow-hidden z-50">
+            <div className="absolute mt-2 w-full bg-brand-gray-0 border border-[#565F7E] rounded-[6px] overflow-hidden z-50">
               <div
                 onClick={() => {
                   setSelectedCity("City");

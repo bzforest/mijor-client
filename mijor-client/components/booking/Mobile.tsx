@@ -67,7 +67,7 @@ function Mobile({
   return !next ? (
     <div className="flex flex-col md:hidden">
       {/* ===== Header Section ===== */}
-      <header className="flex justify-center bg-brand-gray-0 p-[16px]">
+      <header className="flex justify-center p-[16px]">
         <Step
           steps={[{ label: "Select showtime" }, { label: "Select seat" }, { label: "Payment" }]}
           currentStep={2}
@@ -75,12 +75,12 @@ function Mobile({
       </header>
 
       {/* ===== Booking Body ===== */}
-      <section className="flex flex-col items-center gap-[29px] px-[16px] py-[40px] h-full bg-[#101525] ">
+      <section className="flex flex-col items-center gap-[29px] px-[16px] py-[40px] h-full">
         {/* ================= Screen & Seating Area ================= */}
         <article className="flex w-[343px] flex-col gap-[28px]">
           {/* ----- Screen Representation ----- */}
           <div className="flex w-full flex-col rounded-tl-[80px] rounded-tr-[80px] bg-gradient-to-r from-[#2C344E] to-[#516199] text-center">
-            <span className="text-body-1-bold text-brand-gray-400">screen</span>
+            <span className="text-body-1-bold text-[#ffffff]">screen</span>
           </div>
 
           {/* ----- Seat Grid ----- */}

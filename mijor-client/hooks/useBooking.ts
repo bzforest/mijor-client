@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useCallback, useRef } from "react";
 import axios from "axios";
 import { useRouter } from "next/router";
 import { api } from "@/lib/booking/api";
@@ -86,8 +86,14 @@ export const useBooking = () => {
   }, [showtimeId]);
 
   /* ================= Reselection Timer ================= */
+  const hasTriggeredExpiry = useRef(false);
+  const releaseSeatsRef = useRef<() => void>(() => {});
+
   useEffect(() => {
-    if (!expireTime) return;
+    if (!expireTime) {
+      hasTriggeredExpiry.current = false;
+      return;
+    }
 
     const interval = setInterval(() => {
       const now = new Date().getTime();
@@ -96,6 +102,12 @@ export const useBooking = () => {
       if (diff <= 0) {
         clearInterval(interval);
         setRemainingTime(0);
+
+        // Trigger seat release when timer expires
+        if (!hasTriggeredExpiry.current) {
+          hasTriggeredExpiry.current = true;
+          releaseSeatsRef.current();
+        }
       } else {
         setRemainingTime(diff);
       }
@@ -103,22 +115,6 @@ export const useBooking = () => {
 
     return () => clearInterval(interval);
   }, [expireTime]);
-
-  /* ================= Polling Fallback ================= */
-  useEffect(() => {
-    if (!showtimeId) return;
-
-    const interval = setInterval(async () => {
-      try {
-        const seatRes = await api.get(`/showtime/${showtimeId}/seats`);
-        setSeats(seatRes.data); 
-      } catch (error) {
-        
-      }
-    }, 5000);
-
-    return () => clearInterval(interval);
-  }, [showtimeId]);
 
   /* ================= Socket Lifecycle ================= */
   useEffect(() => {
@@ -164,18 +160,44 @@ export const useBooking = () => {
         })),
       );
     };
+
+    // Full state reconciliation from server (on connect/reconnect)
+    const handleSeatSync = ({ seats: serverSeats }: { seats: SeatRow[] }) => {
+      setSeats(serverSeats);
+    };
   
     socket.on("connect", handleReconnect);
     socket.on("seatSelected", handleSeatSelected);
     socket.on("seatBooked", handleSeatBooked);
     socket.on("seatExpired", handleSeatExpired);
+    socket.on("seatSync", handleSeatSync);
   
     return () => {
       socket.off("connect", handleReconnect);
       socket.off("seatSelected", handleSeatSelected);
       socket.off("seatBooked", handleSeatBooked);
       socket.off("seatExpired", handleSeatExpired);
+      socket.off("seatSync", handleSeatSync);
     };
+  }, [showtimeId]);
+
+  /* ================= Tab Visibility Resync ================= */
+  useEffect(() => {
+    if (!showtimeId) return;
+
+    const handleVisibilityChange = async () => {
+      if (document.visibilityState === "visible") {
+        try {
+          const seatRes = await api.get(`/showtime/${showtimeId}/seats`);
+          setSeats(seatRes.data);
+        } catch (error) {
+          console.error("Failed to resync seats on tab focus:", error);
+        }
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
   }, [showtimeId]);
 
   /* ================= Persistence Restoration ================= */
@@ -213,11 +235,31 @@ export const useBooking = () => {
     );
   };
 
-  const handleExpired = () => {
+  // Release seats on server and reset local state
+  const releaseSeats = useCallback(async () => {
+    if (selectedSeats.length > 0 && showtimeId) {
+      try {
+        await api.post("/showtimeSeat/release", {
+          showtimeId,
+          seatIds: selectedSeats,
+        });
+      } catch (error) {
+        console.error("Failed to release seats:", error);
+      }
+    }
     setSelectedSeats([]);
     setNext(false);
     setExpireTime(null);
     setRemainingTime(0);
+  }, [selectedSeats, showtimeId]);
+
+  // Keep ref in sync so timer closure always has latest version
+  useEffect(() => {
+    releaseSeatsRef.current = releaseSeats;
+  }, [releaseSeats]);
+
+  const handleExpired = () => {
+    releaseSeats();
   };
 
   const handleSelect = async () => {

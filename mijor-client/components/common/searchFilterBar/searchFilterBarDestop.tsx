@@ -99,7 +99,7 @@ export default function SearchResultDestop({
         onClear?.();
     };
 
-    const selectClass = "w-full py-[12px] pl-[16px] pr-[12px] bg-brand-gray-100 text-white text-body-2 cursor-pointer border border-brand-gray-200 rounded-[4px] focus:border-brand-gray-300 focus:outline-none";
+    const selectClass = "w-full py-[12px] pl-[16px] pr-[12px] bg-brand-gray-100 dark:bg-brand-gray-100 text-white text-body-2 cursor-pointer border border-brand-gray-200 rounded-[4px] focus:border-brand-gray-300 focus:outline-none";
     const contentClass = "bg-brand-gray-0 border border-brand-gray-100 text-white data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 relative z-50 max-h-(--radix-select-content-available-height) min-w-[8rem] w-[var(--radix-select-trigger-width)] origin-(--radix-select-content-transform-origin) overflow-x-hidden overflow-y-auto rounded-md border shadow-md";
 
     const allLanguages = ["Any language", ...languageOptions];
@@ -120,7 +120,7 @@ export default function SearchResultDestop({
                                 if (filters.title.length >= 1 && titleSuggestions.length > 0) setShowSuggestions(true);
                             }}
                             placeholder="Search movie..."
-                            className="w-full py-[12px] pl-[16px] pr-[12px] bg-brand-gray-100 text-white text-body-2 border border-brand-gray-200 rounded-[4px] focus:border-brand-gray-300 focus:outline-none"
+                            className="w-full py-[12px] pl-[16px] pr-[12px] bg-brand-gray-100 dark:bg-brand-gray-100 text-white text-body-2 border border-brand-gray-200 rounded-[4px] focus:border-brand-gray-300 focus:outline-none"
                         />
                         {showSuggestions && titleSuggestions.length > 0 && (
                             <ul className="absolute top-[calc(100%+4px)] mt-1 left-0 z-50 w-full origin-top overflow-x-hidden overflow-y-auto rounded-md border border-brand-gray-100 bg-brand-gray-0 text-white shadow-md py-1 px-1">
