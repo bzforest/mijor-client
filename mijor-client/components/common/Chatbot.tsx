@@ -79,7 +79,7 @@ export default function Chatbot () {
                                 <div className={`max-w-[80%] rounded-lg px-4 py-2 text-sm whitespace-pre-wrap ${
                                     msg.role === "user"
                                     ? "bg-brand-blue-300 text-white rounded-br-none"
-                                    : "bg-brand-gray-200 text-white rounded-bl-none"
+                                    : "bg-brand-gray-200 text-foreground rounded-bl-none"
                                 }`}>
                                     {msg.text}
                                 </div>   
@@ -100,7 +100,7 @@ export default function Chatbot () {
                         <input 
                             type="text"
                             placeholder="พิมพ์ข้อความที่นี่..."
-                            className="flex-1 bg-background border border-brand-gray-300 text-brand-gray-0 rounded-lg px-3 py-2 focus:outline-none focus:border-brand-blue-300"
+                            className="flex-1 bg-brand-gray-100 border border-brand-gray-300 text-foreground placeholder:text-brand-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:border-brand-blue-300"
                             value={inputText}
                             onChange={(e) => setInputText(e.target.value)}
                             onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}

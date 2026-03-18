@@ -210,10 +210,10 @@
   ================================ */
   /* Grays — Light Mode */
   --color-gray-0: #e7e9fd;
-  --color-gray-100: #f4f7ff;
-  --color-gray-200: #e0e6f0;
-  --color-gray-300: #8b93b0;
-  --color-gray-400: #1e29a8;
+  --color-gray-100: #747e9c;
+  --color-gray-200: #485170;
+  --color-gray-300: #262c42;
+  --color-gray-400: #090b14;
 
   /* Blues — Light Mode */
   --color-blue-100: #3b66d1;
@@ -242,10 +242,10 @@
   ================================ */
 
   --brand-gray-0: #ffffff;
-  --brand-gray-100: #f4f7ff;
-  --brand-gray-200: #e0e6f0;
-  --brand-gray-300: #8b93b0;
-  --brand-gray-400: #1e29a8;
+  --color-gray-100: #747e9c;
+  --color-gray-200: #485170;
+  --color-gray-300: #262c42;
+  --color-gray-400: #090b14;
 
   --brand-blue-100: #d0d9ff;
   --brand-blue-200: #afbfff;
