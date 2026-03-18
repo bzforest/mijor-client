@@ -12,21 +12,6 @@ import { useEffect, useState, useCallback } from "react";
 import Alert from "@/components/ui/Alert";
 
 // ตั้งค่า Style ให้ตัวหนังสือข้างใน Element เหมือนกับ InputField ของคุณ
-const STRIPE_STYLE = {
-  style: {
-    base: {
-      fontSize: "16px",
-      color: "text-white", // สีขาวตามธีม
-      fontFamily: "inherit",
-      "::placeholder": {
-        color: "text-gray-300", // สีเทาเหมือน placeholder ปกติ
-      },
-    },
-    invalid: {
-      color: "#ef4444", // สีแดงเวลาข้อมูลผิด
-    },
-  },
-};
 
 export default function StripeCreditCardForm({
   setHandleStripePayment,
@@ -44,6 +29,31 @@ export default function StripeCreditCardForm({
   
   const stripe = useStripe();
   const elements = useElements();
+
+  const [isDark, setIsDark] = useState(false);
+
+  useEffect(() => {
+    setIsDark(document.documentElement.classList.contains("dark"));
+    const syncTheme = () => setIsDark(document.documentElement.classList.contains("dark"));
+    window.addEventListener("theme-sync", syncTheme);
+    return () => window.removeEventListener("theme-sync", syncTheme);
+  }, []);
+
+  const STRIPE_STYLE = {
+    style: {
+      base: {
+        fontSize: "16px",
+        color: isDark ? "#ffffff" : "#111827",
+        fontFamily: "inherit",
+        "::placeholder": {
+          color: isDark ? "#9ca3af" : "#6b7280",
+        },
+      },
+      invalid: {
+        color: "#ef4444",
+      },
+    },
+  };
 
   // สำหรับเก็บสถานะว่าแต่ละช่องกรอกครบหรือยัง (เอาไปทำ Validation)
   const [validation, setValidation] = useState({
@@ -238,7 +248,7 @@ export default function StripeCreditCardForm({
       {/* Card Number */}
       <div className="col-span-2 md:col-span-1 flex flex-col gap-2">
         <label className="text-body-2 text-brand-gray-300">Card number</label>
-        <div className={`h-14 flex items-center px-4 rounded-xl bg-brand-gray-0 border transition-all ${
+        <div className={`h-14 flex items-center px-4 rounded-xl text-white bg-brand-gray-0 border transition-all ${
           fieldErrors.number 
             ? 'border-red-500' 
             : 'border-brand-gray-100/50'
@@ -276,7 +286,7 @@ export default function StripeCreditCardForm({
       {/* Expiry Date */}
       <div className="col-span-1 flex flex-col gap-2">
         <label className="text-body-2 text-brand-gray-300">Expiry date</label>
-        <div className={`h-14 flex items-center px-4 rounded-xl bg-brand-gray-0 border transition-all ${
+        <div className={`h-14 flex items-center px-4 rounded-xl text-white bg-brand-gray-0 border transition-all ${
           fieldErrors.expiry
             ? 'border-red-500'
             : 'border-brand-gray-100/50'
@@ -301,7 +311,7 @@ export default function StripeCreditCardForm({
       {/* CVC */}
       <div className="col-span-1 flex flex-col gap-2">
         <label className="text-body-2 text-brand-gray-300">CVC</label>
-        <div className={`h-14 flex items-center px-4 rounded-xl bg-brand-gray-0 border transition-all ${
+        <div className={`h-14 flex items-center px-4 rounded-xl text-white bg-brand-gray-0 border transition-all ${
           fieldErrors.cvc
             ? 'border-red-500'
             : 'border-brand-gray-100/50'

@@ -165,7 +165,7 @@ export default function MovieShowtimeCard({
                 ))}
               </div>
 
-              <Button variant="text" className="w-fit" onClick={onClickMovieDetail}>
+              <Button variant="text" className="w-fit cursor-pointer" onClick={onClickMovieDetail}>
                 Movie detail
               </Button>
             </div>
