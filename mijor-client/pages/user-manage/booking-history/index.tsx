@@ -4,7 +4,7 @@ import { BookingHistoryItem } from "@/types/bookingHistory";
 import { useMediaQuery } from "react-responsive"
 import { Activity } from "lucide-react"
 import Pagination from "@/components/ui/pagination";
-import { formatTime } from "@/utils/formatTime"
+import { formatTime, getBookingStatus } from "@/utils/formatTime"
 import formatDate from "@/utils/formatDate"
 import { mapBookingStatus } from "@/utils/booking/mapBookingStatus";
 import BookingDetailModal from "@/components/common/bookingDetailModal";
@@ -20,6 +20,9 @@ function mapHistoryToCard(item: BookingHistoryItem, isMobile: boolean): BookingC
   const validSeats = (item.seats || []).filter(Boolean)
   const time = formatTime(item.start_time)
   const date = formatDate(item.start_time)
+  
+  // ใช้ helper function ใหม่สำหรับคำนวณสถานะ
+  const uiStatus = getBookingStatus(item.start_time, item.status);
 
   return {
     title: item.title || "",
@@ -39,7 +42,7 @@ function mapHistoryToCard(item: BookingHistoryItem, isMobile: boolean): BookingC
 
     paymentMethod: "Credit card",
 
-    status: mapBookingStatus(item.status),
+    status: mapBookingStatus(uiStatus),
 
     variant: isMobile ? "mobile" : "desktop",
   };

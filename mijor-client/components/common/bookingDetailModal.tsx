@@ -7,7 +7,7 @@ import SummaryPriceBlock from "@/components/common/summaryPriceBloack";
 import { cancelBooking } from "@/services/bookingService";
 import Radio from "@/components/ui/Radio";
 import formatMyDate from "@/utils/formatDate";
-import { formatTime } from "@/utils/formatTime";
+import { formatTime, getBookingStatus, canCancelBooking } from "@/utils/formatTime";
 
 interface Props {
   booking: any;
@@ -36,14 +36,10 @@ export default function BookingDetailModal({
 
   const date = formatMyDate(booking.start_time);
   const time = formatTime(booking.start_time);
-  const showtimeDate = new Date(booking.start_time);
-  const now = new Date();
-  const isPastShowtime = now.getTime() > showtimeDate.getTime();
-  const canCancel =
-    booking.status === "confirmed" &&
-    !isPastShowtime &&
-    showtimeDate.getTime() - now.getTime() > 30 * 60 * 1000;
-  const canCancelByPolicy = showtimeDate.getTime() - now.getTime() > 30 * 60 * 1000;
+  
+  // ใช้ helper function ใหม่สำหรับตรวจสอบสถานะและการ cancel
+  const canCancel = canCancelBooking(booking.start_time, booking.status);
+  const uiStatus = getBookingStatus(booking.start_time, booking.status);
 
   const handleConfirmCancel = async () => {
     try {
@@ -108,7 +104,7 @@ export default function BookingDetailModal({
               tickets={booking.seats?.length || 0}
               selectedSeat={booking.seats?.join(", ") || "-"}
               paymentMethod={booking.payment_method || "Credit card"}
-              status={mapBookingStatus(booking.status)}
+              status={mapBookingStatus(uiStatus)}
               variant="desktop"
             />
 
@@ -134,7 +130,7 @@ export default function BookingDetailModal({
                   Cancel booking
                 </Button>
 
-                {!canCancelByPolicy && (
+                {!canCancel && (
                   <p className="text-red-400 text-sm mt-2">
                     Cannot cancel within 30 minutes before showtime
                   </p>
