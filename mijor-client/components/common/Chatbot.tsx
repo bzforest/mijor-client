@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState , useEffect } from "react";
 import axios from "axios";
 
 type Message = {
@@ -15,6 +15,41 @@ export default function Chatbot () {
     ])
     const [isLoading , setIsLoading] = useState(false);
     const [isError , setIsError] = useState(false);
+
+    // ตอนเปิดหน้าเว็บ/เปลี่ยนหน้าเว็บ ให้ไปค้นดูก่อนว่ามีประวัติแชทเก่ามั้ย
+    useEffect(() => {
+        const savedChat = sessionStorage.getItem("minor_chat_history");
+        if (savedChat) {
+            setMessage(JSON.parse(savedChat));
+        }
+    }, []);
+
+    // ทุกครั้งที่มีแชทใหม่ ให้เซฟเข้า sessionStorage
+    useEffect(() => {
+        sessionStorage.setItem("minor_chat_history" , JSON.stringify(message));
+    }, [message]);
+
+    // ฟังก์ชันเปลี่ยน Markdown Link [text](url) ให้กลายเป็น <a> tag ที่คลิกได้
+    const renderMessageWithLinks = (text: string) => {
+        const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
+        const parts = [];
+        let lastIndex = 0;
+        let match;
+
+        while ((match = linkRegex.exec(text)) !== null) {
+            // ใส่ข้อความปกติ
+            parts.push(text.slice(lastIndex, match.index));
+            // ใส่ลิงก์ที่กดได้
+            parts.push(
+                <a key={match.index} href={match[2]} className="text-brand-blue-600 underline font-bold hover:text-brand-blue-400">
+                    {match[1]}
+                </a>
+            );
+            lastIndex = linkRegex.lastIndex;
+        }
+        parts.push(text.slice(lastIndex));
+        return parts;
+    };
 
     const handleSendMessage = async () => {
         if (!inputText.trim()) return;
@@ -82,7 +117,7 @@ export default function Chatbot () {
                                     ? "bg-brand-blue-300 text-white rounded-br-none"
                                     : "bg-brand-gray-200 text-foreground rounded-bl-none"
                                 }`}>
-                                    {msg.text}
+                                    {renderMessageWithLinks(msg.text)}
                                 </div>   
                             </div>
                         ))}
