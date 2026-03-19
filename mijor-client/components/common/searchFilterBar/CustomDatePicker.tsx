@@ -36,10 +36,9 @@ export function CustomDatePicker({ value, onChange, className }: CustomDatePicke
             </PopoverTrigger>
             <PopoverContent
                 className="p-0 border border-brand-gray-200 bg-brand-gray-0 text-white shadow-2xl rounded-lg overflow-hidden animate-in fade-in zoom-in-95 duration-200 w-fit"
-                align="start"
+                align="end"
                 side="bottom"
                 sideOffset={4}
-                avoidCollisions={false}
             >
                 <div className="p-1">
                     <Calendar

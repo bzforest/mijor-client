@@ -103,7 +103,7 @@ export const useBooking = () => {
         clearInterval(interval);
         setRemainingTime(0);
 
-        // Trigger seat release when timer expires
+        // Tigger seat release when timer expires
         if (!hasTriggeredExpiry.current) {
           hasTriggeredExpiry.current = true;
           releaseSeatsRef.current();
