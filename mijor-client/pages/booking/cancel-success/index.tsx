@@ -88,7 +88,7 @@ export default function CancelSuccess() {
           variant={isMobile ? "mobile" : "desktop"} 
         />
 
-        <Button variant="primary" onClick={() => router.back()}>
+        <Button variant="primary" className="cursor-pointer" onClick={() => router.back()}>
           Back to booking history
         </Button>
       </div>

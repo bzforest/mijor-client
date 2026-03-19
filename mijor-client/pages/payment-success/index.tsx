@@ -177,14 +177,15 @@ export default function PaymentSuccess() {
                     <div className="flex gap-4 w-full justify-center">
                         <Button
                             variant="secondary"
-                            className="border-brand-gray-100/20"
+                            className="border-brand-gray-100/20 cursor-pointer"
                             onClick={() => router.push("/")}
                         >
                             Back
                         </Button>
                         <Button
                             variant="primary"
-                            onClick={() => {/* Navigate to booking history or details page */ }}
+                            onClick={() => router.push("/user-manage/booking-history")}
+                            className="cursor-pointer"
                         >
                             Booking detail
                         </Button>
@@ -193,7 +194,7 @@ export default function PaymentSuccess() {
                     {/* Social Share Popover Configuration */}
                     <Popover>
                         <PopoverTrigger asChild>
-                            <button className="flex items-center gap-2 text-foreground/80 hover:text-foreground transition-colors text-sm underline underline-offset-4 decoration-foreground/30">
+                            <button className="flex items-center gap-2 text-foreground/80 hover:text-foreground transition-colors text-sm underline underline-offset-4 decoration-foreground/30 cursor-pointer">
                                 {isGeneratingLink ? (
                                     <Loader2 size={16} className="animate-spin" />
                                 ) : (

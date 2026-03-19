@@ -47,6 +47,7 @@ function BookingCard({
                     w-[691px]
                     bg-brand-gray-0
                     rounded-[8px]
+                    cursor-pointer
                 "
             >
                 {/* ===== Top Section ===== */}

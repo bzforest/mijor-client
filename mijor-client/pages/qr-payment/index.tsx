@@ -163,7 +163,7 @@ export default function QRPayment() {
         <Button
           variant="secondary"
           onClick={() => router.back()}
-          className="flex items-center gap-2"
+          className="flex items-center gap-2 cursor-pointer"
         >
           Back
         </Button>
