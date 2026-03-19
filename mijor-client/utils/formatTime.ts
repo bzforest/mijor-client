@@ -50,3 +50,32 @@ export function formatTime(timeInput: string | undefined | null): string {
     return timeInput;
   }
 }
+
+export function getBookingStatus(startTime: string, currentStatus: string): string {
+
+  if (currentStatus !== "confirmed") return currentStatus;
+
+  const BANGKOK_OFFSET_MS = 7 * 60 * 60 * 1000;
+  const showStartUTC = new Date(startTime).getTime() - BANGKOK_OFFSET_MS;
+  const nowUTC = Date.now();
+  const timeDiff = showStartUTC - nowUTC;
+    if (timeDiff < 30 * 60 * 1000) {
+      return "completed";
+    }
+    return "confirmed";
+  }
+
+export function canCancelBooking(startTime: string, currentStatus: string): boolean {
+  if (currentStatus !== "confirmed") return false;
+
+  const BANGKOK_OFFSET_MS = 7 * 60 * 60 * 1000;
+  const showStartUTC = new Date(startTime).getTime() - BANGKOK_OFFSET_MS;
+  const nowUTC = Date.now();
+  const timeDiff = showStartUTC - nowUTC;
+
+  return timeDiff > 30 * 60 * 1000;
+}
+
+export function convertUTCtoBangkok(utcDateString: string): Date {
+  return new Date(utcDateString);
+}

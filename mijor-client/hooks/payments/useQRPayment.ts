@@ -3,7 +3,6 @@
 
 import { useState, useEffect, useRef } from "react";
 import { createQRPayment } from "@/services/paymentApi";
-import axios from "axios";
 
 interface QRPaymentData {
   amount: number;

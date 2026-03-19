@@ -3,6 +3,13 @@
 
 import axios from "axios";
 
+const getAuthToken = () => {
+  if (typeof window !== "undefined") {
+    return localStorage.getItem("access_token") || sessionStorage.getItem("access_token");
+  }
+  return null;
+};
+
 interface QRPaymentRequest {
   amount: number;
   bookingId: string;
@@ -40,6 +47,9 @@ interface ConfirmQRResponse {
 export const createQRPayment = async (
   paymentData: QRPaymentRequest
 ): Promise<QRPaymentResponse> => {
+
+  const token = getAuthToken();
+
   try {
     const response = await axios.post<QRPaymentResponse>(
       `${process.env.NEXT_PUBLIC_API_URL}/api/payments/create-qr-payment`,
@@ -47,6 +57,7 @@ export const createQRPayment = async (
       {
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
       },
     );
@@ -70,6 +81,9 @@ export const createQRPayment = async (
 export const confirmQRPayment = async (
   confirmData: ConfirmQRRequest
 ): Promise<ConfirmQRResponse> => {
+
+  const token = getAuthToken();
+
   try {
     const response = await axios.post<ConfirmQRResponse>(
       `${process.env.NEXT_PUBLIC_API_URL}/api/booking/showtimeSeat/confirm-qr`,
@@ -77,6 +91,7 @@ export const confirmQRPayment = async (
       {
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
       },
     );

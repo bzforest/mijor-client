@@ -32,10 +32,16 @@ export default function CouponPage() {
     try {
       const userCoupons = await fetchUserCoupons();
       const fetchedCoupons = userCoupons
+        .filter((uc: any) => !uc.is_used)
         .map((uc: any) => uc.coupons)
         .filter(Boolean) as Coupon[];
 
-      const ids = userCoupons.map((uc: any) => uc.coupon_id);
+      const ids = userCoupons
+        .filter((uc: any) => !uc.is_used)
+        .map((uc: any) => ({
+          coupon_id: uc.coupon_id,
+          is_used: uc.is_used
+        }));
       
       setCoupons(fetchedCoupons);
       setUserCoupons(ids);
@@ -66,10 +72,16 @@ export default function CouponPage() {
         
         // Extract coupon details from user coupons
         const fetchedCoupons = userCoupons
+          .filter((uc: any) => !uc.is_used)
           .map((uc: any) => uc.coupons)
           .filter(Boolean) as Coupon[];
           
-        const ids = userCoupons.map((uc: any) => uc.coupon_id);
+        const ids = userCoupons
+          .filter((uc: any) => !uc.is_used) // Filter only unused coupons
+          .map((uc: any) => ({
+            coupon_id: uc.coupon_id,
+            is_used: uc.is_used
+          }));
         
         setCoupons(fetchedCoupons);
         setUserCoupons(ids);
@@ -135,8 +147,9 @@ export default function CouponPage() {
                 ))
               )}
             </div>
-  
-            {totalPages > 1 && (
+          </div>
+        </div>
+        {totalPages > 1 && (
               <div className="flex justify-center mt-10 md:mt-12">
                 <Pagination
                   currentPage={currentPage}
@@ -145,10 +158,8 @@ export default function CouponPage() {
                 />
               </div>
             )}
-          </div>
-        </div>
       </div>
-  
+      
       {showAlert && (
         <div className="fixed bottom-6 right-6 md:bottom-10 md:right-10 z-50 w-[90%] max-w-[420px]">
           <Alert

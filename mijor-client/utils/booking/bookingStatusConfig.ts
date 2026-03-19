@@ -3,6 +3,7 @@ export type BookingUIStatus =
   | "paid"
   | "completed"
   | "cancelled"
+  | "refunded"
 
 export const bookingStatusConfig: Record<
   BookingUIStatus,
@@ -26,5 +27,9 @@ export const bookingStatusConfig: Record<
   cancelled: {
     label: "Cancelled",
     className: "border border-red-500 text-red-400",
+  },
+  refunded: {
+    label: "Refunded",
+    className: "border border-blue-400 text-blue-400",
   },
 }

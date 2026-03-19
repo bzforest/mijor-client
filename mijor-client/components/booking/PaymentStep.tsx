@@ -192,13 +192,14 @@ export default function PaymentStep({
               <StripeProvider clientSecret={clientSecret}>
                 <StripeCreditCardForm
                   setHandleStripePayment={setStripeAction}
-                  onPaymentSuccess={() => {
+                  onPaymentSuccess={(stripeResult: any) => {
                     const selectedCoupon = userCoupons.find((c) => c.id === selectedCouponId);
                     const actualCouponId = selectedCoupon?.coupons?.id || "";
                     onPaymentSuccess({
                       selectedCouponId: actualCouponId,
                       finalPrice,
                       paymentMethod: "CreditCard",
+                      paymentIntentId: stripeResult?.paymentIntentId,
                     });
                   }}
                   clientSecret={clientSecret}

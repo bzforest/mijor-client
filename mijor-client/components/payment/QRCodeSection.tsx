@@ -3,7 +3,7 @@
 
 import { CheckCircle, AlertCircle } from "lucide-react";
 import { useRouter } from "next/router";
-import axios from "axios";
+import { api } from "@/lib/booking/api";
 
 import Button from "@/components/ui/Button";
 import QRCodeDisplay from "@/components/payment/QRCodeDisplay";
@@ -41,13 +41,13 @@ export const QRCodeSection = ({
     try {
       console.log("🧪 Force simulating success locally...");
       // Call confirm-qr directly without Stripe
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/booking/showtimeSeat/confirm-qr`,
+      const response = await api.post(
+        "/showtimeSeat/confirm-qr",
         {
           showtimeId,
           seatIds,
           selectedCouponId,
-          paymentIntentId,
+          paymentIntentId: "dev_force_success",
           forceSuccess: true,
         },
       );

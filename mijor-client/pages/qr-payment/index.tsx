@@ -124,7 +124,7 @@ export default function QRPayment() {
   if (!isReady) return null;
 
   return (
-    <main className="min-h-screen bg-[#101525]">
+    <main className="min-h-screen">
       <div className="container mx-auto px-4 py-8">
         {/* ===== Main Content ===== */}
         <div className="max-w-4xl mx-auto">
@@ -159,7 +159,7 @@ export default function QRPayment() {
           </div>
         </div>
       </div>
-      <div className="flex justify-center items-center pt-8">
+      <div className="flex justify-center items-center mb-8">
         <Button
           variant="secondary"
           onClick={() => router.back()}

@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import Tabs from "@/components/ui/Tab";
 import CardCouponVertical from "@/components/common/cardCouponVertical";
 import Pagination from "@/components/ui/pagination";
-import Footer from "@/components/common/footer";
+import LoadingPage from "@/components/loading/LoadingPage";
 import { formatDate } from "@/utils/dateUtils";
 import { fetchCoupons, Coupon } from "@/services/couponApi";
 import { useAuth } from "@/contexts/AuthContext";
@@ -117,6 +117,14 @@ export default function CouponPage() {
     return () => clearTimeout(timer);
   }, [showAlert]);
 
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center">
+        <LoadingPage />
+      </div>
+    );
+  }
+
   return (
     <>
       {/* ===== Category Tabs ===== */}
@@ -132,7 +140,8 @@ export default function CouponPage() {
         </div>
 
         {/* ===== Coupon Cards ===== */}
-        <div className="grid grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4 max-w-[1200px] min-h-[550px] justify-items-center">
+        <div className="flex justify-center items-center">
+          <div className="grid grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4 max-w-[1200px] pt-20">
           {loading ? (
             <div className="flex justify-center items-center h-64">
               <div className="h-12 w-12 animate-spin rounded-full border-b-2 border-brand-primary" />
@@ -151,6 +160,7 @@ export default function CouponPage() {
               />
             ))
           )}
+        </div>
         </div>
 
         {/* ===== Pagination ===== */}

@@ -318,6 +318,7 @@ export const useBooking = () => {
         showtimeId,
         seatIds: selectedSeats,
         selectedCouponId: params.selectedCouponId,
+        paymentIntentId: params.paymentIntentId,
       });
 
       const bookingId = bookingResult.data.bookingId;

@@ -138,12 +138,16 @@ export default function StripeCreditCardForm({
   }, [validation]); // ลบ onFormValidChange ออก
 
   // Memoize onPaymentSuccess to prevent infinite loop
-  const memoizedOnPaymentSuccess = useCallback(() => {
-    onPaymentSuccess({
-      selectedCouponId,
-      finalPrice
-    });
-  }, [selectedCouponId, finalPrice]); // ลบ onPaymentSuccess ออกเพื่อป้องกัน infinite loop
+  const memoizedOnPaymentSuccess = useCallback(
+    (paymentIntentId?: string) => {
+      onPaymentSuccess({
+        selectedCouponId,
+        finalPrice,
+        paymentIntentId,
+      });
+    },
+    [selectedCouponId, finalPrice]
+  ); // ลบ onPaymentSuccess ออกเพื่อป้องกัน infinite loop
 
   useEffect(() => {
     if (isFree) {
@@ -210,7 +214,7 @@ export default function StripeCreditCardForm({
         } else if (paymentIntent) {
           if (paymentIntent.status === "succeeded") {
             console.log("✅ Payment successful!");
-            memoizedOnPaymentSuccess();
+            memoizedOnPaymentSuccess(paymentIntent.id);
           } else if (paymentIntent.status === "requires_payment_method") {
             console.log("⚠️ Payment requires additional authentication");
             setError("Payment requires additional authentication");

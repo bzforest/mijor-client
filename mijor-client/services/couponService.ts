@@ -90,7 +90,6 @@ export async function fetchUserCoupons(): Promise<UserCoupon[]> {
     if (!token) {
       return [];
     }
-    console.log('Token being sent:', token);
     const response = await axios.get(`${API_URL}/api/user/coupons`, {
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -99,7 +98,12 @@ export async function fetchUserCoupons(): Promise<UserCoupon[]> {
     });
 
     return response.data.data || [];
-  } catch (error) {
+  } catch (error: any) {
+    // If it's a 401 error, let the AuthContext interceptor handle it
+    if (error.response?.status === 401) {
+      throw error;
+    }
+    
     console.error('Error fetching user coupons:', error);
     return [];
   }

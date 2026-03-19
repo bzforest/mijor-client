@@ -1,7 +1,7 @@
 import { bookingStatusConfig } from "@/utils/booking/bookingStatusConfig"
 
 type Props = {
-  status: "pay" | "paid" | "completed" | "cancelled"
+  status: "pay" | "paid" | "completed" | "cancelled" | "refunded"
 }
 
 function BookingStatus({ status }: Props) {
