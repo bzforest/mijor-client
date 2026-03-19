@@ -7,7 +7,7 @@ type Props = {
 
 export default function SummaryPriceBlock({ tickets, subtotal, discount, total }: Props) {
       return (
-    <div className="bg-brand-gray-0 p-4 w-full">
+    <div className="p-4 w-full">
 
       <div className="flex justify-between">
         <span className="text-brand-gray-400 text-body-2">

@@ -202,7 +202,7 @@ function BookingCard({
             className="
                 flex flex-col
                 p-[24px] gap-[24px]
-                w-[375px]
+                w-[343px]
                 bg-brand-gray-0
                 rounded-[8px]
             "

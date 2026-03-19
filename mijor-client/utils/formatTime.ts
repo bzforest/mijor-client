@@ -51,47 +51,31 @@ export function formatTime(timeInput: string | undefined | null): string {
   }
 }
 
-// Helper function สำหรับแปลง UTC เป็น Bangkok time
-export function convertUTCtoBangkok(utcDateString: string): Date {
-  // สมมติว่า server ส่งเวลามาเป็น Bangkok time อยู่แล้ว
-  // ไม่ต้องแปลง timezone ให้ใช้เวลาตามที่ส่งมา直接
-  return new Date(utcDateString);
-}
-
-// คำนวณสถานะ booking ตามเวลา Bangkok
 export function getBookingStatus(startTime: string, currentStatus: string): string {
-  // ถ้าไม่ใช่ confirmed ให้คืนค่าสถานะเดิม (refunded, cancelled)
-  if (currentStatus !== "confirmed") return currentStatus;
-  
-  const bangkokTime = convertUTCtoBangkok(startTime);
-  
-  // ใช้วิธีสุดท้ายที่ง่ายและถูกต้อง: บวก offset ของ Bangkok (7 ชั่วโมง) ตรงๆ
-  const nowUTC = new Date();
-  const nowBangkok = new Date(nowUTC.getTime() + (7 * 60 * 60 * 1000));
-  
-  const timeDiff = bangkokTime.getTime() - nowBangkok.getTime();
-  
-  // หลังหนังฉาย 30 นาที หรือมากกว่า = completed
-  if (timeDiff <= -30 * 60 * 1000) {
-    return "completed";
-  }
-  
-  // ก่อนหนังฉาย 30 นาที หรือน้อยกว่า = confirmed (จะถูก map เป็น "paid" ใน UI)
-  return "confirmed";
-}
 
-// ตรวจสอบว่าสามารถ cancel ได้หรือไม่
+  if (currentStatus !== "confirmed") return currentStatus;
+
+  const BANGKOK_OFFSET_MS = 7 * 60 * 60 * 1000;
+  const showStartUTC = new Date(startTime).getTime() - BANGKOK_OFFSET_MS;
+  const nowUTC = Date.now();
+  const timeDiff = showStartUTC - nowUTC;
+    if (timeDiff < 30 * 60 * 1000) {
+      return "completed";
+    }
+    return "confirmed";
+  }
+
 export function canCancelBooking(startTime: string, currentStatus: string): boolean {
   if (currentStatus !== "confirmed") return false;
-  
-  const bangkokTime = convertUTCtoBangkok(startTime);
-  
-  // ใช้วิธีเดียวกันกับ getBookingStatus
-  const nowUTC = new Date();
-  const nowBangkok = new Date(nowUTC.getTime() + (7 * 60 * 60 * 1000));
-  
-  const timeDiff = bangkokTime.getTime() - nowBangkok.getTime();
-  
-  // สามารถ cancel ได้ก่อนหนังฉาย 30 นาที
+
+  const BANGKOK_OFFSET_MS = 7 * 60 * 60 * 1000;
+  const showStartUTC = new Date(startTime).getTime() - BANGKOK_OFFSET_MS;
+  const nowUTC = Date.now();
+  const timeDiff = showStartUTC - nowUTC;
+
   return timeDiff > 30 * 60 * 1000;
+}
+
+export function convertUTCtoBangkok(utcDateString: string): Date {
+  return new Date(utcDateString);
 }

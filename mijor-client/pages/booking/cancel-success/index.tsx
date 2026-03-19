@@ -1,4 +1,5 @@
 import { useRouter } from "next/router";
+import { useMediaQuery } from "react-responsive"
 import { useEffect, useState } from "react";
 import { CheckCircle } from "lucide-react";
 import formatDate from "@/utils/formatDate";
@@ -14,6 +15,7 @@ export default function CancelSuccess() {
 
   const [booking, setBooking] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const isMobile = useMediaQuery({ maxWidth: 768 })
 
   useEffect(() => {
     if (!bookingId) return;
@@ -38,7 +40,7 @@ export default function CancelSuccess() {
 
   if (!booking) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#101525] text-white">
+      <div className="min-h-screen flex items-center justify-center text-white">
         Booking not found
       </div>
     );
@@ -48,14 +50,14 @@ export default function CancelSuccess() {
   const time = formatTime(booking.start_time);
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-[#101525] p-10">
+    <div className="min-h-screen flex flex-col items-center justify-center p-10">
       <div className="flex flex-col gap-10 items-center">
         {/* Success Icon */}
         <div className="text-green-400">
           <CheckCircle size={64} />
         </div>
 
-        <h1 className="text-white text-headline-2 font-bold">
+        <h1 className="text-white md:text-headline-2 text-headline-3 font-bold">
           Cancellation successful
         </h1>
 
@@ -83,7 +85,7 @@ export default function CancelSuccess() {
           selectedSeat={booking.seats?.join(", ") || "-"}
           paymentMethod={booking.payment_method}
           status={booking.status}
-          variant="desktop"
+          variant={isMobile ? "mobile" : "desktop"} 
         />
 
         <Button variant="primary" onClick={() => router.back()}>

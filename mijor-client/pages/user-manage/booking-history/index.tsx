@@ -94,7 +94,7 @@ const loadHistory = async () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#0B1220] text-white">
+    <div className="min-h-screen text-white">
       <div className="md:px-16 py-8 md:py-12">
         <div className="w-full lg:max-w-[1300px] lg:mx-auto lg:flex lg:gap-12 lg:items-start">
           <MenuSidebar />
@@ -102,7 +102,7 @@ const loadHistory = async () => {
           {/* ===== Content ===== */}
           <div className="flex-1">
             <div className="flex flex-col gap-12">
-            <h1 className="px-4 text-headline-2 md:text-headline-3 font-semibold">
+            <h1 className="px-4 pt-10 text-headline-2 md:text-headline-3 font-semibold">
               Booking history
             </h1>
               {data.length === 0 ? (
@@ -147,12 +147,14 @@ const loadHistory = async () => {
                   </div>
                 </div>
               ) : (
-                data.map((item) => {
-                  const card = mapHistoryToCard(item, isMobile)
-                  return <BookingCard key={item.booking_id} {...card} 
-                  variant={isMobile ? "mobile" : "desktop"} 
-                  onClick={() => setSelectedBooking(item)} />
-                })
+                <div className="flex flex-col gap-4 md:gap-6 items-center">
+                  {data.map((item) => {
+                    const card = mapHistoryToCard(item, isMobile)
+                    return <BookingCard key={item.booking_id} {...card} 
+                    variant={isMobile ? "mobile" : "desktop"} 
+                    onClick={() => setSelectedBooking(item)} />
+                  })}
+                </div>
               )}
             </div>
           </div>

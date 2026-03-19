@@ -35,7 +35,7 @@ export default function Modal({
       />
 
       {/* 2. Modal Card */}
-      <div className={`relative w-full bg-brand-gray-100 border border-brand-gray-200 rounded-[8px] p-6 ${className}`}>
+      <div className={`relative w-full bg-brand-gray-0 border border-brand-gray-200 rounded-[8px] p-6 ${className}`}>
         {/* Close Button Icon */}
         <button
           onClick={onClose}

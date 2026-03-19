@@ -128,14 +128,22 @@ function LandingPage() {
       setCoupons(data);
 
       if (user) {
-        const data = await fetchUserCoupons();
+        try {
+          const data = await fetchUserCoupons();
 
-        setUserCoupons(
-          data.map((uc: any) => ({
-            coupon_id: uc.coupon_id,
-            is_used: uc.is_used,
-          }))
-        );
+          setUserCoupons(
+            data.map((uc: any) => ({
+              coupon_id: uc.coupon_id,
+              is_used: uc.is_used,
+            }))
+          );
+        } catch (error: any) {
+          // 401 errors will be handled by the AuthContext interceptor
+          if (error.response?.status !== 401) {
+            console.error("Failed to fetch user coupons:", error);
+            setUserCoupons([]);
+          }
+        }
       } else {
         setUserCoupons([]);
       }
@@ -169,8 +177,11 @@ function LandingPage() {
         }))
       );
       setShowAlert(true);
-    } catch (error) {
-      console.error("Failed to refresh user coupons:", error);
+    } catch (error: any) {
+      // 401 errors will be handled by the AuthContext interceptor
+      if (error.response?.status !== 401) {
+        console.error("Failed to refresh user coupons:", error);
+      }
     }
   };
 

@@ -98,7 +98,12 @@ export async function fetchUserCoupons(): Promise<UserCoupon[]> {
     });
 
     return response.data.data || [];
-  } catch (error) {
+  } catch (error: any) {
+    // If it's a 401 error, let the AuthContext interceptor handle it
+    if (error.response?.status === 401) {
+      throw error;
+    }
+    
     console.error('Error fetching user coupons:', error);
     return [];
   }
