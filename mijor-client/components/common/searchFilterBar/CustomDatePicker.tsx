@@ -39,6 +39,7 @@ export function CustomDatePicker({ value, onChange, className }: CustomDatePicke
                 align="end"
                 side="bottom"
                 sideOffset={4}
+                avoidCollisions={false}
             >
                 <div className="p-1">
                     <Calendar
