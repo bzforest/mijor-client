@@ -64,18 +64,7 @@ function LandingPage() {
 
         const formattedMovies: Movie[] = await Promise.all(
           moviesRes.data.data.map(async (movie: any) => {
-            let genres: string[] = [];
-
-            try {
-              const { data: genreRes } = await axios.get(
-                `${API_URL}/moviegenres/${movie.id}`
-              );
-              if (Array.isArray(genreRes.data)) {
-                genres = genreRes.data.map((g: any) => g.name);
-              }
-            } catch {
-              console.log("Cannot load genres:", movie.id);
-            }
+            let genres: string[] = Array.isArray(movie.genre) ? movie.genre : [];
 
             let formattedDate = "";
             if (movie.release_date) {

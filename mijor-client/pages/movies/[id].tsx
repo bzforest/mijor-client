@@ -76,15 +76,14 @@ export default function MovieDetailPage() {
       try {
         setLoading(true);
 
-        const [movieRes, showtimeRes, genreRes] = await Promise.all([
+        const [movieRes, showtimeRes] = await Promise.all([
           axios.get(`${API_URL}/movies/${id}`),
           axios.get(
             `${API_URL}/showtimes/movie/${id}?date=${selectedDate}`
           ),
-          axios.get(`${API_URL}/moviegenres/${id}`),
         ]);
 
-        const genres = genreRes.data.data.map((g: any) => g.name);
+        const genres = Array.isArray(movieRes.data.data.genre) ? movieRes.data.data.genre : [];
 
         setMovie({
           ...movieRes.data.data,
