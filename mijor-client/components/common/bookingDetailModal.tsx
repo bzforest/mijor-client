@@ -161,7 +161,7 @@ export default function BookingDetailModal({
           shadow-2xl
           p-4 md:p-6
           z-10
-          max-h-[85vh] md:max-h-[90vh] overflow-y-auto
+          max-h-[80vh] md:max-h-[90vh] overflow-y-auto
         "
       >
         {/* header */}
@@ -177,7 +177,7 @@ export default function BookingDetailModal({
             ) && (
               <Popover>
                 <PopoverTrigger asChild>
-                  <button className="text-gray-400 hover:text-white transition-colors">
+                  <button className="text-gray-400 hover:text-white transition-colors cursor-pointer">
                     {isGeneratingLink ? (
                       <Loader2 size={20} className="animate-spin" />
                     ) : (
@@ -238,7 +238,7 @@ export default function BookingDetailModal({
 
             <button
               onClick={() => onClose()}
-              className="text-gray-400 hover:text-white text-xl pb-1"
+              className="text-gray-400 hover:text-white text-xl pb-1 cursor-pointer"
             >
               ✕
             </button>
@@ -282,7 +282,7 @@ export default function BookingDetailModal({
                     if (!canCancel) return
                     setMode("reason")
                   }}
-                  className="w-full md:w-auto"
+                  className="w-full md:w-auto cursor-pointer"
                 >
                   Cancel booking
                 </Button>
@@ -323,7 +323,7 @@ export default function BookingDetailModal({
                     setMode("detail");
                     setReason(null);
                   }}
-                  className="w-full md:w-auto"
+                  className="w-full md:w-auto cursor-pointer"
                 >
                   Back
                 </Button>
@@ -344,7 +344,7 @@ export default function BookingDetailModal({
                   variant="primary"
                   state={reason || loading ? "default" : "disabled"}
                   onClick={handleConfirmCancel}
-                  className="w-full md:w-auto"
+                  className="w-full md:w-auto cursor-pointer"
                 >
                   {loading ? "Cancelling..." : "Confirm cancel"}
                 </Button>
@@ -356,7 +356,7 @@ export default function BookingDetailModal({
                     setMode("detail");
                     setReason(null);
                   }}
-                  className="w-full md:w-auto"
+                  className="w-full md:w-auto cursor-pointer"
                 >
                   Back
                 </Button>

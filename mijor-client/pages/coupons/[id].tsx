@@ -197,6 +197,7 @@ export default function CouponDetail() {
               {!isCouponSaved && !hasCoupon ? (
                 <Button
                   onClick={handleClick}
+                  className="cursor-pointer"
                   variant="primary"
                 >
                   Get coupon
