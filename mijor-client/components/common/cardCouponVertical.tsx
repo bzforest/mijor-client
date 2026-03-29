@@ -196,7 +196,7 @@ const handleClick = async () => {
       </Modal>
 
       {/* Already Coupons */}
-      <Modal
+      {/* <Modal
         isOpen={infoModalOpen}
         onClose={() => setInfoModalOpen(false)}
         title={infoTitle}
@@ -205,7 +205,7 @@ const handleClick = async () => {
         className="max-w-md"
       >
         {infoMessage}
-      </Modal>
+      </Modal> */}
     </article>
   );
 }

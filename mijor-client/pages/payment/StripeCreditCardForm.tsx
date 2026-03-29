@@ -302,7 +302,6 @@ export default function StripeCreditCardForm({
           />
           <Calendar
             size={20}
-            // สั่งให้ Element ของ Stripe รับโฟกัสเมื่อคลิกไอคอน
             onClick={() => elements?.getElement(CardExpiryElement)?.focus()}
             className="text-brand-gray-300 cursor-pointer hover:text-white transition-colors"
           />

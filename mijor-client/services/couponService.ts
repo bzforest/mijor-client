@@ -116,11 +116,9 @@ export async function fetchUserCoupons(): Promise<UserCoupon[]> {
  * @returns Token string or null
  */
 function getAuthToken(): string | null {
-  // เช็คว่ารันบน Browser หรือไม่
   if (typeof window === 'undefined') return null;
 
   try {
-    // ดึงค่าได้ทั้งจาก localStorage และ sessionStorage
     return localStorage.getItem("access_token") || sessionStorage.getItem("access_token");
   } catch (error) {
     return null;

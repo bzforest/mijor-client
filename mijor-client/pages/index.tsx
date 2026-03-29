@@ -185,6 +185,19 @@ function LandingPage() {
     }
   };
 
+    /* ================= Alert Timeout Coupon ================= */
+
+    useEffect(() => {
+    if (!showAlert) return;
+
+    const timer = setTimeout(() => {
+      setShowAlert(false);
+    }, 5000);
+
+    return () => clearTimeout(timer);
+  }, [showAlert]);
+
+
   /* ================= RENDER ================= */
   return (
     <div className="flex flex-col overflow-x-hidden">
@@ -217,12 +230,14 @@ function LandingPage() {
       </div>
       
       {showAlert && (
+        <div className="fixed flex items-center justify-center z-50 w-full transform transition-all duration-500 ease-out md:right-10 md:bottom-10 md:w-[440px]">
         <Alert
           type="success"
           title="Coupon Claimed!"
           message="You can find it in My Coupons"
           onClose={() => setShowAlert(false)}
         />
+        </div>
       )}
 
       {errorAlert && (
