@@ -212,17 +212,6 @@ export default function CouponDetail() {
                   Coupon Saved
                 </Button>
               )}
-
-              {showAlert && (
-                <div className="fixed flex items-center justify-center z-50 transform transition-all duration-500 ease-out md:right-10 md:bottom-10 md:w-[440px]">
-                  <Alert
-                    type="success"
-                    title="Coupon Claimed!"
-                    message="You can find it in the 'My Coupons' menu"
-                    onClose={() => setShowAlert(false)}
-                  />
-                </div>
-              )}
             </div>
 
             {/* Description Section */}
@@ -270,6 +259,16 @@ export default function CouponDetail() {
         Please log in to get this coupon.
       </Modal>
 
+      {showAlert && (
+        <div className="fixed flex items-center justify-center z-50 w-full transform transition-all duration-500 ease-out md:right-10 md:bottom-10 md:w-[440px]">
+          <Alert
+            type="success"
+            title="Coupon Claimed!"
+            message="You can find it in the 'My Coupons' menu"
+            onClose={() => setShowAlert(false)}
+          />
+        </div>
+      )}
     </div >
   );
 }

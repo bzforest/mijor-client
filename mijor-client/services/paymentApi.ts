@@ -64,7 +64,6 @@ export const createQRPayment = async (
 
     return response.data;
   } catch (error) {
-    // ✅ เพิ่มตรงนี้
     if (axios.isAxiosError(error)) {
       console.error("❌ createQRPayment error response:", {
         status: error.response?.status,
