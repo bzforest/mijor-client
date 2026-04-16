@@ -64,12 +64,12 @@ export default function Modal({
         {/* Action Buttons */}
         <div className="flex gap-4 justify-center">
           {secondaryActionButton && (
-            <Button variant="secondary" onClick={onSecondaryAction}>
+            <Button variant="secondary" onClick={onSecondaryAction} className="cursor-pointer">
               {secondaryActionButton}
             </Button>
           )}
           {primaryActionButton && (
-            <Button variant="primary" onClick={onPrimaryAction}>
+            <Button variant="primary" onClick={onPrimaryAction} className="cursor-pointer">
               {primaryActionButton}
             </Button>
           )}

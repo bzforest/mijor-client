@@ -188,7 +188,7 @@ export default function WheelSpin({ onWin }: Props) {
             <button
                 onClick={spin}
                 disabled={isSpinning || availableSpins === 0}
-                className={`px-8 py-3 rounded-full font-bold text-lg
+                className={`px-8 py-3 rounded-full font-bold text-lg cursor-pointer
         ${isSpinning || availableSpins === 0
                         ? "bg-gray-300 text-gray-500"
                         : "bg-linear-to-r from-pink-500 to-purple-500 text-white hover:scale-105 active:scale-95"}

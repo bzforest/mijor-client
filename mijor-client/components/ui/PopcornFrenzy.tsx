@@ -140,7 +140,7 @@ export default function PopcornFrenzy({ onGameEnd }: { onGameEnd?: () => void })
                             🥤 = <span className="text-red-400 font-bold">-2 points</span>
                         </span>
                     </p>
-                    <Button onClick={startGame} className="animate-pulse shadow-[0_0_15px_rgba(255,255,255,0.3)]">Start Game</Button>
+                    <Button onClick={startGame} className="animate-pulse shadow-[0_0_15px_rgba(255,255,255,0.3)] cursor-pointer">Start Game</Button>
                 </div>
             )}
 
@@ -151,8 +151,8 @@ export default function PopcornFrenzy({ onGameEnd }: { onGameEnd?: () => void })
 
                     {gameState === "gameover" && (
                         <div className="flex gap-4">
-                            <Button variant="secondary" onClick={startGame}>Play Again</Button>
-                            <Button onClick={submitScore} variant="primary">Submit Score</Button>
+                            <Button variant="secondary" onClick={startGame} className='cursor-pointer'>Play Again</Button>
+                            <Button onClick={submitScore} variant="primary" className='cursor-pointer'>Submit Score</Button>
                         </div>
                     )}
 
@@ -161,7 +161,7 @@ export default function PopcornFrenzy({ onGameEnd }: { onGameEnd?: () => void })
                     {gameState === "submitted" && (
                         <div className="flex flex-col items-center gap-4">
                             <p className="text-green-400 font-bold text-xl drop-shadow-md">🎉 Score Submitted! 🎉</p>
-                            <Button onClick={startGame} variant="secondary">Play Again</Button>
+                            <Button onClick={startGame} variant="secondary" className='cursor-pointer'>Play Again</Button>
                         </div>
                     )}
                 </div>

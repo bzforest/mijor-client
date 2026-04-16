@@ -189,7 +189,7 @@ export default function NotiNavbar({ profileId, onDataLoaded, onClose }: NotiNav
           className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all ${
             activeTab === "all"
               ? "bg-brand-blue-100/20 text-brand-blue-100"
-              : "text-brand-gray-300 hover:bg-white/5"
+              : "text-brand-gray-300 hover:bg-white/5 cursor-pointer"
           }`}
         >
           All
@@ -199,7 +199,7 @@ export default function NotiNavbar({ profileId, onDataLoaded, onClose }: NotiNav
           className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all ${
             activeTab === "movie"
               ? "bg-brand-blue-100/20 text-brand-blue-100"
-              : "text-brand-gray-300 hover:bg-white/5"
+              : "text-brand-gray-300 hover:bg-white/5 cursor-pointer"
           }`}
         >
           Movie
@@ -209,7 +209,7 @@ export default function NotiNavbar({ profileId, onDataLoaded, onClose }: NotiNav
           className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all ${
             activeTab === "coupon"
               ? "bg-brand-blue-100/20 text-brand-blue-100"
-              : "text-brand-gray-300 hover:bg-white/5"
+              : "text-brand-gray-300 hover:bg-white/5 cursor-pointer"
           }`}
         >
           Coupons
@@ -221,7 +221,7 @@ export default function NotiNavbar({ profileId, onDataLoaded, onClose }: NotiNav
         {!showAll && (
           <button
             onClick={handleSeeAll}
-            className="text-sm font-medium text-brand-blue-100 hover:underline"
+            className="text-sm font-medium text-brand-blue-100 hover:underline cursor-pointer"
           >
             See All
           </button>
@@ -339,7 +339,7 @@ export default function NotiNavbar({ profileId, onDataLoaded, onClose }: NotiNav
           <div className="px-4 mt-2">
             <button
               onClick={handleSeeAll}
-              className="w-full py-2.5 mb-2 text-sm text-white font-medium bg-white/5 hover:bg-white/10 rounded-lg transition-colors"
+              className="w-full py-2.5 mb-2 text-sm text-white font-medium bg-white/5 hover:bg-white/10 rounded-lg transition-colors cursor-pointer"
             >
               See previous notifications ({filteredNotifications.length - INITIAL_LIMIT} more)
             </button>

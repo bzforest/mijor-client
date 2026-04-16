@@ -386,7 +386,7 @@ function ShareIcon({
   return (
     <button
       onClick={onClick}
-      className="flex flex-col items-center gap-2 transition-transform hover:scale-110 active:scale-95"
+      className="flex flex-col items-center gap-2 transition-transform hover:scale-110 active:scale-95 cursor-pointer"
     >
       <div
         className={`w-10 h-10 ${bg} rounded-full flex items-center justify-center text-white shadow-md`}

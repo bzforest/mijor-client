@@ -144,14 +144,14 @@ function Calendar({
         Chevron: ({ className, orientation, ...props }) => {
           if (orientation === "left") {
             return (
-              <ChevronLeftIcon className={cn("size-4", className)} {...props} />
+              <ChevronLeftIcon className={cn("size-4", className, "cursor-pointer")} {...props} />
             )
           }
 
           if (orientation === "right") {
             return (
               <ChevronRightIcon
-                className={cn("size-4", className)}
+                className={cn("size-4", className, "cursor-pointer")}
                 {...props}
               />
             )
@@ -207,7 +207,7 @@ function CalendarDayButton({
       data-range-middle={modifiers.range_middle}
       className={cn(
         ghostButtonClass,
-        "data-[selected-single=true]:bg-brand-blue-100 data-[selected-single=true]:text-white data-[range-middle=true]:bg-brand-gray-100 data-[range-middle=true]:text-white data-[range-start=true]:bg-brand-blue-100 data-[range-start=true]:text-white data-[range-end=true]:bg-brand-blue-100 data-[range-end=true]:text-white group-data-[focused=true]/day:border-brand-gray-300 group-data-[focused=true]/day:ring-brand-gray-300/50 hover:bg-brand-gray-100 hover:text-white flex aspect-square size-auto w-full min-w-(--cell-size) flex-col gap-1 leading-none font-normal group-data-[focused=true]/day:relative group-data-[focused=true]/day:z-10 group-data-[focused=true]/day:ring-[3px] data-[range-end=true]:rounded-md data-[range-end=true]:rounded-r-md data-[range-middle=true]:rounded-none data-[range-start=true]:rounded-md data-[range-start=true]:rounded-l-md [&>span]:text-xs [&>span]:opacity-70",
+        "data-[selected-single=true]:bg-brand-blue-100 data-[selected-single=true]:text-white data-[range-middle=true]:bg-brand-gray-100 data-[range-middle=true]:text-white data-[range-start=true]:bg-brand-blue-100 data-[range-start=true]:text-white data-[range-end=true]:bg-brand-blue-100 data-[range-end=true]:text-white group-data-[focused=true]/day:border-brand-gray-300 group-data-[focused=true]/day:ring-brand-gray-300/50 hover:bg-brand-gray-100 hover:text-white flex aspect-square size-auto w-full min-w-(--cell-size) flex-col gap-1 leading-none font-normal group-data-[focused=true]/day:relative group-data-[focused=true]/day:z-10 group-data-[focused=true]/day:ring-[3px] data-[range-end=true]:rounded-md data-[range-end=true]:rounded-r-md data-[range-middle=true]:rounded-none data-[range-start=true]:rounded-md data-[range-start=true]:rounded-l-md [&>span]:text-xs [&>span]:opacity-70 cursor-pointer",
         defaultClassNames.day,
         className
       )}

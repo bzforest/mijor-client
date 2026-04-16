@@ -218,7 +218,7 @@ export default function CouponMinigameModal({ isOpen, onClose }: Props) {
             title={title}
             primaryActionButton={primaryActionButton}
             onPrimaryAction={onPrimaryAction}
-            className="w-full max-w-lg max-h-[90vh] overflow-y-auto custom-scrollbar"
+            className="w-full max-w-lg max-h-[85vh] overflow-y-auto custom-scrollbar top-12"
         >
             {/* --- TAB NAVIGATION --- */}
             <div className="flex justify-center gap-2 mb-6 pb-4 border-b border-brand-gray-200/50">
@@ -226,7 +226,7 @@ export default function CouponMinigameModal({ isOpen, onClose }: Props) {
                     onClick={() => setActiveTab("trivia")}
                     className={`px-4 py-2 text-sm rounded-full transition-colors ${activeTab === "trivia"
                         ? "bg-brand-primary-500 text-white font-medium shadow-md shadow-brand-primary-500/20"
-                        : "bg-brand-gray-200 text-brand-gray-400 hover:text-white"
+                        : "bg-brand-gray-200 text-brand-gray-400 hover:text-white cursor-pointer"
                         }`}
                 >
                     Trivia
@@ -235,7 +235,7 @@ export default function CouponMinigameModal({ isOpen, onClose }: Props) {
                     onClick={() => setActiveTab("game2")}
                     className={`px-4 py-2 text-sm rounded-full transition-colors ${activeTab === "game2"
                         ? "bg-brand-primary-500 text-white font-medium shadow-md shadow-brand-primary-500/20"
-                        : "bg-brand-gray-200 text-brand-gray-400 hover:text-white"
+                        : "bg-brand-gray-200 text-brand-gray-400 hover:text-white cursor-pointer"
                         }`}
                 >
                     Wheel Spin
@@ -244,7 +244,7 @@ export default function CouponMinigameModal({ isOpen, onClose }: Props) {
                     onClick={() => setActiveTab("game3")}
                     className={`px-4 py-2 text-sm rounded-full transition-colors ${activeTab === "game3"
                         ? "bg-brand-primary-500 text-white font-medium shadow-md shadow-brand-primary-500/20"
-                        : "bg-brand-gray-200 text-brand-gray-400 hover:text-white"
+                        : "bg-brand-gray-200 text-brand-gray-400 hover:text-white cursor-pointer"
                         }`}
                 >
                     Popcorn Frenzy
@@ -253,7 +253,7 @@ export default function CouponMinigameModal({ isOpen, onClose }: Props) {
                     onClick={() => setActiveTab("leaderboard")}
                     className={`px-4 py-2 text-sm rounded-full transition-colors flex items-center gap-2 ${activeTab === "leaderboard"
                         ? "bg-brand-primary-500 text-white font-medium shadow-md shadow-brand-primary-500/20"
-                        : "bg-brand-gray-200 text-brand-gray-400 hover:text-white"
+                        : "bg-brand-gray-200 text-brand-gray-400 hover:text-white cursor-pointer"
                         }`}
                 >
                     🏆 Leaderboard
@@ -305,7 +305,7 @@ export default function CouponMinigameModal({ isOpen, onClose }: Props) {
                                 <div className="grid grid-cols-2 gap-4">
                                     <button
                                         onClick={() => handleStart("easy")}
-                                        className="flex flex-col items-center gap-1 p-4 rounded-xl border border-green-500/50 hover:bg-green-500/10 transition-colors"
+                                        className="flex flex-col items-center gap-1 p-4 rounded-xl border border-green-500/50 hover:bg-green-500/10 transition-colors cursor-pointer"
                                     >
                                         <span className="text-xl">🟢</span>
                                         <span className="font-bold text-green-400">Easy</span>
@@ -313,7 +313,7 @@ export default function CouponMinigameModal({ isOpen, onClose }: Props) {
                                     </button>
                                     <button
                                         onClick={() => handleStart("medium")}
-                                        className="flex flex-col items-center gap-1 p-4 rounded-xl border border-yellow-500/50 hover:bg-yellow-500/10 transition-colors"
+                                        className="flex flex-col items-center gap-1 p-4 rounded-xl border border-yellow-500/50 hover:bg-yellow-500/10 transition-colors cursor-pointer"
                                     >
                                         <span className="text-xl">🟡</span>
                                         <span className="font-bold text-yellow-400">Medium</span>
@@ -321,7 +321,7 @@ export default function CouponMinigameModal({ isOpen, onClose }: Props) {
                                     </button>
                                     <button
                                         onClick={() => handleStart("hard")}
-                                        className="flex flex-col items-center gap-1 p-4 rounded-xl border border-orange-500/50 hover:bg-orange-500/10 transition-colors"
+                                        className="flex flex-col items-center gap-1 p-4 rounded-xl border border-orange-500/50 hover:bg-orange-500/10 transition-colors cursor-pointer"
                                     >
                                         <span className="text-xl">🟠</span>
                                         <span className="font-bold text-orange-400">Hard</span>
@@ -329,7 +329,7 @@ export default function CouponMinigameModal({ isOpen, onClose }: Props) {
                                     </button>
                                     <button
                                         onClick={() => handleStart("expert")}
-                                        className="flex flex-col items-center gap-1 p-4 rounded-xl border border-red-500/50 hover:bg-red-500/10 transition-colors"
+                                        className="flex flex-col items-center gap-1 p-4 rounded-xl border border-red-500/50 hover:bg-red-500/10 transition-colors cursor-pointer"
                                     >
                                         <span className="text-xl">🔴</span>
                                         <span className="font-bold text-red-500">Expert</span>

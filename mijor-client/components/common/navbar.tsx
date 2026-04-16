@@ -208,13 +208,13 @@ export default function Navbar() {
           {!isLoggedIn ? (
             <div className="flex gap-4">
               <button
-                className="text-white font-light"
+                className="text-white font-light cursor-pointer"
                 onClick={navigateToLogin}
               >
                 Login
               </button>
               <button
-                className="px-5 py-2 border border-white/20 rounded-md text-white hover:bg-white/10 transition-colors"
+                className="px-5 py-2 border border-white/20 rounded-md text-white hover:bg-white/10 transition-colors cursor-pointer"
                 onClick={() => router.push("/register")}
               >
                 Register
@@ -226,7 +226,7 @@ export default function Navbar() {
                 <button
                   onClick={() => setIsNotiOpen(!isNotiOpen)}
                   className={`relative p-2 rounded-full transition-all duration-200 outline-none ${
-                    isNotiOpen ? "bg-white/10 text-white" : "text-brand-gray-300 hover:text-white"
+                    isNotiOpen ? "bg-white/10 text-white" : "text-brand-gray-300 hover:text-white cursor-pointer"
                   }`}
                 >
                   <Bell size={24} />
@@ -250,7 +250,7 @@ export default function Navbar() {
               <div className="relative" ref={dropdownRef}>
                 <button
                   onClick={() => setIsOpen(!isOpen)}
-                  className="flex items-center gap-3 outline-none"
+                  className="flex items-center gap-3 outline-none cursor-pointer"
                 >
                   <img
                     src={avatarUrl || "/logo.png"}

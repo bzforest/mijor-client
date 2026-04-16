@@ -100,7 +100,7 @@ export default function Chatbot () {
                     {/* Header */}
                     <div className="bg-linear-to-b from-brand-blue-300 to-brand-blue-100 p-4 text-white font-bold flex justify-between items-center">
                         <span>Minor AI Assistant</span>
-                        <button onClick={() => setIsOpen(false)} className="hover:text-brand-gray-200 transition-colors">
+                        <button onClick={() => setIsOpen(false)} className="hover:text-brand-gray-200 transition-colors cursor-pointer">
                             X
                         </button>
                     </div>
@@ -141,7 +141,7 @@ export default function Chatbot () {
                             onChange={(e) => setInputText(e.target.value)}
                             onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
                         />
-                        <button className="bg-linear-to-t from-brand-blue-300 to-brand-blue-200 text-white px-4 py-2 rounded-lg font-bold hover:opacity-80 transition-opacity"
+                        <button className="bg-linear-to-t from-brand-blue-300 to-brand-blue-200 text-white px-4 py-2 rounded-lg font-bold hover:opacity-80 transition-opacity cursor-pointer"
                                 onClick={handleSendMessage}>
                             Send
                         </button>

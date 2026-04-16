@@ -35,7 +35,7 @@ export default function Tabs({
               onClick={() => onChange(tab.id)}
               className={`
               relative flex flex-col items-center justify-center transition-all duration-200
-              shrink-0 whitespace-nowrap
+              shrink-0 whitespace-nowrap cursor-pointer
               ${viewType === "date" 
                 ? "min-w-[100px] md:w-[16.666%] py-3 px-4" 
                 : "min-w-fit pb-4 px-4"

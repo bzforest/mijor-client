@@ -147,7 +147,7 @@ export default function SearchResultDestop({
                         <SelectContent position="popper" side="bottom" sideOffset={4} avoidCollisions={false} className={contentClass}>
                             <SelectGroup>
                                 {allLanguages.map((language, id) => (
-                                    <SelectItem key={id} value={language === "Any language" ? "all_languages" : language}>
+                                    <SelectItem key={id} value={language === "Any language" ? "all_languages" : language} className="cursor-pointer">
                                         {language}
                                     </SelectItem>
                                 ))}
@@ -165,7 +165,7 @@ export default function SearchResultDestop({
                         <SelectContent position="popper" side="bottom" sideOffset={4} avoidCollisions={false} className={contentClass}>
                             <SelectGroup>
                                 {allGenres.map((genre, id) => (
-                                    <SelectItem key={id} value={genre === "All genre" ? "all_genres" : genre}>
+                                    <SelectItem key={id} value={genre === "All genre" ? "all_genres" : genre} className="cursor-pointer">
                                         {genre}
                                     </SelectItem>
                                 ))}
@@ -183,7 +183,7 @@ export default function SearchResultDestop({
                         <SelectContent position="popper" side="bottom" sideOffset={4} avoidCollisions={false} className={contentClass}>
                             <SelectGroup>
                                 {allCities.map((city, id) => (
-                                    <SelectItem key={id} value={city === "All city" ? "all_cities" : city}>
+                                    <SelectItem key={id} value={city === "All city" ? "all_cities" : city} className="cursor-pointer">
                                         {city}
                                     </SelectItem>
                                 ))}

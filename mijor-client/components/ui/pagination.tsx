@@ -67,7 +67,7 @@ export default function Pagination({
           }
         }}
         disabled={currentPage === 1}
-        className="p-3 text-brand-gray-300 hover:text-white disabled:opacity-20 transition-colors"
+        className="p-3 text-brand-gray-300 hover:text-white disabled:opacity-20 transition-colors cursor-pointer"
       >
         <ChevronLeft />
       </button>
@@ -94,7 +94,7 @@ export default function Pagination({
               key={pageNumber}
               onClick={() => onPageChange(Number(pageNumber))}
               className={`
-                w-[40px] h-[40px] flex items-center justify-center rounded-[4px] font-bold transition-all
+                w-[40px] h-[40px] flex items-center justify-center rounded-[4px] font-bold transition-all cursor-pointer
                 ${
                   isActive
                     ? "bg-brand-gray-100 text-white shadow-lg"
@@ -117,7 +117,7 @@ export default function Pagination({
           }
         }}
         disabled={currentPage === totalPages}
-        className="p-3 text-brand-gray-300 hover:text-white disabled:opacity-20 transition-colors"
+        className="p-3 text-brand-gray-300 hover:text-white disabled:opacity-20 transition-colors cursor-pointer"
       >
         <ChevronRight />
       </button>

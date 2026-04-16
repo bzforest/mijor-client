@@ -218,7 +218,7 @@ export default function ProfilePage() {
 
               <button
                 onClick={handleUploadClick}
-                className="mt-2 self-end text-sm text-gray-300 hover:text-white"
+                className="mt-2 self-end text-sm text-gray-300 hover:text-white cursor-pointer"
               >
                 Upload
               </button>
@@ -270,7 +270,7 @@ export default function ProfilePage() {
               <button
                 onClick={handleSave}
                 disabled={loading}
-                className="mt-2 px-6 py-2 border border-[#565F7E] rounded-[4px] hover:bg-[#21263F]"
+                className="mt-2 px-6 py-2 border border-[#565F7E] rounded-[4px] hover:bg-[#21263F] cursor-pointer"
               >
 
                 {loading ? "Saving..." : "Save"}

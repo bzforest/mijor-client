@@ -132,7 +132,7 @@ export default function ResetPasswordPage() {
                   <button
                     type="button"
                     onClick={() => setShowCurrent(!showCurrent)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white cursor-pointer"
                   >
                     {showCurrent ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
@@ -160,7 +160,7 @@ export default function ResetPasswordPage() {
                   <button
                     type="button"
                     onClick={() => setShowNew(!showNew)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white cursor-pointer"
                   >
                     {showNew ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
@@ -188,7 +188,7 @@ export default function ResetPasswordPage() {
                   <button
                     type="button"
                     onClick={() => setShowConfirm(!showConfirm)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white cursor-pointer"
                   >
                     {showConfirm ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
@@ -200,7 +200,7 @@ export default function ResetPasswordPage() {
               {/* Reset Button */}
               <button
                 onClick={handleReset}
-                className="mt-4 px-6 py-2 border border-[#565F7E] rounded-[4px] hover:bg-[#21263F]"
+                className="mt-4 px-6 py-2 border border-[#565F7E] rounded-[4px] hover:bg-[#21263F] cursor-pointer"
               >
                 Reset password
               </button>

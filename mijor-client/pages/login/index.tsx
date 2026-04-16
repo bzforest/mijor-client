@@ -117,7 +117,7 @@ export default function Login() {
             <Button 
               variant="primary" 
               type="submit" 
-              className="w-full" 
+              className="w-full cursor-pointer" 
               disabled={isLoading || (!isEmailValid || !isPasswordValid)} // ให้ปุ่มทึบถ้ายังกรอกไม่ครบแบบ Figma
             >
               <span className="w-full text-center block">
