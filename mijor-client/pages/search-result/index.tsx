@@ -264,11 +264,7 @@ export default function SearchResultPage() {
                                         wheelchairAccess={movie.wheelchairAccess}
                                         date={
                                             movie.status === "Now Showing"
-                                                ? movie.date
-                                                    ? new Date(movie.date).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })
-                                                    : currentFilters?.date
-                                                        ? new Date(currentFilters.date).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })
-                                                        : undefined
+                                                ? movie.date || currentFilters?.date
                                                 : undefined
                                         }
                                         onSelectTime={(showtimeId) => router.push(`/booking/${showtimeId}`)}

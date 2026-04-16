@@ -9,11 +9,13 @@ type Schedule = {
 type TimeSelectionProps = {
   schedules: Schedule[];
   onSelect: (schedule: Schedule) => void;
+  date?: string; // พัดมาจากหน้า Cinema-detail หรือ Search-result
 };
 
 export default function TimeSelection({
   schedules,
   onSelect,
+  date,
 }: TimeSelectionProps) {
   const getButtonStatus = (schedule: Schedule) => {
     // ถ้า parent กำหนด isAvailable ไว้แล้ว ใช้ค่านั้นเลย (กรณีวันอื่นที่ไม่ใช่วันนี้)
@@ -26,6 +28,21 @@ export default function TimeSelection({
 
     // Fallback: ใช้ logic เวลาเดิม (กรณีวันนี้ หรือไม่ได้กำหนด isAvailable)
     const now = new Date();
+    
+    // หาวันที่ปัจจุบันในรูปแบบ YYYY-MM-DD เพื่อเอามาเทียบกับพร็อพ date
+    const todayStr = now.toLocaleDateString('en-CA'); // en-CA ให้รูปแบบ YYYY-MM-DD
+    
+    // ถ้ามีการส่งวันที่มา และวันนั้น "ไม่ใช่" วันนี้
+    if (date && date !== todayStr) {
+      if (date < todayStr) {
+        // กรณีเป็นวันในอดีต (ถ้าหลุดมา) ให้ disabled
+        return { variant: "secondary" as const, state: "disabled" as const };
+      }
+      // กรณีเป็นวันในอนาคต ให้คลิกได้ทุกอันตามปกติ
+      return { variant: "primary" as const, state: "hover" as const };
+    }
+
+    // --- LOGIC กรณีที่เป็น "วันนี้" ---
     // 1. แปลงเวลาปัจจุบันเป็นนาทีรวมของวัน
     const currentTime = now.getHours() * 60 + now.getMinutes();
 

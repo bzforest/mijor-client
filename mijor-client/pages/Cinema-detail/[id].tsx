@@ -8,7 +8,7 @@ import { useCinemaDetails } from "@/hooks/useCinemaDetails";
 function CinemaDetail() {
     const router = useRouter();
     const { id } = router.query;
-    const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().split("T")[0]);
+    const [selectedDate, setSelectedDate] = useState<string>(new Date().toLocaleDateString("en-CA"));
 
     const { cinema, movies, loading, error } = useCinemaDetails(id, selectedDate);
 
@@ -70,7 +70,7 @@ function CinemaDetail() {
             <div className="flex justify-center w-full px-6 pt-10 pb-20 md:px-0 z-20">
                 <div className="flex flex-col items-center w-full max-w-5xl">
                     <div className="flex flex-col gap-10 w-full">
-                        <CinemaShowtimesList loading={loading} movies={movies} />
+                        <CinemaShowtimesList loading={loading} movies={movies} date={selectedDate} />
                     </div>
                 </div>
             </div>

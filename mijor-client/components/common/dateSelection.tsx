@@ -37,7 +37,7 @@ export default function DateSelection({ value, onChange }: DateSelectionProps) {
       date.setDate(date.getDate() + i);
 
       days.push({
-        id: date.toISOString().split("T")[0],
+        id: date.toLocaleDateString("en-CA"),
         label: i === 0 ? "Today" : dayNames[date.getDay()],
         subLabel: `${date.getDate()} ${monthNames[date.getMonth()]} ${date.getFullYear()}`,
       });

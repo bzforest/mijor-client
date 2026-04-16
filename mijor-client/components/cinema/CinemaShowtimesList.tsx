@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 
 interface CinemaShowtimesListProps {
     loading: boolean;
+    date?: string;
     movies: Array<{
         id: string;
         title: string;
@@ -12,7 +13,7 @@ interface CinemaShowtimesListProps {
     }>;
 }
 
-export default function CinemaShowtimesList({ loading, movies }: CinemaShowtimesListProps) {
+export default function CinemaShowtimesList({ loading, movies, date }: CinemaShowtimesListProps) {
     const router = useRouter();
     if (loading) {
         return (
@@ -39,7 +40,9 @@ export default function CinemaShowtimesList({ loading, movies }: CinemaShowtimes
                     posterUrl={movie.posterUrl}
                     tags={movie.tags}
                     halls={movie.halls}
+                    date={date}
                     onSelectTime={(showtimeId) => router.push(`/booking/${showtimeId}`)}
+                    onClickMovieDetail={() => router.push(`/movies/${movie.id}`)}
                 />
             ))}
         </>

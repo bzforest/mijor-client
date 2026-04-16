@@ -85,7 +85,8 @@ export default function CinemaShowTime({ nameCinema, halls, date, onSelectTime }
                 {/* TimeSelection Component ที่ทำไว้ */}
                 <TimeSelection
                   schedules={hall.schedules}
-                  onSelect={(schedule) => onSelectTime ? onSelectTime(schedule.id) : console.log(`Selected session: ${schedule.id}`)}
+                  date={date}
+                  onSelect={(showtime) => onSelectTime ? onSelectTime(showtime.id) : console.log(`Selected session: ${showtime.id}`)}
                 />
               </div>
             ))}

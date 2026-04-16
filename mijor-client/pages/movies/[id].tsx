@@ -38,7 +38,7 @@ export default function MovieDetailPage() {
   const { id } = router.query;
 
   const [selectedDate, setSelectedDate] = useState(
-    new Date().toISOString().split("T")[0]
+    new Date().toLocaleDateString("en-CA")
   );
 
   const [movie, setMovie] = useState<Movie | null>(null);
@@ -353,6 +353,7 @@ export default function MovieDetailPage() {
             <CinemaShowTime
               key={cinema.cinema_id}
               nameCinema={cinema.cinema_name}
+              date={selectedDate}
               halls={cinema.halls.map((hall, index) => ({
                 id: String(index),
                 name: hall.hall_name,

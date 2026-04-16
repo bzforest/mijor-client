@@ -85,6 +85,7 @@ export default function MovieShowtimeCard({
             </h3>
             <TimeSelection
               schedules={hall.schedules}
+              date={date}
               onSelect={(schedule) => onSelectTime ? onSelectTime(schedule.id) : console.log(`Selected session: ${schedule.id}`)}
             />
           </div>
@@ -148,12 +149,28 @@ export default function MovieShowtimeCard({
             <img
               src={posterUrl}
               alt={title}
-              className="object-cover w-[96px] h-fit md:w-auto md:h-auto rounded-sm bg-brand-gray-200/30"
+              onClick={onClickMovieDetail}
+              className="object-cover w-[96px] h-fit md:w-auto md:h-auto rounded-sm bg-brand-gray-200/30 cursor-pointer transition-opacity hover:opacity-80"
             />
             <div className="flex flex-col gap-2 w-full">
-              {date && <p className="text-body-2 text-brand-gray-300">{date}</p>}
+              {date && (
+                <p className="text-body-2 text-brand-gray-300">
+                  {!isNaN(Date.parse(date)) && date.includes("-")
+                    ? new Date(date).toLocaleDateString("en-GB", {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                      })
+                    : date}
+                </p>
+              )}
               
-              <h2 className="mb-2 text-headline-4 font-bold text-white">{title}</h2>
+              <h2 
+                onClick={onClickMovieDetail}
+                className="mb-2 text-headline-4 font-bold text-white cursor-pointer hover:text-brand-blue-100 transition-colors"
+              >
+                {title}
+              </h2>
 
               {/* Tags */}
               <div className="flex flex-wrap gap-2 mb-4">
