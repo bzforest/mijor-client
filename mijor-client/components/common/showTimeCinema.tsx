@@ -29,7 +29,7 @@ export default function CinemaShowTime({ nameCinema, halls, date, onSelectTime }
       {/* --- Cinema Header --- */}
       <div
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center justify-between p-4 bg-brand-gray-0 border-b border-brand-gray-100"
+        className="flex items-center justify-between p-4 bg-brand-gray-0 border-b border-brand-gray-100 cursor-pointer"
       >
         <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-3">
           <div className="flex items-center gap-3">

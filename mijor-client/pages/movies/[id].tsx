@@ -204,7 +204,7 @@ export default function MovieDetailPage() {
               {movie.trailer_youtube && (
                 <button
                   onClick={() => setIsTrailerModalOpen(true)}
-                  className="px-6 py-3 w-fit font-semibold bg-brand-blue-100 rounded-md"
+                  className="px-6 py-3 w-fit font-semibold bg-brand-blue-100 rounded-md cursor-pointer"
                 >
                   View Trailer
                 </button>
@@ -241,7 +241,7 @@ export default function MovieDetailPage() {
             {/* Close Button Icon */}
             <button
               onClick={() => setIsTrailerModalOpen(false)}
-              className="absolute top-4 right-4 text-brand-gray-400 hover:text-white transition-colors"
+              className="absolute top-4 right-4 text-brand-gray-400 hover:text-white transition-colors cursor-pointer"
             >
               <svg
                 width="28"

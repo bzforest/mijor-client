@@ -74,7 +74,7 @@ export default function DateSelection({ value, onChange }: DateSelectionProps) {
         {/* ปุ่มลูกศรซ้าย */}
         <div className="absolute left-2 z-10 hidden md:block">
           {startIndex > 0 && (
-            <button onClick={handlePrev} className="p-2 transition-all">
+            <button onClick={handlePrev} className="p-2 transition-all cursor-pointer">
               <ChevronLeft size={24} className="text-brand-gray-400" />
             </button>
           )}
@@ -102,7 +102,7 @@ export default function DateSelection({ value, onChange }: DateSelectionProps) {
         {/* ปุ่มลูกศรขวา */}
         <div className="absolute right-2 z-10 hidden md:block">
           {startIndex + visibleTabs < dateTabs.length && (
-            <button onClick={handleNext} className="p-2 transition-all">
+            <button onClick={handleNext} className="p-2 transition-all cursor-pointer">
               <ChevronRight size={24} className="text-brand-gray-400" />
             </button>
           )}
