@@ -1,4 +1,4 @@
-import { useState , useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 
 type Message = {
@@ -16,6 +16,10 @@ export default function Chatbot () {
     const [isLoading , setIsLoading] = useState(false);
     const [isError , setIsError] = useState(false);
 
+    const messagesEndRef = useRef<HTMLDivElement>(null);
+    const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+};
     // ตอนเปิดหน้าเว็บ/เปลี่ยนหน้าเว็บ ให้ไปค้นดูก่อนว่ามีประวัติแชทเก่ามั้ย
     useEffect(() => {
         const savedChat = sessionStorage.getItem("minor_chat_history");
@@ -28,6 +32,10 @@ export default function Chatbot () {
     useEffect(() => {
         sessionStorage.setItem("minor_chat_history" , JSON.stringify(message));
     }, [message]);
+
+    useEffect(() => {
+        scrollToBottom();
+    }, [message, isOpen]);
 
     // ฟังก์ชันเปลี่ยน Markdown Link [text](url) ให้กลายเป็น <a> tag ที่คลิกได้
     const renderMessageWithLinks = (text: string) => {
@@ -129,6 +137,8 @@ export default function Chatbot () {
                                     <div className="w-2 h-2 bg-brand-gray-400 rounded-full animate-bounce" style={{ animationDelay: "300ms" }}></div>
                             </div>
                         )}
+
+                        <div ref={messagesEndRef} />
                     </div>
 
                     {/* Input */}
